@@ -1366,6 +1366,7 @@ function HeroVisual({ language }: { language: Language }) {
       >
         <div className="hero-mesh absolute -inset-8 opacity-90 blur-2xl" />
         <div
+          data-portal-version="mobile-v2"
           className={`ai-hologram nexus-stage relative h-[calc(100vh-4rem)] min-h-[680px] w-full overflow-hidden border-y border-dyd-cyan/15 bg-dyd-ink/70 shadow-[inset_0_1px_0_rgba(18,199,232,0.16),inset_0_-1px_0_rgba(18,199,232,0.12)] backdrop-blur-xl ${
             activation ? "is-activating" : ""
           }`}
