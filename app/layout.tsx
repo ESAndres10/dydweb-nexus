@@ -5,9 +5,26 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://dydweb.co";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "DYDWEB | Soluciones digitales, IA y transformación tecnológica",
+  title: {
+    default: "DYDWEB | Desarrollo web, software e IA para empresas",
+    template: "%s | DYDWEB",
+  },
   description:
-    "DYDWEB desarrolla software, aplicaciones web, inteligencia artificial, SEO, automatización, diseño y producción audiovisual para empresas en crecimiento.",
+    "DYDWEB desarrolla sitios web, software a medida, inteligencia artificial, automatización, SEO y experiencias digitales premium para empresas y emprendedores.",
+  keywords: [
+    "desarrollo web Colombia",
+    "software a medida",
+    "inteligencia artificial para empresas",
+    "automatización de negocios",
+    "SEO técnico",
+    "diseño web premium",
+    "chatbots para empresas",
+    "DYDWEB",
+  ],
+  authors: [{ name: "DYDWEB Nexus" }],
+  creator: "DYDWEB Nexus",
+  publisher: "DYDWEB Nexus",
+  category: "technology",
   icons: {
     icon: "/icon.png",
     shortcut: "/icon.png",
@@ -17,9 +34,9 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "DYDWEB | Tecnología para negocios que crecen",
+    title: "DYDWEB | Desarrollo web, software e IA para empresas",
     description:
-      "Plataforma empresarial de captación, innovación, contenido, inversión e impacto social bajo la marca DYDWEB.",
+      "Soluciones digitales premium para crear presencia profesional, captar clientes, automatizar procesos y escalar negocios con tecnología.",
     url: "/",
     siteName: "DYDWEB Nexus",
     type: "website",
@@ -35,10 +52,66 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "DYDWEB | Tecnología para negocios que crecen",
+    title: "DYDWEB | Desarrollo web, software e IA para empresas",
     description:
       "Soluciones digitales, IA, automatización y desarrollo web para empresas en crecimiento.",
     images: ["/logo-dydweb-nexus-og.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+};
+
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": ["Organization", "LocalBusiness"],
+  name: "DYDWEB Nexus",
+  alternateName: ["D&D WEB Nexus", "DYDWEB"],
+  url: siteUrl,
+  logo: `${siteUrl}/logo-dydweb-nexus-og.png`,
+  image: `${siteUrl}/logo-dydweb-nexus-og.png`,
+  description:
+    "Empresa de tecnología especializada en desarrollo web, software a medida, inteligencia artificial, automatización, SEO y transformación digital.",
+  areaServed: ["Colombia", "Latinoamérica", "Estados Unidos"],
+  address: {
+    "@type": "PostalAddress",
+    addressCountry: "CO",
+  },
+  contactPoint: {
+    "@type": "ContactPoint",
+    telephone: "+57-350-862-9779",
+    contactType: "sales",
+    areaServed: ["CO", "US", "LATAM"],
+    availableLanguage: ["Spanish", "English"],
+  },
+  sameAs: [siteUrl],
+  makesOffer: [
+    "Desarrollo web profesional",
+    "Software a medida",
+    "Inteligencia artificial para empresas",
+    "Automatización comercial",
+    "SEO y analítica",
+    "Diseño de marca y contenido digital",
+  ],
+};
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "DYDWEB Nexus",
+  url: siteUrl,
+  inLanguage: ["es-CO", "en"],
+  publisher: {
+    "@type": "Organization",
+    name: "DYDWEB Nexus",
   },
 };
 
@@ -49,7 +122,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body>{children}</body>
+      <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
+        {children}
+      </body>
     </html>
   );
 }
