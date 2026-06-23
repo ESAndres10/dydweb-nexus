@@ -1378,7 +1378,7 @@ function HeroVisual({ language }: { language: Language }) {
             D&D WEB Ops
           </div>
 
-        <svg className="pointer-events-none absolute inset-0 z-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <svg className="holo-lines pointer-events-none absolute inset-0 z-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
           <defs>
             <linearGradient id="holo-line" x1="0" x2="1" y1="0" y2="1">
               <stop offset="0%" stopColor="#0B4DFF" stopOpacity="0.22" />
@@ -1414,7 +1414,7 @@ function HeroVisual({ language }: { language: Language }) {
           ))}
         </div>
 
-        <div className="absolute left-1/2 top-[42%] z-10 -translate-x-1/2 -translate-y-1/2 2xl:left-[47%]">
+        <div className="holo-core-wrap absolute left-1/2 top-[42%] z-10 -translate-x-1/2 -translate-y-1/2 2xl:left-[47%]">
           <div className="holo-orbit orbit-one" />
           <div className="holo-orbit orbit-two" />
           <div className="holo-orbit orbit-three" />
@@ -1443,7 +1443,7 @@ function HeroVisual({ language }: { language: Language }) {
               key={node.id}
               type="button"
               onClick={() => selectNode(index)}
-              className={`holo-node absolute z-40 ${node.position} ${index === activeNode ? "is-selected" : "is-dimmed"}`}
+              className={`holo-node desktop-holo-node absolute z-40 ${node.position} ${index === activeNode ? "is-selected" : "is-dimmed"}`}
             >
               <NodeIcon size={22} aria-hidden="true" />
               <span>{node.label}</span>
@@ -1451,7 +1451,25 @@ function HeroVisual({ language }: { language: Language }) {
           );
         })}
 
-        <div className="absolute bottom-4 left-4 z-30 w-[min(390px,calc(100%-2rem))]">
+        <div className="mobile-holo-nodes z-30 hidden">
+          {visualNodes.slice(0, 8).map((node, index) => {
+            const NodeIcon = node.icon;
+
+            return (
+              <button
+                key={node.id}
+                type="button"
+                onClick={() => selectNode(index)}
+                className={`holo-node ${index === activeNode ? "is-selected" : "is-dimmed"}`}
+              >
+                <NodeIcon size={18} aria-hidden="true" />
+                <span>{node.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="nexus-detail-card absolute bottom-4 left-4 z-30 w-[min(390px,calc(100%-2rem))]">
           <div className="rounded-lg border border-dyd-cyan/20 bg-dyd-ink/80 p-4 shadow-2xl backdrop-blur-xl">
             <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-dyd-cyan">
               <ActiveIcon size={20} />
