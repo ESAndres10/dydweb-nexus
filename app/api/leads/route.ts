@@ -63,18 +63,31 @@ export async function POST(request: NextRequest) {
       targetUrl.searchParams.set("secret", webhookSecret);
     }
 
-    const response = await fetch(targetUrl.toString(), {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(webhookSecret ? { "x-dydweb-secret": webhookSecret } : {}),
-      },
-      body: JSON.stringify({
-        fields: forwardedFields,
-        lead: enrichedPayload,
-      }),
-      cache: "no-store",
-    });
+    let response: Response;
+    try {
+      response = await fetch(targetUrl.toString(), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(webhookSecret ? { "x-dydweb-secret": webhookSecret } : {}),
+        },
+        body: JSON.stringify({
+          fields: forwardedFields,
+          lead: enrichedPayload,
+        }),
+        cache: "no-store",
+      });
+    } catch (error) {
+      console.info("Google Sheets webhook is not reachable yet", error);
+      return NextResponse.json(
+        {
+          ok: true,
+          stored: false,
+          message: "Google Sheets webhook is not configured yet.",
+        },
+        { status: 202 }
+      );
+    }
 
     if (!response.ok) {
       return NextResponse.json(
