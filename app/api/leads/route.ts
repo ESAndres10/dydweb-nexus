@@ -44,7 +44,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const targetUrl = new URL(webhookUrl);
+    let targetUrl: URL;
+    try {
+      targetUrl = new URL(webhookUrl);
+    } catch {
+      console.info("GOOGLE_SHEETS_WEBHOOK_URL is invalid", enrichedPayload);
+      return NextResponse.json(
+        {
+          ok: true,
+          stored: false,
+          message: "Google Sheets webhook is not configured yet.",
+        },
+        { status: 202 }
+      );
+    }
+
     if (webhookSecret && !targetUrl.searchParams.has("secret")) {
       targetUrl.searchParams.set("secret", webhookSecret);
     }
