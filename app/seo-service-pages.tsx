@@ -232,6 +232,35 @@ export function SeoServiceLanding({ page }: { page: SeoServicePage }) {
         </div>
       </section>
 
+      <section className="relative z-10 border-y border-dyd-silver/15 bg-dyd-black/40 px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="max-w-3xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-dyd-cyan">Paquetes recomendados</p>
+            <h2 className="mt-3 text-3xl font-semibold md:text-5xl">Elige una ruta acorde a la etapa de tu empresa</h2>
+            <p className="mt-5 text-base leading-8 text-dyd-text">
+              Cada paquete puede crecer con nuevas secciones, automatizaciones, analítica, CRM, idiomas o campañas de captación.
+            </p>
+          </div>
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            {page.packages.map(([title, text], index) => (
+              <article key={title} className="premium-card rounded-lg p-5">
+                <span className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-dyd-cyan/30 bg-dyd-cyan/10 text-sm font-bold text-dyd-cyan">
+                  {index + 1}
+                </span>
+                <h3 className="mt-5 text-xl font-semibold text-white">{title}</h3>
+                <p className="mt-3 text-sm leading-6 text-dyd-text">{text}</p>
+                <a
+                  href="/servicios"
+                  className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-dyd-cyan transition hover:text-white"
+                >
+                  Ver detalles <ArrowRight size={16} />
+                </a>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="relative z-10 px-4 py-12 sm:px-6 lg:px-8">
         <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1fr_0.8fr]">
           <div className="premium-card rounded-lg p-6">
