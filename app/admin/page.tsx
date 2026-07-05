@@ -589,6 +589,33 @@ export default function AdminPage() {
     setNotice(`Artículo marcado como publicado. URL sugerida: /noticias/${nextSlug}`);
   };
 
+  const handleUpdatePublishedArticle = () => {
+    const title = selectedArticle.title.trim();
+    const content = selectedArticle.content.trim();
+    const nextSlug = selectedArticle.slug || slugify(title);
+    const now = new Date().toISOString();
+
+    if (!title || !content) {
+      setNotice("Antes de actualizar, completa al menos el titulo y el contenido del articulo.");
+      return;
+    }
+
+    const nextArticles = articles.map((article) =>
+      article.id === selectedArticle.id
+        ? {
+            ...article,
+            title,
+            slug: nextSlug,
+            status: "Publicado" as ArticleStatus,
+            updatedAt: now,
+          }
+        : article
+    );
+
+    persistArticles(nextArticles);
+    setNotice(`Articulo actualizado correctamente. Abre: /noticias/${nextSlug}?preview=${Date.now()}`);
+  };
+
   const handleExport = async () => {
     const payload = {
       ...selectedArticle,
@@ -791,6 +818,15 @@ export default function AdminPage() {
                 >
                   Publicar artículo <Send size={16} />
                 </button>
+                {selectedArticle.status === "Publicado" ? (
+                  <button
+                    type="button"
+                    onClick={handleUpdatePublishedArticle}
+                    className="inline-flex h-10 items-center gap-2 rounded-md border border-dyd-cyan/35 bg-dyd-cyan/10 px-3 text-sm font-semibold text-dyd-cyan transition hover:bg-dyd-cyan hover:text-dyd-ink"
+                  >
+                    Actualizar artículo <Save size={16} />
+                  </button>
+                ) : null}
                 {selectedArticle.status === "Publicado" && selectedArticle.slug ? (
                   <a
                     href={`/noticias/${selectedArticle.slug}?preview=${encodeURIComponent(selectedArticle.updatedAt || "")}`}
