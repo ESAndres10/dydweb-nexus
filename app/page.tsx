@@ -133,9 +133,9 @@ const lab = [
 ];
 
 const news = [
+  ["Desarrollo Web", "Desarrollo web empresarial: la guía definitiva para hacer crecer tu empresa en 2026", "/noticias/desarrollo-web-empresarial"],
   ["IA", "Cómo los agentes inteligentes están cambiando el servicio al cliente"],
   ["SEO", "Arquitectura técnica para posicionar plataformas empresariales"],
-  ["Innovación", "De sitio web a sistema operativo comercial para empresas"],
 ];
 
 const techStack = ["Next.js", "TypeScript", "Tailwind CSS", "Framer Motion", "Node.js", "PostgreSQL", "Cloudflare", "Docker"];
@@ -644,9 +644,9 @@ const siteCopy = {
       "Experiments with vertical digital agents",
     ],
     news: [
+      ["Web Development", "Enterprise web development: the guide to growing your company in 2026", "/noticias/desarrollo-web-empresarial"],
       ["AI", "How intelligent agents are changing customer service"],
       ["SEO", "Technical architecture to position enterprise platforms"],
-      ["Innovation", "From website to commercial operating system for companies"],
     ],
     labEyebrow: "Innovation Lab",
     labTitle: "A lab for building proprietary products, SaaS and AI tools",
@@ -1912,11 +1912,19 @@ export default function Home() {
             </button>
           </div>
           <div className="grid gap-4 md:grid-cols-3">
-            {copy.news.map(([category, title]) => (
+            {copy.news.map(([category, title, href]) => (
               <article key={title} className="premium-card rounded-lg p-6">
                 <span className="rounded-md bg-dyd-cyan/10 px-3 py-1 text-xs font-semibold text-dyd-cyan">{category}</span>
                 <h3 className="mt-5 text-xl font-semibold leading-7">{title}</h3>
                 <p className="mt-3 text-sm leading-6 text-dyd-text">{copy.newsCardText}</p>
+                {href ? (
+                  <a
+                    href={href}
+                    className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-dyd-cyan transition hover:text-white"
+                  >
+                    Leer artículo <ArrowRight size={16} />
+                  </a>
+                ) : null}
               </article>
             ))}
           </div>
