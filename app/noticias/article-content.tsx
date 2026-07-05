@@ -1,7 +1,7 @@
 "use client";
 
 import { CheckCircle2, ShieldCheck } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 type ArticleImage = {
   id: string;
@@ -29,22 +29,131 @@ type ArticleContentProps = {
   faqs: string[][];
 };
 
-function renderAdminContent(content: string, imageBank: ArticleImage[] = []) {
+const articleHeadings = new Set([
+  "La nueva realidad digital",
+  "Qué es el desarrollo web empresarial",
+  "Beneficios",
+  "Errores frecuentes",
+  "Tecnologías",
+  "SEO y contenido",
+  "Inteligencia artificial",
+  "Conclusión",
+  "FAQ",
+  "Preguntas frecuentes",
+]);
+
+function stripHtml(value: string) {
+  return value.replace(/<[^>]*>/g, "").trim();
+}
+
+function ArticleImageFigure({ image }: { image: ArticleImage }) {
+  return (
+    <figure className="my-8 overflow-hidden rounded-lg border border-dyd-cyan/20 bg-dyd-black/35 p-3">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={image.src}
+        alt={image.name}
+        className="max-h-[420px] w-full rounded-md bg-dyd-black/40 object-contain"
+      />
+      <figcaption className="px-1 pt-3 text-xs leading-5 text-dyd-text">
+        {image.caption || image.name}
+      </figcaption>
+    </figure>
+  );
+}
+
+function AdminArticleBody({ content, imageBank = [] }: { content: string; imageBank?: ArticleImage[] }) {
   const imageMap = new Map(imageBank.map((image) => [image.id, image]));
+  const blocks = content
+    .replace(/\r\n/g, "\n")
+    .replace(/<figure>[\s\S]*?<\/figure>/g, "")
+    .split(/\n{2,}/)
+    .map((block) => block.trim())
+    .filter(Boolean);
 
-  return content
-    .replace(/\[imagen:([^\]]+)\]/g, (_match, id: string) => {
-      const image = imageMap.get(id.trim());
-      if (!image) {
-        return `<p class="rounded-md border border-dyd-silver/15 bg-dyd-black/35 px-3 py-2 text-sm text-dyd-text">Imagen no encontrada: ${id}</p>`;
-      }
+  return (
+    <div className="mt-8 space-y-7">
+      {blocks.map((block, index) => {
+        const imageOnly = block.match(/^\[imagen:([^\]]+)\]$/);
+        if (imageOnly) {
+          const image = imageMap.get(imageOnly[1].trim());
+          return image ? (
+            <ArticleImageFigure key={`${block}-${index}`} image={image} />
+          ) : (
+            <p key={`${block}-${index}`} className="rounded-md border border-dyd-silver/15 bg-dyd-black/35 px-3 py-2 text-sm text-dyd-text">
+              Imagen no encontrada: {imageOnly[1]}
+            </p>
+          );
+        }
 
-      return `<figure class="my-8 overflow-hidden rounded-lg border border-dyd-cyan/20 bg-dyd-black/35 p-3">
-        <img src="${image.src}" alt="${image.name}" class="w-full rounded-md object-cover" />
-        <figcaption class="px-1 pt-3 text-xs leading-5 text-dyd-text">${image.caption || image.name}</figcaption>
-      </figure>`;
-    })
-    .replace(/\n/g, "<br />");
+        const aligned = block.match(/^<p style="text-align:\s*(left|center|right|justify);">\n?([\s\S]*?)\n?<\/p>$/);
+        if (aligned) {
+          return (
+            <p
+              key={`${block}-${index}`}
+              className="text-base leading-8 text-dyd-text"
+              style={{ textAlign: aligned[1] as "left" | "center" | "right" | "justify" }}
+            >
+              {stripHtml(aligned[2])}
+            </p>
+          );
+        }
+
+        const cleaned = stripHtml(block);
+        if (!cleaned) return null;
+
+        if (articleHeadings.has(cleaned)) {
+          return (
+            <h2 key={`${block}-${index}`} className="pt-4 text-2xl font-semibold text-white md:text-3xl">
+              {cleaned === "FAQ" ? "Preguntas frecuentes" : cleaned}
+            </h2>
+          );
+        }
+
+        const lines = cleaned.split("\n").map((line) => line.trim()).filter(Boolean);
+        if (lines.length > 1 && lines.every((line) => line.startsWith("¿"))) {
+          return (
+            <div key={`${block}-${index}`} className="grid gap-3">
+              {lines.map((line) => (
+                <details key={line} className="rounded-lg border border-dyd-silver/15 bg-dyd-black/35 p-4">
+                  <summary className="cursor-pointer text-base font-semibold text-white">{line}</summary>
+                  <p className="mt-3 text-sm leading-6 text-dyd-text">
+                    Respuesta pendiente para completar desde el portal administrador.
+                  </p>
+                </details>
+              ))}
+            </div>
+          );
+        }
+
+        const parts = block.split(/(\[imagen:[^\]]+\])/g).filter(Boolean);
+        if (parts.length > 1) {
+          return (
+            <div key={`${block}-${index}`} className="space-y-5">
+              {parts.map((part, partIndex) => {
+                const marker = part.match(/^\[imagen:([^\]]+)\]$/);
+                if (marker) {
+                  const image = imageMap.get(marker[1].trim());
+                  return image ? <ArticleImageFigure key={`${part}-${partIndex}`} image={image} /> : null;
+                }
+                return (
+                  <p key={`${part}-${partIndex}`} className="text-base leading-8 text-dyd-text">
+                    {stripHtml(part)}
+                  </p>
+                );
+              })}
+            </div>
+          );
+        }
+
+        return (
+          <p key={`${block}-${index}`} className="text-base leading-8 text-dyd-text">
+            {cleaned}
+          </p>
+        );
+      })}
+    </div>
+  );
 }
 
 export function ArticleContent({ slug, fallbackIntro, sections, benefits, mistakes, faqs }: ArticleContentProps) {
@@ -65,11 +174,6 @@ export function ArticleContent({ slug, fallbackIntro, sections, benefits, mistak
     }
   }, [slug]);
 
-  const renderedAdminContent = useMemo(
-    () => (adminArticle ? renderAdminContent(adminArticle.content, adminArticle.imageBank) : ""),
-    [adminArticle]
-  );
-
   if (adminArticle) {
     return (
       <>
@@ -80,10 +184,7 @@ export function ArticleContent({ slug, fallbackIntro, sections, benefits, mistak
         {adminArticle.excerpt ? (
           <p className="mt-4 text-base leading-8 text-dyd-text">{adminArticle.excerpt}</p>
         ) : null}
-        <div
-          className="mt-8 text-base leading-8 text-dyd-text [&_h2]:mt-10 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:text-white [&_p]:my-4"
-          dangerouslySetInnerHTML={{ __html: renderedAdminContent }}
-        />
+        <AdminArticleBody content={adminArticle.content} imageBank={adminArticle.imageBank} />
       </>
     );
   }
