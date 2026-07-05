@@ -149,6 +149,7 @@ export default function AdminPage() {
   const [query, setQuery] = useState("");
   const [notice, setNotice] = useState("");
   const contentTextareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const inlineImageInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     setAuthenticated(window.localStorage.getItem(sessionKey) === "active");
@@ -305,6 +306,24 @@ export default function AdminPage() {
       ""
     );
     setNotice("Imagen insertada dentro del contenido del artículo.");
+  };
+
+  const handleInlineImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const imageData = String(reader.result || "");
+      insertIntoContent(
+        `\n<figure>\n  <img src="${imageData}" alt="${file.name.replace(/"/g, "")}" />\n  <figcaption>Describe la imagen aquí.</figcaption>\n</figure>\n`,
+        "",
+        ""
+      );
+      setNotice("Imagen local insertada dentro del contenido del artículo.");
+      event.target.value = "";
+    };
+    reader.readAsDataURL(file);
   };
 
   const restoreFullArticleContent = () => {
@@ -634,6 +653,20 @@ export default function AdminPage() {
                       >
                         Insertar imagen <ImagePlus size={16} />
                       </button>
+                      <button
+                        type="button"
+                        onClick={() => inlineImageInputRef.current?.click()}
+                        className="inline-flex h-9 items-center gap-2 rounded-md border border-dyd-silver/15 bg-dyd-black/35 px-3 text-xs font-semibold text-dyd-silver transition hover:border-dyd-cyan hover:text-white"
+                      >
+                        Subir imagen local <ImagePlus size={16} />
+                      </button>
+                      <input
+                        ref={inlineImageInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleInlineImageUpload}
+                        className="sr-only"
+                      />
                       <button
                         type="button"
                         onClick={restoreFullArticleContent}
