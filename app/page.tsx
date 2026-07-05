@@ -1620,15 +1620,19 @@ export default function Home() {
                 {copy.pageLinks.more} <ChevronDown size={15} />
               </button>
               <div className="invisible absolute right-0 top-full z-50 w-56 translate-y-2 rounded-lg border border-dyd-silver/15 bg-dyd-ink/95 p-2 opacity-0 shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl transition group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
-                {moreMenu.map(([, id], index) => (
-                  <a
-                    key={id}
-                    href={`#${id}`}
-                    className="block rounded-md px-3 py-2 text-sm font-medium text-dyd-text transition hover:bg-dyd-cyan/10 hover:text-white"
-                  >
-                    {copy.moreMenu[index]}
-                  </a>
-                ))}
+                {moreMenu.map(([, id], index) => {
+                  const href = id === "noticias" ? "/noticias" : `#${id}`;
+
+                  return (
+                    <a
+                      key={id}
+                      href={href}
+                      className="block rounded-md px-3 py-2 text-sm font-medium text-dyd-text transition hover:bg-dyd-cyan/10 hover:text-white"
+                    >
+                      {copy.moreMenu[index]}
+                    </a>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -1695,11 +1699,15 @@ export default function Home() {
             </a>
             <div className="mt-2 border-t border-dyd-silver/10 pt-2">
               <p className="px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-dyd-cyan">{copy.pageLinks.more}</p>
-              {moreMenu.map(([, id], index) => (
-                <a key={id} href={`#${id}`} onClick={() => setOpen(false)} className="block rounded-md px-3 py-2.5 text-sm text-dyd-text hover:bg-dyd-silver/10 hover:text-white">
-                  {copy.moreMenu[index]}
-                </a>
-              ))}
+              {moreMenu.map(([, id], index) => {
+                const href = id === "noticias" ? "/noticias" : `#${id}`;
+
+                return (
+                  <a key={id} href={href} onClick={() => setOpen(false)} className="block rounded-md px-3 py-2.5 text-sm text-dyd-text hover:bg-dyd-silver/10 hover:text-white">
+                    {copy.moreMenu[index]}
+                  </a>
+                );
+              })}
             </div>
           </div>
         ) : null}

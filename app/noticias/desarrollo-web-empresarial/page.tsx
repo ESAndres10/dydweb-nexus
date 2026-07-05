@@ -201,7 +201,7 @@ export default function Page() {
           <div className="hidden items-center gap-1 lg:flex">
             <a href="/#inicio" className="rounded-md px-3 py-2 text-sm font-medium text-dyd-text transition hover:text-white">Inicio</a>
             <a href="/servicios" className="rounded-md px-3 py-2 text-sm font-medium text-dyd-text transition hover:text-white">Servicios</a>
-            <a href="/#noticias" className="rounded-md px-3 py-2 text-sm font-medium text-dyd-text transition hover:text-white">Noticias</a>
+            <a href="/noticias" className="rounded-md px-3 py-2 text-sm font-medium text-dyd-text transition hover:text-white">Noticias</a>
             <a href="/nosotros" className="rounded-md px-3 py-2 text-sm font-medium text-dyd-text transition hover:text-white">Quiénes Somos</a>
             <a href="/#contacto" className="rounded-md px-3 py-2 text-sm font-medium text-dyd-text transition hover:text-white">Contacto</a>
           </div>

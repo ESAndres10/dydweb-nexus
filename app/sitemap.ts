@@ -14,6 +14,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/automatizacion-con-inteligencia-artificial",
     "/chatbots-whatsapp-empresas",
     "/seo-tecnico-para-negocios",
+    "/noticias",
     "/noticias/desarrollo-web-empresarial",
   ];
   const now = new Date();
