@@ -12,6 +12,7 @@ import {
   Plus,
   Save,
   Search,
+  Send,
   Tag,
   Trash2,
   type LucideIcon,
@@ -207,6 +208,23 @@ export default function AdminPage() {
     reader.readAsDataURL(file);
   };
 
+  const handlePublishArticle = () => {
+    const title = selectedArticle.title.trim();
+    const content = selectedArticle.content.trim();
+    const nextSlug = selectedArticle.slug || slugify(title);
+
+    if (!title || !content) {
+      setNotice("Antes de publicar, completa al menos el título y el contenido del artículo.");
+      return;
+    }
+
+    updateArticle({
+      slug: nextSlug,
+      status: "Publicado",
+    });
+    setNotice(`Artículo marcado como publicado. URL sugerida: /noticias/${nextSlug}`);
+  };
+
   const handleExport = async () => {
     const payload = {
       ...selectedArticle,
@@ -381,6 +399,23 @@ export default function AdminPage() {
                 <h1 className="mt-2 text-3xl font-semibold">Crear y preparar contenido</h1>
               </div>
               <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={handlePublishArticle}
+                  className="inline-flex h-10 items-center gap-2 rounded-md bg-gradient-to-r from-dyd-blue to-dyd-cyan px-4 text-sm font-semibold text-white shadow-glow transition hover:brightness-110"
+                >
+                  Publicar artículo <Send size={16} />
+                </button>
+                {selectedArticle.status === "Publicado" && selectedArticle.slug ? (
+                  <a
+                    href={`/noticias/${selectedArticle.slug}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex h-10 items-center gap-2 rounded-md border border-dyd-cyan/35 px-3 text-sm font-semibold text-dyd-cyan transition hover:bg-dyd-cyan hover:text-dyd-ink"
+                  >
+                    Ver publicación <Eye size={16} />
+                  </a>
+                ) : null}
                 <button
                   type="button"
                   onClick={() => updateArticle({ views: Number(selectedArticle.views || 0) + 1 })}
