@@ -1,6 +1,10 @@
 "use client";
 
 import {
+  AlignCenter,
+  AlignJustify,
+  AlignLeft,
+  AlignRight,
   BarChart3,
   CheckCircle2,
   Edit3,
@@ -18,7 +22,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type ArticleStatus = "Borrador" | "Publicado";
 
@@ -44,6 +48,53 @@ const sessionKey = "dydweb-admin-session";
 
 const defaultCategories = ["Desarrollo Web", "SEO", "Inteligencia Artificial", "Automatización", "Noticias"];
 
+const starterArticleContent = `La nueva realidad digital
+
+Durante años muchas empresas consideraban suficiente tener una página con información básica. Hoy el comportamiento del consumidor cambió: antes de llamar, comprar o solicitar una cotización, investiga en internet. El sitio web es la primera impresión de una empresa y, en muchos casos, el factor que determina si un cliente continúa el proceso o busca otra opción.
+
+Cada proyecto debe partir de un análisis del negocio, definir objetivos claros, establecer indicadores de rendimiento y construir una experiencia centrada en el usuario. Esta visión permite que el sitio web evolucione con el tiempo y siga generando valor para la organización.
+
+Qué es el desarrollo web empresarial
+
+Es el proceso de analizar, diseñar, desarrollar y optimizar una plataforma digital alineada con los objetivos del negocio. No se trata únicamente de diseño visual: incluye experiencia de usuario, rendimiento, seguridad, posicionamiento en buscadores, integraciones, automatización y escalabilidad.
+
+Beneficios
+
+Una plataforma profesional aumenta la credibilidad, mejora la captación de clientes, automatiza tareas, integra CRM, facilita el análisis de datos, fortalece la marca y crea nuevas oportunidades comerciales. También permite atender usuarios las 24 horas y reducir procesos manuales.
+
+Errores frecuentes
+
+Elegir soluciones únicamente por precio, ignorar el SEO, no optimizar para móviles, descuidar la velocidad, no medir resultados y publicar contenido desactualizado son algunos de los errores más comunes. Corregirlos puede representar una ventaja competitiva importante.
+
+Tecnologías
+
+La tecnología debe elegirse según las necesidades del proyecto. Existen soluciones para sitios corporativos, plataformas a medida, comercio electrónico y aplicaciones web. Lo importante es construir una arquitectura preparada para crecer junto con la empresa.
+
+SEO y contenido
+
+Una buena página necesita contenido útil. Publicar guías, casos de éxito y respuestas a las preguntas de los clientes ayuda a posicionarse en Google y demuestra experiencia. Un blog estratégico se convierte en una fuente constante de tráfico orgánico.
+
+Inteligencia artificial
+
+La IA permite automatizar respuestas, clasificar solicitudes, asistir a los usuarios y generar procesos más eficientes. Integrarla correctamente mejora la experiencia del cliente y optimiza recursos.
+
+Conclusión
+
+El desarrollo web empresarial ya no es un gasto, sino una inversión. Las empresas que construyen plataformas rápidas, seguras y orientadas a resultados tienen mayores posibilidades de crecer en un mercado cada vez más digital. En DYDWEB creemos en crear soluciones que impulsen negocios, no solo páginas web.
+
+FAQ
+
+¿Qué es el desarrollo web empresarial?
+¿Cuánto tarda desarrollar una página web empresarial?
+¿Qué tecnologías son recomendables?
+¿Por qué es importante el SEO?
+¿Cómo ayuda la inteligencia artificial?
+¿Qué mantenimiento requiere un sitio web?
+¿Cómo medir los resultados?
+¿Qué diferencia hay entre una web básica y una plataforma empresarial?
+¿Es importante la velocidad del sitio?
+¿Cómo elegir una agencia de desarrollo web?`;
+
 const starterArticle: Article = {
   id: "article-desarrollo-web-empresarial",
   title: "Desarrollo web empresarial: la guía definitiva para hacer crecer tu empresa en 2026",
@@ -51,8 +102,7 @@ const starterArticle: Article = {
   category: "Desarrollo Web",
   excerpt:
     "Conoce cómo el desarrollo web empresarial impulsa las ventas, fortalece tu marca y acelera la transformación digital de tu empresa.",
-  content:
-    "Una plataforma empresarial moderna no es solo una vitrina. Es un activo comercial que comunica confianza, captura oportunidades, mide resultados y prepara a la empresa para escalar con tecnología.",
+  content: starterArticleContent,
   tags: "Desarrollo Web, Empresas, SEO, Transformación Digital, IA",
   featuredImage: "/noticias/desarrollo-web-empresarial.png",
   status: "Publicado",
@@ -98,6 +148,7 @@ export default function AdminPage() {
   const [selectedId, setSelectedId] = useState(starterArticle.id);
   const [query, setQuery] = useState("");
   const [notice, setNotice] = useState("");
+  const contentTextareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
     setAuthenticated(window.localStorage.getItem(sessionKey) === "active");
@@ -110,8 +161,19 @@ export default function AdminPage() {
     const storedArticles = window.localStorage.getItem(articlesKey);
     if (storedArticles) {
       const parsed = JSON.parse(storedArticles) as Article[];
-      setArticles(parsed.length ? parsed : [starterArticle]);
-      setSelectedId(parsed[0]?.id || starterArticle.id);
+      const migrated = parsed.map((article) =>
+        article.id === starterArticle.id && article.content.trim().length < 420
+          ? {
+              ...article,
+              content: starterArticleContent,
+              excerpt: article.excerpt || starterArticle.excerpt,
+              featuredImage: article.featuredImage || starterArticle.featuredImage,
+              updatedAt: new Date().toISOString().slice(0, 10),
+            }
+          : article
+      );
+      setArticles(migrated.length ? migrated : [starterArticle]);
+      setSelectedId(migrated[0]?.id || starterArticle.id);
     }
   }, []);
 
@@ -206,6 +268,48 @@ export default function AdminPage() {
       setNotice("Imagen destacada cargada en la vista previa.");
     };
     reader.readAsDataURL(file);
+  };
+
+  const insertIntoContent = (before: string, after = "", fallbackText = "") => {
+    const textarea = contentTextareaRef.current;
+    const content = selectedArticle.content || "";
+    const start = textarea?.selectionStart ?? content.length;
+    const end = textarea?.selectionEnd ?? content.length;
+    const selectedText = content.slice(start, end) || fallbackText;
+    const nextContent = `${content.slice(0, start)}${before}${selectedText}${after}${content.slice(end)}`;
+
+    updateArticle({ content: nextContent });
+
+    window.requestAnimationFrame(() => {
+      textarea?.focus();
+      const cursor = start + before.length + selectedText.length + after.length;
+      textarea?.setSelectionRange(cursor, cursor);
+    });
+  };
+
+  const alignSelectedText = (alignment: "left" | "center" | "right" | "justify") => {
+    insertIntoContent(
+      `<p style="text-align: ${alignment};">\n`,
+      "\n</p>",
+      "Escribe aquí el texto que quieres alinear."
+    );
+    setNotice(`Bloque con alineación ${alignment} agregado al contenido.`);
+  };
+
+  const insertInlineImage = () => {
+    const imageUrl = window.prompt("Pega la URL de la imagen que quieres insertar en el artículo:");
+    if (!imageUrl?.trim()) return;
+    insertIntoContent(
+      `\n<figure>\n  <img src="${imageUrl.trim()}" alt="Imagen del artículo" />\n  <figcaption>Describe la imagen aquí.</figcaption>\n</figure>\n`,
+      "",
+      ""
+    );
+    setNotice("Imagen insertada dentro del contenido del artículo.");
+  };
+
+  const restoreFullArticleContent = () => {
+    updateArticle({ content: starterArticleContent });
+    setNotice("Contenido completo del artículo cargado en el editor.");
   };
 
   const handlePublishArticle = () => {
@@ -503,16 +607,54 @@ export default function AdminPage() {
               </label>
 
               <div className="grid gap-4 lg:grid-cols-[0.58fr_0.42fr]">
-                <label className="block">
-                  <span className="text-sm font-semibold text-dyd-silver">Contenido del artículo</span>
+                <div className="block">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <span className="text-sm font-semibold text-dyd-silver">Contenido del artículo</span>
+                    <div className="flex flex-wrap gap-2">
+                      {([
+                        ["Izquierda", AlignLeft, () => alignSelectedText("left")],
+                        ["Centrar", AlignCenter, () => alignSelectedText("center")],
+                        ["Derecha", AlignRight, () => alignSelectedText("right")],
+                        ["Justificar", AlignJustify, () => alignSelectedText("justify")],
+                      ] as [string, LucideIcon, () => void][]).map(([label, Icon, action]) => (
+                        <button
+                          key={label}
+                          type="button"
+                          onClick={action}
+                          title={label}
+                          className="grid h-9 w-9 place-items-center rounded-md border border-dyd-silver/15 bg-dyd-black/35 text-dyd-silver transition hover:border-dyd-cyan hover:text-dyd-cyan"
+                        >
+                          <Icon size={17} />
+                        </button>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={insertInlineImage}
+                        className="inline-flex h-9 items-center gap-2 rounded-md border border-dyd-cyan/30 bg-dyd-cyan/10 px-3 text-xs font-semibold text-dyd-cyan transition hover:bg-dyd-cyan hover:text-dyd-ink"
+                      >
+                        Insertar imagen <ImagePlus size={16} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={restoreFullArticleContent}
+                        className="inline-flex h-9 items-center rounded-md border border-dyd-silver/15 bg-dyd-black/35 px-3 text-xs font-semibold text-dyd-silver transition hover:border-dyd-cyan hover:text-white"
+                      >
+                        Cargar completo
+                      </button>
+                    </div>
+                  </div>
                   <textarea
+                    ref={contentTextareaRef}
                     value={selectedArticle.content}
                     onChange={(event) => updateArticle({ content: event.target.value })}
-                    rows={14}
-                    className="mt-2 w-full rounded-md border border-dyd-silver/15 bg-dyd-black/35 px-4 py-3 text-white outline-none focus:border-dyd-cyan"
-                    placeholder="Escribe o pega aquí el artículo. Puedes separar secciones con saltos de línea."
+                    rows={24}
+                    className="mt-3 min-h-[620px] w-full resize-y rounded-md border border-dyd-silver/15 bg-dyd-black/35 px-4 py-3 font-mono text-sm leading-7 text-white outline-none focus:border-dyd-cyan"
+                    placeholder="Escribe o pega aquí el artículo. Puedes separar secciones con saltos de línea o usar HTML simple."
                   />
-                </label>
+                  <p className="mt-2 text-xs leading-5 text-dyd-text">
+                    Tip: selecciona un párrafo y usa los botones de alineación. Para insertar una imagen, pega la URL cuando el sistema la solicite.
+                  </p>
+                </div>
 
                 <div>
                   <span className="text-sm font-semibold text-dyd-silver">Imagen destacada</span>
