@@ -137,8 +137,7 @@ function slugify(value: string) {
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)+/g, "")
-    .slice(0, 82);
+    .replace(/(^-|-$)+/g, "");
 }
 
 function createEmptyArticle(categories: string[]): Article {
@@ -813,7 +812,7 @@ export default function AdminPage() {
                   value={selectedArticle.title}
                   onChange={(event) => {
                     const title = event.target.value;
-                    updateArticle({ title, slug: selectedArticle.slug || slugify(title) });
+                    updateArticle({ title, slug: slugify(title) });
                   }}
                   className="mt-2 h-12 w-full rounded-md border border-dyd-silver/15 bg-dyd-black/35 px-4 text-white outline-none focus:border-dyd-cyan"
                   placeholder="Ej: Desarrollo web empresarial..."
