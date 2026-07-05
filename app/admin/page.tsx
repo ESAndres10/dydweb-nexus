@@ -53,6 +53,7 @@ const adminPasscode = "DYDWEB2026";
 const articlesKey = "dydweb-admin-articles";
 const categoriesKey = "dydweb-admin-categories";
 const sessionKey = "dydweb-admin-session";
+const uploadTokenKey = "dydweb-spaces-upload-token";
 const maxUploadSize = 10 * 1024 * 1024;
 
 const defaultCategories = ["Desarrollo Web", "SEO", "Inteligencia Artificial", "Automatización", "Noticias"];
@@ -246,11 +247,15 @@ export default function AdminPage() {
   const [selectedId, setSelectedId] = useState(starterArticle.id);
   const [query, setQuery] = useState("");
   const [notice, setNotice] = useState("");
+  const [uploadToken, setUploadToken] = useState("");
   const contentTextareaRef = useRef<HTMLTextAreaElement | null>(null);
   const inlineImageInputRef = useRef<HTMLInputElement | null>(null);
+  const spacesInlineInputRef = useRef<HTMLInputElement | null>(null);
+  const spacesFeaturedInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     setAuthenticated(window.localStorage.getItem(sessionKey) === "active");
+    setUploadToken(window.localStorage.getItem(uploadTokenKey) || "");
 
     const storedCategories = window.localStorage.getItem(categoriesKey);
     if (storedCategories) {
@@ -287,6 +292,14 @@ export default function AdminPage() {
       setNotice("El navegador no pudo guardar el articulo. Reduce el peso o la cantidad de imagenes cargadas.");
     }
   }, [articles]);
+
+  useEffect(() => {
+    if (uploadToken.trim()) {
+      window.localStorage.setItem(uploadTokenKey, uploadToken.trim());
+    } else {
+      window.localStorage.removeItem(uploadTokenKey);
+    }
+  }, [uploadToken]);
 
   const selectedArticle = articles.find((article) => article.id === selectedId) || articles[0];
 
@@ -377,6 +390,47 @@ export default function AdminPage() {
     }
   };
 
+  const uploadFileToSpaces = async (file: File) => {
+    if (!uploadToken.trim()) {
+      throw new Error("Configura primero el token de subida a Spaces.");
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("folder", "images");
+
+    const response = await fetch("/api/spaces-upload", {
+      method: "POST",
+      headers: {
+        "x-upload-token": uploadToken.trim(),
+      },
+      body: formData,
+    });
+    const payload = (await response.json()) as { url?: string; key?: string; name?: string; error?: string };
+
+    if (!response.ok || !payload.url) {
+      throw new Error(payload.error || "No fue posible subir la imagen a Spaces.");
+    }
+
+    return payload;
+  };
+
+  const handleSpacesFeaturedUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setNotice("Subiendo imagen destacada a Spaces...");
+      const uploaded = await uploadFileToSpaces(file);
+      updateArticle({ featuredImage: uploaded.url || "" });
+      setNotice("Imagen destacada subida a Spaces y conectada al articulo.");
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "No fue posible subir la imagen destacada a Spaces.");
+    } finally {
+      event.target.value = "";
+    }
+  };
+
   const insertIntoContent = (before: string, after = "", fallbackText = "") => {
     const textarea = contentTextareaRef.current;
     const content = selectedArticle.content || "";
@@ -437,6 +491,28 @@ export default function AdminPage() {
       setNotice("Imagen local optimizada, cargada al banco e insertada como marcador corto.");
     } catch (error) {
       setNotice(error instanceof Error ? error.message : "No fue posible cargar la imagen local.");
+    } finally {
+      event.target.value = "";
+    }
+  };
+
+  const handleSpacesInlineImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setNotice("Subiendo imagen a Spaces...");
+      const uploaded = await uploadFileToSpaces(file);
+      const id = `img-spaces-${Date.now()}`;
+      insertImageMarker({
+        id,
+        name: uploaded.name || file.name,
+        src: uploaded.url || "",
+        caption: "Describe la imagen aqui.",
+      });
+      setNotice("Imagen subida a Spaces, agregada al banco e insertada en el contenido.");
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "No fue posible subir la imagen a Spaces.");
     } finally {
       event.target.value = "";
     }
@@ -591,6 +667,27 @@ export default function AdminPage() {
             {notice}
           </div>
         ) : null}
+
+        <section className="mb-6 rounded-lg border border-dyd-silver/15 bg-dyd-ink/70 p-4">
+          <div className="grid gap-3 lg:grid-cols-[1fr_0.9fr] lg:items-end">
+            <div>
+              <h2 className="text-sm font-semibold uppercase tracking-[0.18em] text-dyd-cyan">DigitalOcean Spaces</h2>
+              <p className="mt-2 text-sm leading-6 text-dyd-text">
+                Conecta el banco de imagenes para subir archivos directamente a la carpeta images y usar la URL CDN en los articulos.
+              </p>
+            </div>
+            <label className="block">
+              <span className="text-sm font-semibold text-dyd-silver">Token de subida</span>
+              <input
+                type="password"
+                value={uploadToken}
+                onChange={(event) => setUploadToken(event.target.value)}
+                className="mt-2 h-11 w-full rounded-md border border-dyd-silver/15 bg-dyd-black/35 px-3 text-sm text-white outline-none focus:border-dyd-cyan"
+                placeholder="Pega el token configurado en DigitalOcean"
+              />
+            </label>
+          </div>
+        </section>
 
         <div className="grid gap-6 lg:grid-cols-[0.34fr_0.66fr]">
           <aside className="space-y-6">
@@ -806,11 +903,25 @@ export default function AdminPage() {
                       >
                         Subir imagen local <ImagePlus size={16} />
                       </button>
+                      <button
+                        type="button"
+                        onClick={() => spacesInlineInputRef.current?.click()}
+                        className="inline-flex h-9 items-center gap-2 rounded-md border border-dyd-cyan/30 bg-dyd-cyan/10 px-3 text-xs font-semibold text-dyd-cyan transition hover:bg-dyd-cyan hover:text-dyd-ink"
+                      >
+                        Subir a Spaces <ImagePlus size={16} />
+                      </button>
                       <input
                         ref={inlineImageInputRef}
                         type="file"
                         accept="image/*"
                         onChange={handleInlineImageUpload}
+                        className="sr-only"
+                      />
+                      <input
+                        ref={spacesInlineInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleSpacesInlineImageUpload}
                         className="sr-only"
                       />
                       <button
@@ -856,7 +967,14 @@ export default function AdminPage() {
                         onClick={() => inlineImageInputRef.current?.click()}
                         className="inline-flex h-9 shrink-0 items-center gap-2 rounded-md bg-dyd-cyan px-3 text-xs font-semibold text-dyd-ink"
                       >
-                        Subir <ImagePlus size={15} />
+                        Local <ImagePlus size={15} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => spacesInlineInputRef.current?.click()}
+                        className="inline-flex h-9 shrink-0 items-center gap-2 rounded-md border border-dyd-cyan/30 px-3 text-xs font-semibold text-dyd-cyan transition hover:bg-dyd-cyan hover:text-dyd-ink"
+                      >
+                        Spaces <ImagePlus size={15} />
                       </button>
                     </div>
 
@@ -931,6 +1049,29 @@ export default function AdminPage() {
                     )}
                     <input type="file" accept="image/*" onChange={handleImageUpload} className="sr-only" />
                   </label>
+                  <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                    <button
+                      type="button"
+                      onClick={() => spacesFeaturedInputRef.current?.click()}
+                      className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-dyd-cyan px-3 text-xs font-semibold text-dyd-ink transition hover:brightness-110"
+                    >
+                      Subir destacada a Spaces <ImagePlus size={15} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => updateArticle({ featuredImage: "" })}
+                      className="inline-flex h-10 items-center justify-center rounded-md border border-dyd-silver/15 px-3 text-xs font-semibold text-dyd-silver transition hover:border-dyd-cyan hover:text-white"
+                    >
+                      Limpiar destacada
+                    </button>
+                  </div>
+                  <input
+                    ref={spacesFeaturedInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleSpacesFeaturedUpload}
+                    className="sr-only"
+                  />
                   <label className="mt-4 block">
                     <span className="text-sm font-semibold text-dyd-silver">URL de imagen</span>
                     <input
