@@ -26,6 +26,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 type ArticleStatus = "Borrador" | "Publicado";
 
+type ArticleImage = {
+  id: string;
+  name: string;
+  src: string;
+  caption: string;
+};
+
 type Article = {
   id: string;
   title: string;
@@ -35,6 +42,7 @@ type Article = {
   content: string;
   tags: string;
   featuredImage: string;
+  imageBank?: ArticleImage[];
   status: ArticleStatus;
   views: number;
   createdAt: string;
@@ -95,6 +103,15 @@ FAQ
 ¿Es importante la velocidad del sitio?
 ¿Cómo elegir una agencia de desarrollo web?`;
 
+const starterImageBank: ArticleImage[] = [
+  {
+    id: "img-desarrollo-web-empresarial",
+    name: "desarrollo-web-empresarial.png",
+    src: "/noticias/desarrollo-web-empresarial.png",
+    caption: "Guía visual sobre desarrollo web empresarial.",
+  },
+];
+
 const starterArticle: Article = {
   id: "article-desarrollo-web-empresarial",
   title: "Desarrollo web empresarial: la guía definitiva para hacer crecer tu empresa en 2026",
@@ -105,6 +122,7 @@ const starterArticle: Article = {
   content: starterArticleContent,
   tags: "Desarrollo Web, Empresas, SEO, Transformación Digital, IA",
   featuredImage: "/noticias/desarrollo-web-empresarial.png",
+  imageBank: starterImageBank,
   status: "Publicado",
   views: 0,
   createdAt: "2026-07-04",
@@ -132,10 +150,47 @@ function createEmptyArticle(categories: string[]): Article {
     content: "",
     tags: "",
     featuredImage: "",
+    imageBank: [],
     status: "Borrador",
     views: 0,
     createdAt: now,
     updatedAt: now,
+  };
+}
+
+function normalizeArticleImages(article: Article): Article {
+  let imageBank = article.imageBank || (article.id === starterArticle.id ? [...starterImageBank] : []);
+  let content = article.content || "";
+  let migrated = false;
+
+  content = content.replace(
+    /<figure>\s*<img\s+src="(data:image\/[^"]+)"\s+alt="([^"]*)"[^>]*\/>\s*<figcaption>([\s\S]*?)<\/figcaption>\s*<\/figure>/g,
+    (_match, src: string, alt: string, caption: string) => {
+      const id = `img-local-${Date.now()}-${imageBank.length + 1}`;
+      imageBank = [
+        ...imageBank,
+        {
+          id,
+          name: alt || "imagen-local",
+          src,
+          caption: caption.replace(/<[^>]*>/g, "").trim() || "Imagen del artículo.",
+        },
+      ];
+      migrated = true;
+      return `\n[imagen:${id}]\n`;
+    }
+  );
+
+  if (article.id === starterArticle.id && content.trim().length < 420) {
+    content = starterArticleContent;
+    migrated = true;
+  }
+
+  return {
+    ...article,
+    content,
+    imageBank,
+    updatedAt: migrated ? new Date().toISOString().slice(0, 10) : article.updatedAt,
   };
 }
 
@@ -163,15 +218,11 @@ export default function AdminPage() {
     if (storedArticles) {
       const parsed = JSON.parse(storedArticles) as Article[];
       const migrated = parsed.map((article) =>
-        article.id === starterArticle.id && article.content.trim().length < 420
-          ? {
-              ...article,
-              content: starterArticleContent,
-              excerpt: article.excerpt || starterArticle.excerpt,
-              featuredImage: article.featuredImage || starterArticle.featuredImage,
-              updatedAt: new Date().toISOString().slice(0, 10),
-            }
-          : article
+        normalizeArticleImages({
+          ...article,
+          excerpt: article.excerpt || (article.id === starterArticle.id ? starterArticle.excerpt : ""),
+          featuredImage: article.featuredImage || (article.id === starterArticle.id ? starterArticle.featuredImage : ""),
+        })
       );
       setArticles(migrated.length ? migrated : [starterArticle]);
       setSelectedId(migrated[0]?.id || starterArticle.id);
@@ -297,15 +348,22 @@ export default function AdminPage() {
     setNotice(`Bloque con alineación ${alignment} agregado al contenido.`);
   };
 
+  const insertImageMarker = (image: ArticleImage) => {
+    updateArticle({ imageBank: [...(selectedArticle.imageBank || []), image] });
+    insertIntoContent(`\n[imagen:${image.id}]\n`, "", "");
+  };
+
   const insertInlineImage = () => {
     const imageUrl = window.prompt("Pega la URL de la imagen que quieres insertar en el artículo:");
     if (!imageUrl?.trim()) return;
-    insertIntoContent(
-      `\n<figure>\n  <img src="${imageUrl.trim()}" alt="Imagen del artículo" />\n  <figcaption>Describe la imagen aquí.</figcaption>\n</figure>\n`,
-      "",
-      ""
-    );
-    setNotice("Imagen insertada dentro del contenido del artículo.");
+    const id = `img-url-${Date.now()}`;
+    insertImageMarker({
+      id,
+      name: imageUrl.trim().split("/").pop() || "imagen-url",
+      src: imageUrl.trim(),
+      caption: "Describe la imagen aquí.",
+    });
+    setNotice("Imagen agregada al banco e insertada como marcador corto.");
   };
 
   const handleInlineImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -315,20 +373,52 @@ export default function AdminPage() {
     const reader = new FileReader();
     reader.onload = () => {
       const imageData = String(reader.result || "");
-      insertIntoContent(
-        `\n<figure>\n  <img src="${imageData}" alt="${file.name.replace(/"/g, "")}" />\n  <figcaption>Describe la imagen aquí.</figcaption>\n</figure>\n`,
-        "",
-        ""
-      );
-      setNotice("Imagen local insertada dentro del contenido del artículo.");
+      const id = `img-local-${Date.now()}`;
+      insertImageMarker({
+        id,
+        name: file.name,
+        src: imageData,
+        caption: "Describe la imagen aquí.",
+      });
+      setNotice("Imagen local cargada al banco e insertada como marcador corto.");
       event.target.value = "";
     };
     reader.readAsDataURL(file);
   };
 
+  const insertExistingBankImage = (imageId: string) => {
+    insertIntoContent(`\n[imagen:${imageId}]\n`, "", "");
+    setNotice("Imagen del banco insertada como marcador corto.");
+  };
+
+  const updateBankImage = (imageId: string, patch: Partial<ArticleImage>) => {
+    updateArticle({
+      imageBank: (selectedArticle.imageBank || []).map((image) =>
+        image.id === imageId ? { ...image, ...patch } : image
+      ),
+    });
+  };
+
+  const removeBankImage = (imageId: string) => {
+    updateArticle({
+      imageBank: (selectedArticle.imageBank || []).filter((image) => image.id !== imageId),
+      content: selectedArticle.content.replaceAll(`[imagen:${imageId}]`, ""),
+    });
+    setNotice("Imagen eliminada del banco y del contenido.");
+  };
+
   const restoreFullArticleContent = () => {
     updateArticle({ content: starterArticleContent });
     setNotice("Contenido completo del artículo cargado en el editor.");
+  };
+
+  const cleanEmbeddedImages = () => {
+    const normalized = normalizeArticleImages(selectedArticle);
+    updateArticle({
+      content: normalized.content,
+      imageBank: normalized.imageBank,
+    });
+    setNotice("Contenido limpiado: las imágenes pesadas se movieron al banco.");
   };
 
   const handlePublishArticle = () => {
@@ -674,6 +764,13 @@ export default function AdminPage() {
                       >
                         Cargar completo
                       </button>
+                      <button
+                        type="button"
+                        onClick={cleanEmbeddedImages}
+                        className="inline-flex h-9 items-center rounded-md border border-dyd-silver/15 bg-dyd-black/35 px-3 text-xs font-semibold text-dyd-silver transition hover:border-dyd-cyan hover:text-white"
+                      >
+                        Limpiar imágenes
+                      </button>
                     </div>
                   </div>
                   <textarea
@@ -685,11 +782,83 @@ export default function AdminPage() {
                     placeholder="Escribe o pega aquí el artículo. Puedes separar secciones con saltos de línea o usar HTML simple."
                   />
                   <p className="mt-2 text-xs leading-5 text-dyd-text">
-                    Tip: selecciona un párrafo y usa los botones de alineación. Para insertar una imagen, pega la URL cuando el sistema la solicite.
+                    Tip: selecciona un párrafo y usa los botones de alineación. Para imágenes, usa el banco: el contenido solo mostrará marcadores cortos como [imagen:id].
                   </p>
                 </div>
 
                 <div>
+                  <section className="mb-5 rounded-lg border border-dyd-silver/15 bg-dyd-black/25 p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <h2 className="text-sm font-semibold text-dyd-silver">Banco de imágenes</h2>
+                        <p className="mt-1 text-xs leading-5 text-dyd-text">
+                          Las imágenes cargadas quedan aquí como miniaturas. En el contenido solo verás un marcador corto.
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => inlineImageInputRef.current?.click()}
+                        className="inline-flex h-9 shrink-0 items-center gap-2 rounded-md bg-dyd-cyan px-3 text-xs font-semibold text-dyd-ink"
+                      >
+                        Subir <ImagePlus size={15} />
+                      </button>
+                    </div>
+
+                    {(selectedArticle.imageBank || []).length ? (
+                      <div className="mt-4 grid gap-3">
+                        {(selectedArticle.imageBank || []).map((image) => (
+                          <article key={image.id} className="rounded-lg border border-dyd-silver/15 bg-dyd-ink/65 p-3">
+                            <div className="grid gap-3 sm:grid-cols-[96px_1fr]">
+                              <div className="overflow-hidden rounded-md border border-dyd-cyan/20 bg-dyd-black/50">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img src={image.src} alt={image.name} className="h-24 w-full object-cover" />
+                              </div>
+                              <div className="min-w-0">
+                                <p className="truncate text-xs font-semibold text-white">{image.name}</p>
+                                <p className="mt-1 truncate rounded bg-dyd-black/45 px-2 py-1 font-mono text-[11px] text-dyd-cyan">
+                                  [imagen:{image.id}]
+                                </p>
+                                <input
+                                  value={image.caption}
+                                  onChange={(event) => updateBankImage(image.id, { caption: event.target.value })}
+                                  className="mt-2 h-9 w-full rounded-md border border-dyd-silver/15 bg-dyd-black/35 px-2 text-xs text-white outline-none focus:border-dyd-cyan"
+                                  placeholder="Caption de la imagen"
+                                />
+                              </div>
+                            </div>
+                            <div className="mt-3 flex flex-wrap gap-2">
+                              <button
+                                type="button"
+                                onClick={() => insertExistingBankImage(image.id)}
+                                className="inline-flex h-8 items-center rounded-md border border-dyd-cyan/30 px-3 text-xs font-semibold text-dyd-cyan transition hover:bg-dyd-cyan hover:text-dyd-ink"
+                              >
+                                Insertar
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => navigator.clipboard.writeText(`[imagen:${image.id}]`)}
+                                className="inline-flex h-8 items-center rounded-md border border-dyd-silver/15 px-3 text-xs font-semibold text-dyd-silver transition hover:border-dyd-cyan hover:text-white"
+                              >
+                                Copiar marcador
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => removeBankImage(image.id)}
+                                className="inline-flex h-8 items-center rounded-md border border-red-400/25 px-3 text-xs font-semibold text-red-200 transition hover:bg-red-400/10"
+                              >
+                                Eliminar
+                              </button>
+                            </div>
+                          </article>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="mt-4 rounded-md border border-dashed border-dyd-silver/20 p-4 text-center text-xs leading-5 text-dyd-text">
+                        Todavía no hay imágenes en este artículo.
+                      </div>
+                    )}
+                  </section>
+
                   <span className="text-sm font-semibold text-dyd-silver">Imagen destacada</span>
                   <label className="mt-2 flex min-h-[230px] cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-dyd-cyan/35 bg-dyd-black/35 p-4 text-center transition hover:bg-dyd-cyan/10">
                     {selectedArticle.featuredImage ? (
