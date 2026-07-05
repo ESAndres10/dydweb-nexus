@@ -39,16 +39,27 @@ export default function DynamicNewsArticlePage() {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    try {
-      const stored = window.localStorage.getItem("dydweb-admin-articles");
-      const articles = stored ? (JSON.parse(stored) as AdminArticle[]) : [];
-      const current = articles.find((item) => item.slug === slug && item.status === "Publicado");
-      setArticle(current || null);
-    } catch {
-      setArticle(null);
-    } finally {
-      setLoaded(true);
-    }
+    const loadArticle = () => {
+      try {
+        const stored = window.localStorage.getItem("dydweb-admin-articles");
+        const articles = stored ? (JSON.parse(stored) as AdminArticle[]) : [];
+        const current = articles.find((item) => item.slug === slug && item.status === "Publicado");
+        setArticle(current || null);
+      } catch {
+        setArticle(null);
+      } finally {
+        setLoaded(true);
+      }
+    };
+
+    loadArticle();
+    window.addEventListener("focus", loadArticle);
+    window.addEventListener("storage", loadArticle);
+
+    return () => {
+      window.removeEventListener("focus", loadArticle);
+      window.removeEventListener("storage", loadArticle);
+    };
   }, [slug]);
 
   const whatsappUrl = useMemo(() => {

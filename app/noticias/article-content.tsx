@@ -174,18 +174,30 @@ export function ArticleContent({ slug, fallbackIntro, sections, benefits, mistak
   const [adminArticle, setAdminArticle] = useState<AdminArticle | null>(null);
 
   useEffect(() => {
-    try {
-      const stored = window.localStorage.getItem("dydweb-admin-articles");
-      if (!stored) return;
+    const loadArticle = () => {
+      try {
+        const stored = window.localStorage.getItem("dydweb-admin-articles");
+        if (!stored) {
+          setAdminArticle(null);
+          return;
+        }
 
-      const articles = JSON.parse(stored) as AdminArticle[];
-      const article = articles.find((item) => item.slug === slug && item.status === "Publicado");
-      if (article?.content?.trim()) {
-        setAdminArticle(article);
+        const articles = JSON.parse(stored) as AdminArticle[];
+        const article = articles.find((item) => item.slug === slug && item.status === "Publicado");
+        setAdminArticle(article?.content?.trim() ? article : null);
+      } catch {
+        setAdminArticle(null);
       }
-    } catch {
-      setAdminArticle(null);
-    }
+    };
+
+    loadArticle();
+    window.addEventListener("focus", loadArticle);
+    window.addEventListener("storage", loadArticle);
+
+    return () => {
+      window.removeEventListener("focus", loadArticle);
+      window.removeEventListener("storage", loadArticle);
+    };
   }, [slug]);
 
   if (adminArticle) {

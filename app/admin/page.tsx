@@ -331,6 +331,15 @@ export default function AdminPage() {
     );
   };
 
+  const persistArticles = (nextArticles: Article[]) => {
+    setArticles(nextArticles);
+    try {
+      window.localStorage.setItem(articlesKey, JSON.stringify(nextArticles));
+    } catch {
+      setNotice("El navegador no pudo guardar el articulo. Reduce el peso o la cantidad de imagenes cargadas.");
+    }
+  };
+
   const handleLogin = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (passcode.trim() !== adminPasscode) {
@@ -370,6 +379,7 @@ export default function AdminPage() {
       return;
     }
     setCategories((current) => [...current, value]);
+    updateArticle({ category: value });
     setNewCategory("");
     setNotice("Categoría agregada.");
   };
@@ -556,16 +566,26 @@ export default function AdminPage() {
     const title = selectedArticle.title.trim();
     const content = selectedArticle.content.trim();
     const nextSlug = selectedArticle.slug || slugify(title);
+    const now = new Date().toISOString();
 
     if (!title || !content) {
       setNotice("Antes de publicar, completa al menos el título y el contenido del artículo.");
       return;
     }
 
-    updateArticle({
-      slug: nextSlug,
-      status: "Publicado",
-    });
+    const nextArticles = articles.map((article) =>
+      article.id === selectedArticle.id
+        ? {
+            ...article,
+            title,
+            slug: nextSlug,
+            status: "Publicado" as ArticleStatus,
+            updatedAt: now,
+          }
+        : article
+    );
+
+    persistArticles(nextArticles);
     setNotice(`Artículo marcado como publicado. URL sugerida: /noticias/${nextSlug}`);
   };
 
@@ -773,7 +793,7 @@ export default function AdminPage() {
                 </button>
                 {selectedArticle.status === "Publicado" && selectedArticle.slug ? (
                   <a
-                    href={`/noticias/${selectedArticle.slug}`}
+                    href={`/noticias/${selectedArticle.slug}?preview=${encodeURIComponent(selectedArticle.updatedAt || "")}`}
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex h-10 items-center gap-2 rounded-md border border-dyd-cyan/35 px-3 text-sm font-semibold text-dyd-cyan transition hover:bg-dyd-cyan hover:text-dyd-ink"
@@ -830,18 +850,25 @@ export default function AdminPage() {
                   />
                 </label>
                 <label className="block">
-                  <span className="text-sm font-semibold text-dyd-silver">Categoría</span>
-                  <select
+                  <span className="text-sm font-semibold text-dyd-silver">Categoria</span>
+                  <input
+                    list="article-category-options"
                     value={selectedArticle.category}
                     onChange={(event) => updateArticle({ category: event.target.value })}
+                    onBlur={(event) => {
+                      const value = event.target.value.trim();
+                      if (value && !categories.some((item) => item.toLowerCase() === value.toLowerCase())) {
+                        setCategories((current) => [...current, value]);
+                      }
+                    }}
                     className="mt-2 h-12 w-full rounded-md border border-dyd-silver/15 bg-dyd-black/35 px-4 text-white outline-none focus:border-dyd-cyan"
-                  >
+                    placeholder="Ej: Salud Digital"
+                  />
+                  <datalist id="article-category-options">
                     {categories.map((category) => (
-                      <option key={category} value={category}>
-                        {category}
-                      </option>
+                      <option key={category} value={category} />
                     ))}
-                  </select>
+                  </datalist>
                 </label>
                 <label className="block">
                   <span className="text-sm font-semibold text-dyd-silver">Estado</span>
