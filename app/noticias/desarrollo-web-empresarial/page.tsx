@@ -4,15 +4,14 @@ import {
   ArrowRight,
   BarChart3,
   Bot,
-  CheckCircle2,
   Clock,
   Globe2,
   MessageCircle,
   Rocket,
   Search,
-  ShieldCheck,
   Sparkles,
 } from "lucide-react";
+import { ArticleContent } from "../article-content";
 import { ArticleViewTracker } from "../article-view-tracker";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://dydweb.co";
@@ -270,69 +269,14 @@ export default function Page() {
       <section className="relative z-10 px-4 py-10 sm:px-6 lg:px-8">
         <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.75fr_0.25fr]">
           <article className="premium-card rounded-lg p-6 md:p-8">
-            <p className="text-base leading-8 text-dyd-text">
-              Esta guía explica por qué el desarrollo web empresarial es una inversión estratégica, qué características debe tener una
-              plataforma moderna y cómo una empresa puede convertir su sitio web en un activo para generar clientes y automatizar procesos.
-            </p>
-
-            <div className="mt-10 grid gap-6">
-              {sections.map(({ title, text }) => (
-                <section key={title}>
-                  <h2 className="text-2xl font-semibold text-white md:text-3xl">{title}</h2>
-                  <p className="mt-4 text-base leading-8 text-dyd-text">{text}</p>
-                </section>
-              ))}
-            </div>
-
-            <section className="mt-12">
-              <h2 className="text-2xl font-semibold text-white md:text-3xl">Beneficios de una plataforma empresarial moderna</h2>
-              <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                {benefits.map((benefit) => (
-                  <div key={benefit} className="rounded-lg border border-dyd-silver/15 bg-dyd-silver/[0.04] p-4">
-                    <CheckCircle2 className="mb-3 text-dyd-cyan" size={22} />
-                    <p className="text-sm leading-6 text-dyd-text">{benefit}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            <section className="mt-12 rounded-lg border border-dyd-cyan/20 bg-dyd-cyan/10 p-5">
-              <div className="flex items-start gap-4">
-                <ShieldCheck className="mt-1 shrink-0 text-dyd-cyan" size={26} />
-                <div>
-                  <h2 className="text-xl font-semibold text-white">Errores frecuentes que frenan el crecimiento digital</h2>
-                  <ul className="mt-4 grid gap-3 text-sm leading-6 text-dyd-text">
-                    {mistakes.map((mistake) => (
-                      <li key={mistake} className="flex gap-3">
-                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-dyd-cyan" />
-                        <span>{mistake}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </section>
-
-            <section className="mt-12">
-              <h2 className="text-2xl font-semibold text-white md:text-3xl">Conclusión</h2>
-              <p className="mt-4 text-base leading-8 text-dyd-text">
-                El desarrollo web empresarial ya no es un gasto, sino una inversión. Las empresas que construyen plataformas rápidas,
-                seguras y orientadas a resultados tienen mayores posibilidades de crecer en un mercado cada vez más digital. En DYDWEB
-                creemos en crear soluciones que impulsen negocios, no solo páginas web.
-              </p>
-            </section>
-
-            <section className="mt-12">
-              <h2 className="text-2xl font-semibold text-white md:text-3xl">Preguntas frecuentes</h2>
-              <div className="mt-6 grid gap-3">
-                {faqs.map(([question, answer]) => (
-                  <details key={question} className="rounded-lg border border-dyd-silver/15 bg-dyd-black/35 p-4">
-                    <summary className="cursor-pointer text-base font-semibold text-white">{question}</summary>
-                    <p className="mt-3 text-sm leading-6 text-dyd-text">{answer}</p>
-                  </details>
-                ))}
-              </div>
-            </section>
+            <ArticleContent
+              slug="desarrollo-web-empresarial"
+              fallbackIntro="Esta guía explica por qué el desarrollo web empresarial es una inversión estratégica, qué características debe tener una plataforma moderna y cómo una empresa puede convertir su sitio web en un activo para generar clientes y automatizar procesos."
+              sections={sections}
+              benefits={benefits}
+              mistakes={mistakes}
+              faqs={faqs}
+            />
           </article>
 
           <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
