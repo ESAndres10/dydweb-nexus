@@ -29,6 +29,12 @@ type ArticleContentProps = {
   faqs: string[][];
 };
 
+type ArticleBlock = {
+  tag: string;
+  attributes: string;
+  html: string;
+};
+
 const articleHeadings = new Set([
   "La nueva realidad digital",
   "Qué es el desarrollo web empresarial",
@@ -42,12 +48,74 @@ const articleHeadings = new Set([
   "Preguntas frecuentes",
 ]);
 
+function decodeEntities(value: string) {
+  return value
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">");
+}
+
 function stripHtml(value: string) {
-  return value.replace(/<[^>]*>/g, "").trim();
+  return decodeEntities(
+    value
+      .replace(/<br\s*\/?>/gi, "\n")
+      .replace(/<\/(p|h[1-6]|li|div|section)>/gi, "\n")
+      .replace(/<[^>]*>/g, "")
+  )
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+function getTextAlign(attributes: string) {
+  const match = attributes.match(/text-align:\s*(left|center|right|justify)/i);
+  return match?.[1]?.toLowerCase() as "left" | "center" | "right" | "justify" | undefined;
+}
+
+function splitPlainBlocks(content: string): ArticleBlock[] {
+  return content
+    .split(/\n{2,}/)
+    .map((block) => ({ tag: "p", attributes: "", html: block.trim() }))
+    .filter((block) => block.html);
+}
+
+function splitArticleBlocks(content: string) {
+  const normalized = content
+    .replace(/\r\n/g, "\n")
+    .replace(/<figure>[\s\S]*?<\/figure>/gi, "")
+    .replace(/<p[^>]*>\s*(\[imagen:[^\]]+\])\s*<\/p>/gi, "\n$1\n");
+
+  if (!/<(p|h[1-6]|li)\b/i.test(normalized)) {
+    return splitPlainBlocks(normalized);
+  }
+
+  const blocks: ArticleBlock[] = [];
+  const blockRegex = /<(p|h[1-6]|li)\b([^>]*)>([\s\S]*?)<\/\1>/gi;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = blockRegex.exec(normalized)) !== null) {
+    const before = normalized.slice(lastIndex, match.index).trim();
+    if (before) blocks.push(...splitPlainBlocks(before));
+
+    blocks.push({
+      tag: match[1].toLowerCase(),
+      attributes: match[2] || "",
+      html: match[3].trim(),
+    });
+    lastIndex = blockRegex.lastIndex;
+  }
+
+  const after = normalized.slice(lastIndex).trim();
+  if (after) blocks.push(...splitPlainBlocks(after));
+
+  return blocks.filter((block) => stripHtml(block.html) || /\[imagen:[^\]]+\]/.test(block.html));
 }
 
 function splitQuestions(value: string) {
-  const normalized = value.replace(/Â¿/g, "¿").replace(/\s+/g, " ").trim();
+  const normalized = value.replace(/Ã‚Â¿/g, "¿").replace(/Â¿/g, "¿").replace(/\s+/g, " ").trim();
   const matches = normalized.match(/¿[^?]+\?/g) || [];
   return matches.map((item) => item.trim()).filter(Boolean);
 }
@@ -85,47 +153,36 @@ function ArticleImageFigure({ image }: { image: ArticleImage }) {
 
 function AdminArticleBody({ content, imageBank = [] }: { content: string; imageBank?: ArticleImage[] }) {
   const imageMap = new Map(imageBank.map((image) => [image.id, image]));
-  const blocks = content
-    .replace(/\r\n/g, "\n")
-    .replace(/<figure>[\s\S]*?<\/figure>/g, "")
-    .split(/\n{2,}/)
-    .map((block) => block.trim())
-    .filter(Boolean);
+  const blocks = splitArticleBlocks(content);
 
   return (
-    <div className="mt-8 space-y-7">
+    <div className="mt-8 space-y-8">
       {blocks.map((block, index) => {
-        const imageOnly = block.match(/^\[imagen:([^\]]+)\]$/);
+        const cleaned = stripHtml(block.html);
+        const imageOnly = cleaned.match(/^\[imagen:([^\]]+)\]$/);
+
         if (imageOnly) {
           const image = imageMap.get(imageOnly[1].trim());
           return image ? (
-            <ArticleImageFigure key={`${block}-${index}`} image={image} />
+            <ArticleImageFigure key={`${block.html}-${index}`} image={image} />
           ) : (
-            <p key={`${block}-${index}`} className="rounded-md border border-dyd-silver/15 bg-dyd-black/35 px-3 py-2 text-sm text-dyd-text">
+            <p key={`${block.html}-${index}`} className="rounded-md border border-dyd-silver/15 bg-dyd-black/35 px-3 py-2 text-sm text-dyd-text">
               Imagen no encontrada: {imageOnly[1]}
             </p>
           );
         }
 
-        const aligned = block.match(/^<p style="text-align:\s*(left|center|right|justify);">\n?([\s\S]*?)\n?<\/p>$/);
-        if (aligned) {
-          return (
-            <p
-              key={`${block}-${index}`}
-              className="text-base leading-8 text-dyd-text"
-              style={{ textAlign: aligned[1] as "left" | "center" | "right" | "justify" }}
-            >
-              {stripHtml(aligned[2])}
-            </p>
-          );
-        }
-
-        const cleaned = stripHtml(block);
         if (!cleaned) return null;
 
-        if (articleHeadings.has(cleaned)) {
+        const align = getTextAlign(block.attributes);
+
+        if (block.tag.startsWith("h") || articleHeadings.has(cleaned)) {
           return (
-            <h2 key={`${block}-${index}`} className="pt-4 text-2xl font-semibold text-white md:text-3xl">
+            <h2
+              key={`${block.html}-${index}`}
+              className="pt-4 text-2xl font-semibold leading-tight text-white md:text-3xl"
+              style={align ? { textAlign: align } : undefined}
+            >
               {cleaned === "FAQ" ? "Preguntas frecuentes" : cleaned}
             </h2>
           );
@@ -135,23 +192,29 @@ function AdminArticleBody({ content, imageBank = [] }: { content: string; imageB
         const questions = splitQuestions(cleaned);
         if (
           questions.length > 1 &&
-          (lines.every((line) => line.startsWith("¿") || line.startsWith("Â¿")) || questions.join(" ").length >= cleaned.length * 0.55)
+          (lines.every((line) => line.startsWith("¿") || line.startsWith("Â¿") || line.startsWith("Ã‚Â¿")) ||
+            questions.join(" ").length >= cleaned.length * 0.55)
         ) {
-          return <FaqList key={`${block}-${index}`} questions={questions} />;
+          return <FaqList key={`${block.html}-${index}`} questions={questions} />;
         }
 
-        const parts = block.split(/(\[imagen:[^\]]+\])/g).filter(Boolean);
+        const parts = block.html.split(/(\[imagen:[^\]]+\])/g).filter(Boolean);
         if (parts.length > 1) {
           return (
-            <div key={`${block}-${index}`} className="space-y-5">
+            <div key={`${block.html}-${index}`} className="space-y-5">
               {parts.map((part, partIndex) => {
-                const marker = part.match(/^\[imagen:([^\]]+)\]$/);
+                const marker = stripHtml(part).match(/^\[imagen:([^\]]+)\]$/);
                 if (marker) {
                   const image = imageMap.get(marker[1].trim());
                   return image ? <ArticleImageFigure key={`${part}-${partIndex}`} image={image} /> : null;
                 }
+
                 return (
-                  <p key={`${part}-${partIndex}`} className="text-base leading-8 text-dyd-text">
+                  <p
+                    key={`${part}-${partIndex}`}
+                    className="text-base leading-8 text-dyd-text"
+                    style={align ? { textAlign: align } : undefined}
+                  >
                     {stripHtml(part)}
                   </p>
                 );
@@ -161,7 +224,11 @@ function AdminArticleBody({ content, imageBank = [] }: { content: string; imageB
         }
 
         return (
-          <p key={`${block}-${index}`} className="text-base leading-8 text-dyd-text">
+          <p
+            key={`${block.html}-${index}`}
+            className="text-base leading-8 text-dyd-text"
+            style={align ? { textAlign: align } : undefined}
+          >
             {cleaned}
           </p>
         );
