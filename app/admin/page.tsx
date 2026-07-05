@@ -53,6 +53,7 @@ const adminPasscode = "DYDWEB2026";
 const articlesKey = "dydweb-admin-articles";
 const categoriesKey = "dydweb-admin-categories";
 const sessionKey = "dydweb-admin-session";
+const maxUploadSize = 10 * 1024 * 1024;
 
 const defaultCategories = ["Desarrollo Web", "SEO", "Inteligencia Artificial", "Automatización", "Noticias"];
 
@@ -194,6 +195,48 @@ function normalizeArticleImages(article: Article): Article {
   };
 }
 
+function optimizeImageFile(file: File, maxWidth = 1600, quality = 0.78): Promise<string> {
+  return new Promise((resolve, reject) => {
+    if (!file.type.startsWith("image/")) {
+      reject(new Error("El archivo seleccionado no es una imagen."));
+      return;
+    }
+
+    if (file.size > maxUploadSize) {
+      reject(new Error("La imagen es demasiado pesada. Usa una imagen menor a 10 MB."));
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onerror = () => reject(new Error("No fue posible leer la imagen."));
+    reader.onload = () => {
+      const image = document.createElement("img");
+      image.onerror = () => reject(new Error("No fue posible procesar la imagen."));
+      image.onload = () => {
+        const scale = Math.min(1, maxWidth / image.naturalWidth);
+        const width = Math.max(1, Math.round(image.naturalWidth * scale));
+        const height = Math.max(1, Math.round(image.naturalHeight * scale));
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+
+        if (!context) {
+          reject(new Error("No fue posible optimizar la imagen en este navegador."));
+          return;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        context.drawImage(image, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/jpeg", quality));
+      };
+      image.src = String(reader.result || "");
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
 export default function AdminPage() {
   const [authenticated, setAuthenticated] = useState(false);
   const [passcode, setPasscode] = useState("");
@@ -230,11 +273,19 @@ export default function AdminPage() {
   }, []);
 
   useEffect(() => {
-    window.localStorage.setItem(categoriesKey, JSON.stringify(categories));
+    try {
+      window.localStorage.setItem(categoriesKey, JSON.stringify(categories));
+    } catch {
+      setNotice("No fue posible guardar las categorias en este navegador.");
+    }
   }, [categories]);
 
   useEffect(() => {
-    window.localStorage.setItem(articlesKey, JSON.stringify(articles));
+    try {
+      window.localStorage.setItem(articlesKey, JSON.stringify(articles));
+    } catch {
+      setNotice("El navegador no pudo guardar el articulo. Reduce el peso o la cantidad de imagenes cargadas.");
+    }
   }, [articles]);
 
   const selectedArticle = articles.find((article) => article.id === selectedId) || articles[0];
@@ -311,15 +362,19 @@ export default function AdminPage() {
     setNotice("Categoría agregada.");
   };
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      updateArticle({ featuredImage: String(reader.result || "") });
-      setNotice("Imagen destacada cargada en la vista previa.");
-    };
-    reader.readAsDataURL(file);
+
+    try {
+      const imageData = await optimizeImageFile(file, 1600, 0.78);
+      updateArticle({ featuredImage: imageData });
+      setNotice("Imagen destacada optimizada y cargada en la vista previa.");
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "No fue posible cargar la imagen destacada.");
+    } finally {
+      event.target.value = "";
+    }
   };
 
   const insertIntoContent = (before: string, after = "", fallbackText = "") => {
@@ -366,13 +421,12 @@ export default function AdminPage() {
     setNotice("Imagen agregada al banco e insertada como marcador corto.");
   };
 
-  const handleInlineImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInlineImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      const imageData = String(reader.result || "");
+    try {
+      const imageData = await optimizeImageFile(file, 1400, 0.76);
       const id = `img-local-${Date.now()}`;
       insertImageMarker({
         id,
@@ -380,10 +434,12 @@ export default function AdminPage() {
         src: imageData,
         caption: "Describe la imagen aquí.",
       });
-      setNotice("Imagen local cargada al banco e insertada como marcador corto.");
+      setNotice("Imagen local optimizada, cargada al banco e insertada como marcador corto.");
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "No fue posible cargar la imagen local.");
+    } finally {
       event.target.value = "";
-    };
-    reader.readAsDataURL(file);
+    }
   };
 
   const insertExistingBankImage = (imageId: string) => {
