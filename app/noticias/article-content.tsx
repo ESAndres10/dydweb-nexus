@@ -46,6 +46,27 @@ function stripHtml(value: string) {
   return value.replace(/<[^>]*>/g, "").trim();
 }
 
+function splitQuestions(value: string) {
+  const normalized = value.replace(/Â¿/g, "¿").replace(/\s+/g, " ").trim();
+  const matches = normalized.match(/¿[^?]+\?/g) || [];
+  return matches.map((item) => item.trim()).filter(Boolean);
+}
+
+function FaqList({ questions }: { questions: string[] }) {
+  return (
+    <div className="grid gap-3">
+      {questions.map((question) => (
+        <details key={question} className="rounded-lg border border-dyd-silver/15 bg-dyd-black/35 p-4">
+          <summary className="cursor-pointer text-base font-semibold text-white">{question}</summary>
+          <p className="mt-3 text-sm leading-6 text-dyd-text">
+            Respuesta pendiente para completar desde el portal administrador.
+          </p>
+        </details>
+      ))}
+    </div>
+  );
+}
+
 function ArticleImageFigure({ image }: { image: ArticleImage }) {
   return (
     <figure className="my-8 overflow-hidden rounded-lg border border-dyd-cyan/20 bg-dyd-black/35 p-3">
@@ -111,19 +132,12 @@ function AdminArticleBody({ content, imageBank = [] }: { content: string; imageB
         }
 
         const lines = cleaned.split("\n").map((line) => line.trim()).filter(Boolean);
-        if (lines.length > 1 && lines.every((line) => line.startsWith("¿"))) {
-          return (
-            <div key={`${block}-${index}`} className="grid gap-3">
-              {lines.map((line) => (
-                <details key={line} className="rounded-lg border border-dyd-silver/15 bg-dyd-black/35 p-4">
-                  <summary className="cursor-pointer text-base font-semibold text-white">{line}</summary>
-                  <p className="mt-3 text-sm leading-6 text-dyd-text">
-                    Respuesta pendiente para completar desde el portal administrador.
-                  </p>
-                </details>
-              ))}
-            </div>
-          );
+        const questions = splitQuestions(cleaned);
+        if (
+          questions.length > 1 &&
+          (lines.every((line) => line.startsWith("¿") || line.startsWith("Â¿")) || questions.join(" ").length >= cleaned.length * 0.55)
+        ) {
+          return <FaqList key={`${block}-${index}`} questions={questions} />;
         }
 
         const parts = block.split(/(\[imagen:[^\]]+\])/g).filter(Boolean);
