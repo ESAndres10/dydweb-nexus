@@ -13,6 +13,7 @@ import {
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
+import { ArticleViewTracker } from "../article-view-tracker";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://dydweb.co";
 const articleUrl = `${siteUrl}/noticias/desarrollo-web-empresarial`;
@@ -172,6 +173,11 @@ export default function Page() {
 
   return (
     <main className="min-h-screen overflow-hidden bg-dyd-black text-white">
+      <ArticleViewTracker
+        title="Desarrollo web empresarial: la guía definitiva para hacer crecer tu empresa en 2026"
+        slug="desarrollo-web-empresarial"
+        category="Desarrollo Web"
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
