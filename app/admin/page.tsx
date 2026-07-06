@@ -28,6 +28,7 @@ import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 type ArticleStatus = "Borrador" | "Publicado";
+type AdminPanel = "dashboard" | "articles" | "categories" | "spaces";
 
 type ArticleImage = {
   id: string;
@@ -269,6 +270,7 @@ export default function AdminPage() {
   const [query, setQuery] = useState("");
   const [notice, setNotice] = useState("");
   const [uploadToken, setUploadToken] = useState("");
+  const [activePanel, setActivePanel] = useState<AdminPanel>("dashboard");
   const contentTextareaRef = useRef<HTMLTextAreaElement | null>(null);
   const inlineImageInputRef = useRef<HTMLInputElement | null>(null);
   const spacesInlineInputRef = useRef<HTMLInputElement | null>(null);
@@ -442,6 +444,7 @@ export default function AdminPage() {
     const article = createEmptyArticle(categories);
     setArticles((current) => [article, ...current]);
     setSelectedId(article.id);
+    setActivePanel("articles");
     setNotice("Nuevo artículo creado como borrador.");
   };
 
@@ -800,6 +803,39 @@ export default function AdminPage() {
           </div>
         ) : null}
 
+        <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
+          <aside className="premium-card h-fit rounded-lg p-4 lg:sticky lg:top-24">
+            <p className="px-2 text-xs font-semibold uppercase tracking-[0.18em] text-dyd-cyan">Panel principal</p>
+            <div className="mt-4 grid gap-2">
+              {([
+                ["dashboard", "Dashboard", "Metricas y rendimiento", LayoutDashboard],
+                ["articles", "Articulos", "Editor y publicaciones", FileText],
+                ["categories", "Categorias", "Organizacion editorial", Tag],
+                ["spaces", "Banco Spaces", "Imagenes y token CDN", ImagePlus],
+              ] as [AdminPanel, string, string, LucideIcon][]).map(([panel, label, helper, Icon]) => (
+                <button
+                  key={panel}
+                  type="button"
+                  onClick={() => setActivePanel(panel)}
+                  className={`flex items-center gap-3 rounded-lg border p-3 text-left transition ${
+                    activePanel === panel
+                      ? "border-dyd-cyan/55 bg-dyd-cyan/10 text-white"
+                      : "border-dyd-silver/10 bg-dyd-black/25 text-dyd-silver hover:border-dyd-cyan/35 hover:text-white"
+                  }`}
+                >
+                  <Icon size={18} className={activePanel === panel ? "text-dyd-cyan" : "text-dyd-text"} />
+                  <span className="min-w-0">
+                    <span className="block text-sm font-semibold">{label}</span>
+                    <span className="mt-0.5 block truncate text-xs text-dyd-text">{helper}</span>
+                  </span>
+                </button>
+              ))}
+            </div>
+          </aside>
+
+          <div className="min-w-0">
+
+        {activePanel === "spaces" ? (
         <section className="mb-6 rounded-lg border border-dyd-silver/15 bg-dyd-ink/70 p-4">
           <div className="grid gap-3 lg:grid-cols-[1fr_0.9fr] lg:items-end">
             <div>
@@ -820,7 +856,9 @@ export default function AdminPage() {
             </label>
           </div>
         </section>
+        ) : null}
 
+        {activePanel === "dashboard" ? (
         <section className="mb-6 rounded-lg border border-dyd-cyan/20 bg-dyd-ink/75 p-5 md:p-6">
           <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
@@ -865,7 +903,10 @@ export default function AdminPage() {
                     <button
                       type="button"
                       key={article.id}
-                      onClick={() => setSelectedId(article.id)}
+                      onClick={() => {
+                        setSelectedId(article.id);
+                        setActivePanel("articles");
+                      }}
                       className="grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-md border border-dyd-silver/10 bg-dyd-ink/65 p-3 text-left transition hover:border-dyd-cyan/45"
                     >
                       <span className="grid h-8 w-8 place-items-center rounded-md bg-dyd-cyan/10 text-sm font-semibold text-dyd-cyan">
@@ -930,7 +971,10 @@ export default function AdminPage() {
                   <button
                     type="button"
                     key={article.id}
-                    onClick={() => setSelectedId(article.id)}
+                    onClick={() => {
+                      setSelectedId(article.id);
+                      setActivePanel("articles");
+                    }}
                     className="rounded-md border border-dyd-silver/10 bg-dyd-ink/65 p-3 text-left transition hover:border-dyd-cyan/45"
                   >
                     <div className="flex items-center justify-between gap-3">
@@ -963,7 +1007,73 @@ export default function AdminPage() {
             ))}
           </div>
         </section>
+        ) : null}
 
+        {activePanel === "categories" ? (
+          <section className="premium-card rounded-lg p-5 md:p-6">
+            <div className="flex flex-col gap-3 border-b border-dyd-silver/10 pb-5 md:flex-row md:items-end md:justify-between">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-dyd-cyan">Categorias</p>
+                <h1 className="mt-2 text-3xl font-semibold">Organizacion editorial</h1>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-dyd-text">
+                  Crea y revisa las categorias que usas para ordenar articulos, noticias y contenidos SEO.
+                </p>
+              </div>
+              <span className="rounded-md border border-dyd-cyan/25 bg-dyd-cyan/10 px-3 py-2 text-sm font-semibold text-dyd-cyan">
+                {categories.length} categorias
+              </span>
+            </div>
+
+            <div className="mt-6 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+              <section className="rounded-lg border border-dyd-silver/15 bg-dyd-black/25 p-5">
+                <h2 className="text-lg font-semibold text-white">Agregar categoria</h2>
+                <div className="mt-4 flex gap-2">
+                  <input
+                    value={newCategory}
+                    onChange={(event) => setNewCategory(event.target.value)}
+                    className="h-11 min-w-0 flex-1 rounded-md border border-dyd-silver/15 bg-dyd-black/35 px-3 text-sm text-white outline-none focus:border-dyd-cyan"
+                    placeholder="Ej: Salud Digital"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddCategory}
+                    className="inline-flex h-11 items-center gap-2 rounded-md bg-dyd-cyan px-4 text-sm font-semibold text-dyd-ink"
+                  >
+                    Agregar <Plus size={17} />
+                  </button>
+                </div>
+                <p className="mt-3 text-xs leading-5 text-dyd-text">
+                  Al agregar una categoria tambien se asigna al articulo seleccionado para acelerar la edicion.
+                </p>
+              </section>
+
+              <section className="rounded-lg border border-dyd-silver/15 bg-dyd-black/25 p-5">
+                <h2 className="text-lg font-semibold text-white">Categorias activas</h2>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  {categories.map((category) => {
+                    const count = articles.filter((article) => article.category === category).length;
+                    return (
+                      <button
+                        type="button"
+                        key={category}
+                        onClick={() => {
+                          setQuery(category);
+                          setActivePanel("articles");
+                        }}
+                        className="rounded-lg border border-dyd-silver/15 bg-dyd-ink/65 p-4 text-left transition hover:border-dyd-cyan/45"
+                      >
+                        <span className="text-sm font-semibold text-white">{category}</span>
+                        <span className="mt-2 block text-xs text-dyd-text">{count} articulos asociados</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </section>
+            </div>
+          </section>
+        ) : null}
+
+        {activePanel === "articles" ? (
         <div className="grid gap-6 lg:grid-cols-[0.34fr_0.66fr]">
           <aside className="space-y-6">
             <section className="premium-card rounded-lg p-5">
@@ -1402,6 +1512,10 @@ export default function AdminPage() {
               </section>
             </div>
           </section>
+        </div>
+        ) : null}
+
+          </div>
         </div>
       </section>
     </main>
