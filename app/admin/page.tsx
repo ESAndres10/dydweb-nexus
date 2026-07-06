@@ -9,7 +9,9 @@ import {
   BarChart3,
   CalendarDays,
   CheckCircle2,
+  Download,
   Edit3,
+  ExternalLink,
   Eye,
   FileText,
   ImagePlus,
@@ -162,6 +164,22 @@ function getArticleScore(article: Article) {
   const hasImage = Boolean(article.featuredImage.trim());
   return views + Math.min(20, Math.floor(contentLength / 450)) + (hasSeo ? 8 : 0) + (hasImage ? 8 : 0);
 }
+
+const baseSiteLinks = [
+  { title: "Inicio", url: "/", type: "Pagina principal", priority: "Alta" },
+  { title: "Servicios", url: "/servicios", type: "Pagina comercial", priority: "Alta" },
+  { title: "Quienes Somos", url: "/nosotros", type: "Confianza", priority: "Alta" },
+  { title: "Preguntas", url: "/preguntas", type: "Orientacion", priority: "Media" },
+  { title: "Noticias", url: "/noticias", type: "Contenido SEO", priority: "Alta" },
+  { title: "Desarrollo web para empresas", url: "/desarrollo-web-empresas", type: "Landing SEO", priority: "Alta" },
+  { title: "Desarrollo web para emprendedores", url: "/desarrollo-web-para-emprendedores", type: "Landing SEO", priority: "Alta" },
+  { title: "Software a medida", url: "/software-a-medida", type: "Landing SEO", priority: "Alta" },
+  { title: "Automatizacion con IA", url: "/automatizacion-con-inteligencia-artificial", type: "Landing SEO", priority: "Alta" },
+  { title: "Chatbots WhatsApp", url: "/chatbots-whatsapp-empresas", type: "Landing SEO", priority: "Alta" },
+  { title: "SEO tecnico", url: "/seo-tecnico-para-negocios", type: "Landing SEO", priority: "Media" },
+  { title: "Agendar reunion", url: "/#agendar", type: "Conversion", priority: "Alta" },
+  { title: "Contacto", url: "/#contacto", type: "Conversion", priority: "Alta" },
+];
 
 function createEmptyArticle(categories: string[]): Article {
   const now = new Date().toISOString().slice(0, 10);
@@ -392,6 +410,33 @@ export default function AdminPage() {
       },
     ];
 
+    const chartRows = [
+      { label: "Publicados", value: publishedArticles.length },
+      { label: "Borradores", value: articles.filter((article) => article.status === "Borrador").length },
+      { label: "Categorias", value: categoryRows.length },
+      { label: "Visitas", value: totalViews },
+    ];
+
+    const articleLinks = articles
+      .filter((article) => article.status === "Publicado" && article.slug)
+      .map((article) => ({
+        title: article.title || "Articulo sin titulo",
+        url: `/noticias/${article.slug}`,
+        type: "Articulo",
+        priority: "Media",
+        views: Number(article.views || 0),
+        status: article.excerpt.trim().length >= 80 && article.featuredImage.trim() ? "Optimizado" : "Revisar",
+      }));
+
+    const siteLinks = [
+      ...baseSiteLinks.map((link) => ({
+        ...link,
+        views: link.url === "/noticias" ? totalViews : 0,
+        status: link.priority === "Alta" ? "Monitorear" : "Activo",
+      })),
+      ...articleLinks,
+    ];
+
     return {
       averageViews,
       seoCoverage,
@@ -401,6 +446,9 @@ export default function AdminPage() {
       recentActivity,
       categoryRows,
       opportunities,
+      chartRows,
+      chartMax: Math.max(...chartRows.map((row) => row.value), 1),
+      siteLinks,
       bestArticle: [...articles].sort((a, b) => getArticleScore(b) - getArticleScore(a))[0],
     };
   }, [articles, categories]);
@@ -714,6 +762,100 @@ export default function AdminPage() {
     setNotice("Artículo copiado en formato JSON. Ya puedes guardarlo o enviarlo para publicación.");
   };
 
+  const handleDownloadMetricsReport = () => {
+    const generatedAt = new Date().toLocaleString("es-CO");
+    const maxChartValue = Math.max(...dashboard.chartRows.map((row) => row.value), 1);
+    const topRows = dashboard.topArticles
+      .map(
+        (article, index) => `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${article.title || "Articulo sin titulo"}</td>
+            <td>${article.category}</td>
+            <td>${article.views || 0}</td>
+          </tr>`
+      )
+      .join("");
+    const linksRows = dashboard.siteLinks
+      .map(
+        (link) => `
+          <tr>
+            <td>${link.title}</td>
+            <td>https://dydweb.co${link.url}</td>
+            <td>${link.type}</td>
+            <td>${link.priority}</td>
+            <td>${link.views}</td>
+            <td>${link.status}</td>
+          </tr>`
+      )
+      .join("");
+    const chartBars = dashboard.chartRows
+      .map((row) => {
+        const width = Math.max(6, Math.round((row.value / maxChartValue) * 100));
+        return `
+          <div class="bar-row">
+            <span>${row.label}</span>
+            <div class="bar"><i style="width:${width}%"></i></div>
+            <strong>${row.value}</strong>
+          </div>`;
+      })
+      .join("");
+
+    const reportHtml = `<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Informe de metricas DYDWEB Nexus</title>
+  <style>
+    body{font-family:Arial,sans-serif;background:#07111f;color:#ecf6ff;margin:0;padding:32px}
+    .wrap{max-width:1100px;margin:0 auto}
+    h1{font-size:32px;margin:0 0 8px}
+    h2{margin-top:32px;color:#22d3ee}
+    p{color:#b8c7dc;line-height:1.6}
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:24px 0}
+    .card{border:1px solid rgba(34,211,238,.25);background:#0d1b2f;border-radius:10px;padding:18px}
+    .value{font-size:28px;font-weight:700;margin-top:8px}
+    .bar-row{display:grid;grid-template-columns:150px 1fr 60px;gap:12px;align-items:center;margin:14px 0}
+    .bar{height:12px;background:#16263d;border-radius:999px;overflow:hidden}
+    .bar i{display:block;height:100%;background:linear-gradient(90deg,#1463ff,#22d3ee)}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{border-bottom:1px solid rgba(184,199,220,.18);padding:10px;text-align:left;font-size:13px;vertical-align:top}
+    th{color:#22d3ee}
+    @media print{body{background:#fff;color:#0b1220}.card{background:#f5f8fc}.bar{background:#dbe5f2}p{color:#344054}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>Informe de metricas DYDWEB Nexus</h1>
+    <p>Generado el ${generatedAt}. Este informe utiliza las visitas registradas actualmente en el panel administrador. Para trafico completo del sitio se recomienda conectar Google Analytics y Search Console.</p>
+    <section class="grid">
+      <article class="card"><span>Articulos publicados</span><div class="value">${stats.published}</div></article>
+      <article class="card"><span>Borradores</span><div class="value">${stats.drafts}</div></article>
+      <article class="card"><span>Visitas registradas</span><div class="value">${stats.views}</div></article>
+      <article class="card"><span>Cobertura SEO</span><div class="value">${dashboard.seoCoverage}%</div></article>
+    </section>
+    <h2>Grafica general</h2>
+    ${chartBars}
+    <h2>Top articulos</h2>
+    <table><thead><tr><th>#</th><th>Articulo</th><th>Categoria</th><th>Visitas</th></tr></thead><tbody>${topRows || "<tr><td colspan='4'>Sin articulos publicados.</td></tr>"}</tbody></table>
+    <h2>Enlaces del sitio</h2>
+    <table><thead><tr><th>Nombre</th><th>URL</th><th>Tipo</th><th>Prioridad</th><th>Visitas</th><th>Estado</th></tr></thead><tbody>${linksRows}</tbody></table>
+  </main>
+</body>
+</html>`;
+
+    const blob = new Blob([reportHtml], { type: "text/html;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `dydweb-informe-metricas-${new Date().toISOString().slice(0, 10)}.html`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    URL.revokeObjectURL(url);
+    setNotice("Informe de metricas descargado correctamente.");
+  };
+
   if (!authenticated) {
     return (
       <main className="min-h-screen bg-dyd-black px-4 py-10 text-white">
@@ -868,11 +1010,20 @@ export default function AdminPage() {
                 Vista rapida para controlar publicaciones, visitas, cobertura SEO, imagenes y oportunidades de mejora del blog.
               </p>
             </div>
-            <div className="rounded-lg border border-dyd-silver/15 bg-dyd-black/35 px-4 py-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-dyd-text">Articulo con mejor senal</p>
-              <p className="mt-1 max-w-sm truncate text-sm font-semibold text-white">
-                {dashboard.bestArticle?.title || "Aun no hay articulos"}
-              </p>
+            <div className="grid gap-2 sm:grid-cols-[1fr_auto] md:min-w-[380px]">
+              <div className="rounded-lg border border-dyd-silver/15 bg-dyd-black/35 px-4 py-3">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-dyd-text">Articulo con mejor senal</p>
+                <p className="mt-1 max-w-sm truncate text-sm font-semibold text-white">
+                  {dashboard.bestArticle?.title || "Aun no hay articulos"}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleDownloadMetricsReport}
+                className="inline-flex h-full min-h-12 items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-dyd-blue to-dyd-cyan px-4 text-sm font-semibold text-white shadow-glow transition hover:brightness-110"
+              >
+                Descargar informe <Download size={17} />
+              </button>
             </div>
           </div>
 
@@ -890,6 +1041,32 @@ export default function AdminPage() {
               </article>
             ))}
           </div>
+
+          <article className="mt-6 rounded-lg border border-dyd-silver/15 bg-dyd-black/30 p-4">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-dyd-cyan">Grafica general</h3>
+                <p className="mt-1 text-xs leading-5 text-dyd-text">
+                  Resumen visual basado en las visitas y contenido registrado en el administrador.
+                </p>
+              </div>
+              <BarChart3 size={20} className="text-dyd-cyan" />
+            </div>
+            <div className="mt-5 grid gap-4">
+              {dashboard.chartRows.map((row) => {
+                const width = Math.max(6, Math.round((row.value / dashboard.chartMax) * 100));
+                return (
+                  <div key={row.label} className="grid gap-2 sm:grid-cols-[140px_1fr_64px] sm:items-center">
+                    <span className="text-sm font-semibold text-dyd-silver">{row.label}</span>
+                    <div className="h-3 overflow-hidden rounded-full bg-dyd-silver/10">
+                      <div className="h-full rounded-full bg-gradient-to-r from-dyd-blue to-dyd-cyan" style={{ width: `${width}%` }} />
+                    </div>
+                    <span className="text-right text-sm font-semibold text-white">{row.value}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </article>
 
           <div className="mt-6 grid gap-4 xl:grid-cols-[0.95fr_0.75fr_0.8fr]">
             <article className="rounded-lg border border-dyd-silver/15 bg-dyd-black/30 p-4">
@@ -1006,6 +1183,65 @@ export default function AdminPage() {
               </article>
             ))}
           </div>
+
+          <article className="mt-6 rounded-lg border border-dyd-silver/15 bg-dyd-black/30 p-4">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-dyd-cyan">Enlaces del sitio</h3>
+                <p className="mt-1 text-xs leading-5 text-dyd-text">
+                  Mapa de seguimiento de paginas, landings, secciones clave y articulos publicados.
+                </p>
+              </div>
+              <span className="rounded-md border border-dyd-cyan/25 bg-dyd-cyan/10 px-3 py-2 text-xs font-semibold text-dyd-cyan">
+                {dashboard.siteLinks.length} URLs
+              </span>
+            </div>
+
+            <div className="mt-4 overflow-x-auto">
+              <table className="w-full min-w-[760px] text-left text-sm">
+                <thead className="text-xs uppercase tracking-[0.14em] text-dyd-cyan">
+                  <tr className="border-b border-dyd-silver/10">
+                    <th className="py-3 pr-4 font-semibold">Enlace</th>
+                    <th className="py-3 pr-4 font-semibold">Tipo</th>
+                    <th className="py-3 pr-4 font-semibold">Prioridad</th>
+                    <th className="py-3 pr-4 text-right font-semibold">Visitas</th>
+                    <th className="py-3 pr-4 font-semibold">Estado</th>
+                    <th className="py-3 font-semibold">Accion</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dashboard.siteLinks.map((link) => (
+                    <tr key={`${link.type}-${link.url}`} className="border-b border-dyd-silver/10 last:border-0">
+                      <td className="max-w-[280px] py-3 pr-4">
+                        <p className="truncate font-semibold text-white">{link.title}</p>
+                        <p className="mt-1 truncate text-xs text-dyd-text">{link.url}</p>
+                      </td>
+                      <td className="py-3 pr-4 text-dyd-silver">{link.type}</td>
+                      <td className="py-3 pr-4">
+                        <span className={`rounded-md px-2 py-1 text-xs font-semibold ${
+                          link.priority === "Alta" ? "bg-dyd-cyan/10 text-dyd-cyan" : "bg-dyd-silver/10 text-dyd-silver"
+                        }`}>
+                          {link.priority}
+                        </span>
+                      </td>
+                      <td className="py-3 pr-4 text-right font-semibold text-white">{link.views}</td>
+                      <td className="py-3 pr-4 text-dyd-text">{link.status}</td>
+                      <td className="py-3">
+                        <a
+                          href={link.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex h-8 items-center gap-2 rounded-md border border-dyd-silver/15 px-3 text-xs font-semibold text-dyd-silver transition hover:border-dyd-cyan hover:text-white"
+                        >
+                          Abrir <ExternalLink size={14} />
+                        </a>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </article>
         </section>
         ) : null}
 
