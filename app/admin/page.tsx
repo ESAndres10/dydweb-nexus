@@ -1,11 +1,13 @@
 "use client";
 
 import {
+  Activity,
   AlignCenter,
   AlignJustify,
   AlignLeft,
   AlignRight,
   BarChart3,
+  CalendarDays,
   CheckCircle2,
   Edit3,
   Eye,
@@ -18,6 +20,7 @@ import {
   Search,
   Send,
   Tag,
+  TrendingUp,
   Trash2,
   type LucideIcon,
 } from "lucide-react";
@@ -138,6 +141,25 @@ function slugify(value: string) {
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)+/g, "");
+}
+
+function formatAdminDate(value: string) {
+  if (!value) return "Sin fecha";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return new Intl.DateTimeFormat("es-CO", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(date);
+}
+
+function getArticleScore(article: Article) {
+  const views = Number(article.views || 0);
+  const contentLength = article.content.trim().length;
+  const hasSeo = article.excerpt.trim().length > 80;
+  const hasImage = Boolean(article.featuredImage.trim());
+  return views + Math.min(20, Math.floor(contentLength / 450)) + (hasSeo ? 8 : 0) + (hasImage ? 8 : 0);
 }
 
 function createEmptyArticle(categories: string[]): Article {
@@ -316,6 +338,70 @@ export default function AdminPage() {
     const views = articles.reduce((total, article) => total + Number(article.views || 0), 0);
     return { published, drafts, views };
   }, [articles]);
+
+  const dashboard = useMemo(() => {
+    const publishedArticles = articles.filter((article) => article.status === "Publicado");
+    const totalViews = articles.reduce((total, article) => total + Number(article.views || 0), 0);
+    const averageViews = publishedArticles.length ? Math.round(totalViews / publishedArticles.length) : 0;
+    const articlesWithSeo = articles.filter((article) => article.excerpt.trim().length >= 80).length;
+    const articlesWithImage = articles.filter((article) => article.featuredImage.trim()).length;
+    const totalImages = articles.reduce((total, article) => total + (article.imageBank?.length || 0), 0);
+    const seoCoverage = articles.length ? Math.round((articlesWithSeo / articles.length) * 100) : 0;
+    const imageCoverage = articles.length ? Math.round((articlesWithImage / articles.length) * 100) : 0;
+
+    const topArticles = [...articles]
+      .filter((article) => article.status === "Publicado")
+      .sort((a, b) => Number(b.views || 0) - Number(a.views || 0))
+      .slice(0, 4);
+
+    const recentActivity = [...articles]
+      .sort((a, b) => new Date(b.updatedAt || b.createdAt).getTime() - new Date(a.updatedAt || a.createdAt).getTime())
+      .slice(0, 5);
+
+    const categoryRows = categories
+      .map((category) => {
+        const categoryArticles = articles.filter((article) => article.category === category);
+        const categoryViews = categoryArticles.reduce((total, article) => total + Number(article.views || 0), 0);
+        return {
+          category,
+          count: categoryArticles.length,
+          published: categoryArticles.filter((article) => article.status === "Publicado").length,
+          views: categoryViews,
+        };
+      })
+      .filter((row) => row.count > 0)
+      .sort((a, b) => b.views - a.views || b.published - a.published);
+
+    const opportunities = [
+      {
+        label: "Borradores por terminar",
+        value: articles.filter((article) => article.status === "Borrador").length,
+        helper: "Publica los articulos listos para ampliar el alcance organico.",
+      },
+      {
+        label: "Sin resumen SEO",
+        value: articles.filter((article) => article.excerpt.trim().length < 80).length,
+        helper: "Completa descripciones claras para mejorar clics desde Google.",
+      },
+      {
+        label: "Sin imagen destacada",
+        value: articles.filter((article) => !article.featuredImage.trim()).length,
+        helper: "Agrega portada para mejorar lectura, confianza y tarjetas sociales.",
+      },
+    ];
+
+    return {
+      averageViews,
+      seoCoverage,
+      imageCoverage,
+      totalImages,
+      topArticles,
+      recentActivity,
+      categoryRows,
+      opportunities,
+      bestArticle: [...articles].sort((a, b) => getArticleScore(b) - getArticleScore(a))[0],
+    };
+  }, [articles, categories]);
 
   const updateArticle = (patch: Partial<Article>) => {
     setArticles((current) =>
@@ -732,6 +818,149 @@ export default function AdminPage() {
                 placeholder="Pega el token configurado en DigitalOcean"
               />
             </label>
+          </div>
+        </section>
+
+        <section className="mb-6 rounded-lg border border-dyd-cyan/20 bg-dyd-ink/75 p-5 md:p-6">
+          <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-dyd-cyan">Dashboard de metricas</p>
+              <h2 className="mt-2 text-2xl font-semibold text-white">Pulso editorial y rendimiento del contenido</h2>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-dyd-text">
+                Vista rapida para controlar publicaciones, visitas, cobertura SEO, imagenes y oportunidades de mejora del blog.
+              </p>
+            </div>
+            <div className="rounded-lg border border-dyd-silver/15 bg-dyd-black/35 px-4 py-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-dyd-text">Articulo con mejor senal</p>
+              <p className="mt-1 max-w-sm truncate text-sm font-semibold text-white">
+                {dashboard.bestArticle?.title || "Aun no hay articulos"}
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-6 grid gap-4 md:grid-cols-4">
+            {([
+              ["Promedio de visitas", dashboard.averageViews, TrendingUp],
+              ["Cobertura SEO", `${dashboard.seoCoverage}%`, Search],
+              ["Con imagen destacada", `${dashboard.imageCoverage}%`, ImagePlus],
+              ["Imagenes en banco", dashboard.totalImages, FileText],
+            ] as [string, string | number, LucideIcon][]).map(([label, value, Icon]) => (
+              <article key={label} className="rounded-lg border border-dyd-silver/15 bg-dyd-black/30 p-4">
+                <Icon className="text-dyd-cyan" size={22} />
+                <p className="mt-4 text-2xl font-semibold text-white">{value}</p>
+                <p className="mt-1 text-xs leading-5 text-dyd-text">{label}</p>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-6 grid gap-4 xl:grid-cols-[0.95fr_0.75fr_0.8fr]">
+            <article className="rounded-lg border border-dyd-silver/15 bg-dyd-black/30 p-4">
+              <div className="flex items-center justify-between gap-3">
+                <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-dyd-cyan">Top articulos</h3>
+                <BarChart3 size={18} className="text-dyd-cyan" />
+              </div>
+              <div className="mt-4 grid gap-3">
+                {dashboard.topArticles.length ? (
+                  dashboard.topArticles.map((article, index) => (
+                    <button
+                      type="button"
+                      key={article.id}
+                      onClick={() => setSelectedId(article.id)}
+                      className="grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-md border border-dyd-silver/10 bg-dyd-ink/65 p-3 text-left transition hover:border-dyd-cyan/45"
+                    >
+                      <span className="grid h-8 w-8 place-items-center rounded-md bg-dyd-cyan/10 text-sm font-semibold text-dyd-cyan">
+                        {index + 1}
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block truncate text-sm font-semibold text-white">{article.title || "Articulo sin titulo"}</span>
+                        <span className="mt-1 block text-xs text-dyd-text">{article.category}</span>
+                      </span>
+                      <span className="inline-flex items-center gap-1 text-sm font-semibold text-dyd-cyan">
+                        <Eye size={14} /> {article.views || 0}
+                      </span>
+                    </button>
+                  ))
+                ) : (
+                  <p className="rounded-md border border-dyd-silver/10 bg-dyd-ink/65 p-3 text-sm leading-6 text-dyd-text">
+                    Publica articulos y registra visitas para ver el ranking.
+                  </p>
+                )}
+              </div>
+            </article>
+
+            <article className="rounded-lg border border-dyd-silver/15 bg-dyd-black/30 p-4">
+              <div className="flex items-center justify-between gap-3">
+                <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-dyd-cyan">Categorias</h3>
+                <Tag size={18} className="text-dyd-cyan" />
+              </div>
+              <div className="mt-4 grid gap-3">
+                {dashboard.categoryRows.length ? (
+                  dashboard.categoryRows.map((row) => {
+                    const width = stats.views ? Math.max(8, Math.round((row.views / stats.views) * 100)) : 8;
+                    return (
+                      <div key={row.category} className="rounded-md border border-dyd-silver/10 bg-dyd-ink/65 p-3">
+                        <div className="flex items-center justify-between gap-3 text-sm">
+                          <span className="font-semibold text-white">{row.category}</span>
+                          <span className="text-dyd-cyan">{row.views} visitas</span>
+                        </div>
+                        <div className="mt-2 h-2 overflow-hidden rounded-full bg-dyd-silver/10">
+                          <div className="h-full rounded-full bg-gradient-to-r from-dyd-blue to-dyd-cyan" style={{ width: `${width}%` }} />
+                        </div>
+                        <p className="mt-2 text-xs text-dyd-text">
+                          {row.published} publicados de {row.count} articulos
+                        </p>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <p className="rounded-md border border-dyd-silver/10 bg-dyd-ink/65 p-3 text-sm leading-6 text-dyd-text">
+                    Aun no hay categorias con articulos.
+                  </p>
+                )}
+              </div>
+            </article>
+
+            <article className="rounded-lg border border-dyd-silver/15 bg-dyd-black/30 p-4">
+              <div className="flex items-center justify-between gap-3">
+                <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-dyd-cyan">Actividad reciente</h3>
+                <CalendarDays size={18} className="text-dyd-cyan" />
+              </div>
+              <div className="mt-4 grid gap-3">
+                {dashboard.recentActivity.map((article) => (
+                  <button
+                    type="button"
+                    key={article.id}
+                    onClick={() => setSelectedId(article.id)}
+                    className="rounded-md border border-dyd-silver/10 bg-dyd-ink/65 p-3 text-left transition hover:border-dyd-cyan/45"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="truncate text-sm font-semibold text-white">{article.title || "Articulo sin titulo"}</span>
+                      <span className={`shrink-0 rounded px-2 py-1 text-[11px] font-semibold ${
+                        article.status === "Publicado" ? "bg-dyd-cyan/10 text-dyd-cyan" : "bg-dyd-silver/10 text-dyd-silver"
+                      }`}>
+                        {article.status}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-xs text-dyd-text">Actualizado: {formatAdminDate(article.updatedAt || article.createdAt)}</p>
+                  </button>
+                ))}
+              </div>
+            </article>
+          </div>
+
+          <div className="mt-4 grid gap-4 md:grid-cols-3">
+            {dashboard.opportunities.map((item) => (
+              <article key={item.label} className="rounded-lg border border-dyd-silver/15 bg-dyd-black/30 p-4">
+                <div className="flex items-start gap-3">
+                  <Activity className="mt-1 shrink-0 text-dyd-cyan" size={20} />
+                  <div>
+                    <p className="text-2xl font-semibold text-white">{item.value}</p>
+                    <h3 className="mt-1 text-sm font-semibold text-dyd-silver">{item.label}</h3>
+                    <p className="mt-2 text-xs leading-5 text-dyd-text">{item.helper}</p>
+                  </div>
+                </div>
+              </article>
+            ))}
           </div>
         </section>
 
