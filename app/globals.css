@@ -415,16 +415,16 @@ a {
 }
 
 .nexus-flower-wrap {
-  height: min(500px, 52vw);
-  width: min(620px, 62vw);
-  filter: drop-shadow(0 0 34px rgba(18, 199, 232, 0.28));
+  height: min(620px, 57vw);
+  width: min(860px, 64vw);
+  filter: drop-shadow(0 0 42px rgba(18, 199, 232, 0.32));
   perspective: 1200px;
 }
 
 .nexus-flower-canvas {
   position: relative;
   height: 100%;
-  min-height: 390px;
+  min-height: 520px;
   width: 100%;
   --tilt-x: 0deg;
   --tilt-y: 0deg;
@@ -436,11 +436,11 @@ a {
 .nexus-flower-canvas::before {
   content: "";
   position: absolute;
-  inset: 8% 14%;
+  inset: 4% 9%;
   border-radius: 999px;
   background:
-    radial-gradient(circle at 50% 50%, rgba(18, 199, 232, 0.16), transparent 34%),
-    repeating-conic-gradient(from 0deg, rgba(18, 199, 232, 0.14) 0 1deg, transparent 1deg 18deg);
+    radial-gradient(circle at 50% 50%, rgba(18, 199, 232, 0.18), transparent 34%),
+    repeating-conic-gradient(from 0deg, rgba(18, 199, 232, 0.16) 0 1deg, transparent 1deg 18deg);
   filter: blur(0.2px);
   opacity: 0.76;
   animation: digital-flower-breathe 5.8s ease-in-out infinite;
@@ -449,7 +449,7 @@ a {
 .nexus-flower-canvas::after {
   content: "";
   position: absolute;
-  inset: 15% 20%;
+  inset: 10% 16%;
   border-radius: 999px;
   background:
     linear-gradient(rgba(18, 199, 232, 0.11) 1px, transparent 1px),
@@ -462,12 +462,12 @@ a {
 
 .nexus-circuit-flower {
   position: absolute;
-  inset: 8%;
+  inset: 1% 7%;
   border-radius: 999px;
   background:
     radial-gradient(circle at center, transparent 0 18%, rgba(18, 199, 232, 0.18) 18.4% 18.8%, transparent 19.2%),
     repeating-conic-gradient(from 9deg, transparent 0 10deg, rgba(18, 199, 232, 0.18) 10deg 10.8deg, transparent 11deg 24deg);
-  opacity: 0.7;
+  opacity: 0.82;
   filter: drop-shadow(0 0 20px rgba(18, 199, 232, 0.22));
   animation: digital-flower-breathe 6.5s ease-in-out infinite;
 }
@@ -478,16 +478,16 @@ a {
   transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
   transform-style: preserve-3d;
   transition: transform 160ms ease-out;
-  animation: nexus-flower-slow-rotate 34s linear infinite;
+  animation: nexus-flower-slow-rotate 70s linear infinite;
 }
 
 .nexus-flower-petal {
-  --reach: 48px;
+  --reach: 72px;
   position: absolute;
   left: 50%;
   top: 50%;
-  height: 94px;
-  width: 50px;
+  height: 138px;
+  width: 122px;
   border: 0;
   background: transparent;
   color: white;
@@ -499,7 +499,7 @@ a {
     translateY(calc(var(--reach) * -1))
     translate(var(--grav-x), var(--grav-y))
     scale(0.18);
-  transform-origin: 50% 100%;
+  transform-origin: 50% 108%;
   transition:
     opacity 700ms ease var(--delay),
     transform 900ms cubic-bezier(0.2, 0.8, 0.2, 1) var(--delay),
@@ -508,8 +508,8 @@ a {
 }
 
 .nexus-flower-canvas.is-open .nexus-flower-petal {
-  --reach: 148px;
-  opacity: 0.82;
+  --reach: 238px;
+  opacity: 0.94;
   transform:
     translate(-50%, -50%)
     rotate(var(--angle))
@@ -520,7 +520,7 @@ a {
 
 .nexus-flower-canvas.is-open .nexus-flower-petal.is-active,
 .nexus-flower-petal:hover {
-  --reach: 162px;
+  --reach: 255px;
   opacity: 1;
   filter: drop-shadow(0 0 24px rgba(18, 199, 232, 0.72));
 }
@@ -528,24 +528,55 @@ a {
 .nexus-petal-shape {
   position: absolute;
   inset: 0;
-  border: 1px solid rgba(159, 247, 255, 0.46);
-  border-radius: 58% 58% 48% 48% / 72% 72% 36% 36%;
+  border: 1px solid rgba(159, 247, 255, 0.56);
+  border-radius: 62% 62% 48% 48% / 82% 82% 34% 34%;
   background:
-    radial-gradient(circle at 34% 20%, rgba(255, 255, 255, 0.92), transparent 18%),
-    linear-gradient(160deg, rgba(216, 226, 238, 0.55), rgba(18, 199, 232, 0.52) 42%, rgba(11, 77, 255, 0.48));
+    radial-gradient(circle at 34% 18%, rgba(255, 255, 255, 0.96), transparent 16%),
+    radial-gradient(circle at 68% 76%, rgba(127, 63, 255, 0.58), transparent 34%),
+    linear-gradient(160deg, rgba(216, 226, 238, 0.22), rgba(18, 199, 232, 0.62) 42%, rgba(11, 77, 255, 0.56));
   box-shadow:
-    inset 0 0 22px rgba(255, 255, 255, 0.22),
-    inset 0 -24px 38px rgba(11, 77, 255, 0.28),
-    0 0 20px rgba(18, 199, 232, 0.26);
+    inset 0 0 26px rgba(255, 255, 255, 0.24),
+    inset 0 -28px 48px rgba(11, 77, 255, 0.36),
+    0 0 26px rgba(18, 199, 232, 0.34);
   transform: rotateX(18deg) rotateY(8deg);
   animation: petal-breathe 4.8s ease-in-out infinite;
+}
+
+.nexus-petal-shape::after {
+  content: "";
+  position: absolute;
+  inset: 14% 18% 18%;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.34), transparent 38%);
+  filter: blur(1px);
+}
+
+.nexus-petal-content {
+  position: absolute;
+  inset: 18px 14px 28px;
+  display: grid;
+  place-items: center;
+  gap: 0.35rem;
+  color: white;
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1.1;
+  text-align: center;
+  text-shadow: 0 0 16px rgba(18, 199, 232, 0.95);
+  transform: rotate(calc(var(--angle) * -1));
+  z-index: 2;
+}
+
+.nexus-petal-content svg {
+  color: #6eefff;
+  filter: drop-shadow(0 0 12px rgba(18, 199, 232, 0.92));
 }
 
 .nexus-flower-energy {
   position: absolute;
   left: 50%;
-  bottom: -88px;
-  height: 104px;
+  bottom: -122px;
+  height: 142px;
   width: 2px;
   border-radius: 999px;
   background: linear-gradient(to top, rgba(18, 199, 232, 0.06), rgba(18, 199, 232, 0.88), rgba(216, 226, 238, 0.2));
@@ -559,14 +590,14 @@ a {
   left: 50%;
   top: 50%;
   display: grid;
-  height: 116px;
-  width: 116px;
+  height: 172px;
+  width: 172px;
   place-items: center;
   border: 1px solid rgba(159, 247, 255, 0.46);
   border-radius: 999px;
   background:
-    radial-gradient(circle at 36% 26%, rgba(255, 255, 255, 0.92), transparent 18%),
-    radial-gradient(circle at center, rgba(18, 199, 232, 0.82), rgba(11, 77, 255, 0.76) 54%, rgba(5, 7, 13, 0.92));
+    radial-gradient(circle at 36% 24%, rgba(255, 255, 255, 0.95), transparent 16%),
+    radial-gradient(circle at center, rgba(18, 199, 232, 0.88), rgba(11, 77, 255, 0.8) 52%, rgba(5, 7, 13, 0.95));
   box-shadow:
     0 0 32px rgba(18, 199, 232, 0.74),
     0 0 76px rgba(11, 77, 255, 0.38),
@@ -583,16 +614,28 @@ a {
 
 .nexus-flower-core strong {
   align-self: end;
-  font-size: 1rem;
+  font-size: 1.05rem;
   letter-spacing: 0.1em;
+  line-height: 1.05;
+  text-align: center;
 }
 
 .nexus-flower-core small {
-  align-self: start;
+  align-self: center;
   color: #bdf6ff;
-  font-size: 0.52rem;
-  font-weight: 800;
-  letter-spacing: 0.18em;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+.nexus-flower-core em {
+  align-self: start;
+  color: #2fffc8;
+  font-size: 0.6rem;
+  font-style: normal;
+  font-weight: 900;
+  letter-spacing: 0.12em;
 }
 
 .nexus-core-orbit {
@@ -605,14 +648,14 @@ a {
 }
 
 .nexus-core-orbit.orbit-a {
-  height: 156px;
-  width: 225px;
+  height: 220px;
+  width: 330px;
   animation: portal-spin 7s linear infinite;
 }
 
 .nexus-core-orbit.orbit-b {
-  height: 188px;
-  width: 278px;
+  height: 264px;
+  width: 390px;
   border-color: rgba(11, 77, 255, 0.42);
   animation: portal-spin 10s linear infinite reverse;
 }
@@ -679,6 +722,10 @@ a {
   font-size: 0.68rem;
 }
 
+.nexus-metric-strip {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
 @media (max-width: 720px) {
   .ai-hologram {
     display: flex;
@@ -709,27 +756,43 @@ a {
     top: auto !important;
     display: grid;
     place-items: center;
-    height: 330px;
+    height: 350px;
     width: 100%;
     transform: none !important;
   }
 
   .nexus-flower-canvas {
-    min-height: 320px;
+    min-height: 340px;
   }
 
   .nexus-flower-canvas.is-open .nexus-flower-petal {
-    --reach: 126px;
+    --reach: 118px;
   }
 
   .nexus-flower-petal {
-    height: 82px;
-    width: 48px;
+    height: 76px;
+    width: 58px;
+  }
+
+  .nexus-petal-content {
+    display: none;
   }
 
   .nexus-flower-core {
-    height: 104px;
-    width: 104px;
+    height: 112px;
+    width: 112px;
+  }
+
+  .nexus-flower-core strong {
+    font-size: 0.78rem;
+  }
+
+  .nexus-flower-core small {
+    font-size: 0.52rem;
+  }
+
+  .nexus-flower-core em {
+    font-size: 0.48rem;
   }
 
   .mobile-holo-nodes {

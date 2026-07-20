@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import type { LucideIcon } from "lucide-react";
 
 type FlowerNode = {
   id: string;
   label: string;
+  icon: LucideIcon;
 };
 
 type NexusDigitalFlowerProps = {
@@ -51,6 +53,7 @@ export function NexusDigitalFlower({ nodes, activeIndex, onSelect }: NexusDigita
         {nodes.map((node, index) => {
           const angle = (index / nodes.length) * 360 - 90;
           const active = index === activeIndex;
+          const NodeIcon = node.icon;
 
           return (
             <button
@@ -67,6 +70,10 @@ export function NexusDigitalFlower({ nodes, activeIndex, onSelect }: NexusDigita
             >
               <span className="nexus-flower-energy" />
               <span className="nexus-petal-shape" />
+              <span className="nexus-petal-content">
+                <NodeIcon size={28} aria-hidden="true" />
+                <span>{node.label}</span>
+              </span>
             </button>
           );
         })}
@@ -74,8 +81,9 @@ export function NexusDigitalFlower({ nodes, activeIndex, onSelect }: NexusDigita
         <div className="nexus-flower-core">
           <span className="nexus-core-orbit orbit-a" />
           <span className="nexus-core-orbit orbit-b" />
-          <strong>NEXUS</strong>
-          <small>DIGITAL FLOWER</small>
+          <strong>NEXUS CORE</strong>
+          <small>Inteligencia Adaptativa</small>
+          <em>ONLINE</em>
         </div>
       </div>
     </div>

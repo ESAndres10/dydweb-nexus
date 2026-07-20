@@ -1368,7 +1368,7 @@ function HeroVisual({ language }: { language: Language }) {
         <div className="hero-mesh absolute -inset-8 opacity-90 blur-2xl" />
         <div
           data-portal-version="mobile-v2"
-          className={`ai-hologram nexus-stage relative h-[calc(100vh-4rem)] min-h-[680px] w-full overflow-hidden border-y border-dyd-cyan/15 bg-dyd-ink/70 shadow-[inset_0_1px_0_rgba(18,199,232,0.16),inset_0_-1px_0_rgba(18,199,232,0.12)] backdrop-blur-xl ${
+          className={`ai-hologram nexus-stage relative h-[calc(100vh-4rem)] min-h-[760px] w-full overflow-hidden border-y border-dyd-cyan/15 bg-dyd-ink/70 shadow-[inset_0_1px_0_rgba(18,199,232,0.16),inset_0_-1px_0_rgba(18,199,232,0.12)] backdrop-blur-xl ${
             activation ? "is-activating" : ""
           }`}
         >
@@ -1420,22 +1420,6 @@ function HeroVisual({ language }: { language: Language }) {
           <NexusDigitalFlower nodes={visualNodes} activeIndex={activeNode} onSelect={selectNode} />
         </div>
 
-        {visualNodes.map((node, index) => {
-          const NodeIcon = node.icon;
-
-          return (
-            <button
-              key={node.id}
-              type="button"
-              onClick={() => selectNode(index)}
-              className={`holo-node desktop-holo-node absolute z-40 ${node.position} ${index === activeNode ? "is-selected" : "is-dimmed"}`}
-            >
-              <NodeIcon size={22} aria-hidden="true" />
-              <span>{node.label}</span>
-            </button>
-          );
-        })}
-
         <div className="mobile-holo-nodes z-30 hidden">
           {visualNodes.slice(0, 8).map((node, index) => {
             const NodeIcon = node.icon;
@@ -1454,7 +1438,7 @@ function HeroVisual({ language }: { language: Language }) {
           })}
         </div>
 
-        <div className="nexus-live-panel absolute bottom-4 left-4 z-30 w-[min(420px,calc(100%-2rem))]">
+        <div className="nexus-live-panel absolute left-5 top-20 z-30 w-[min(330px,calc(100%-2rem))]">
           <div className="rounded-lg border border-dyd-cyan/25 bg-dyd-ink/82 p-4 shadow-2xl backdrop-blur-xl">
             <div className="mb-3 flex items-center justify-between gap-3">
               <div>
@@ -1518,7 +1502,7 @@ function HeroVisual({ language }: { language: Language }) {
           </div>
         </aside>
 
-        <aside className="nexus-activity absolute bottom-4 right-4 z-30 hidden w-[245px] rounded-lg border border-dyd-cyan/20 bg-dyd-ink/80 p-4 shadow-2xl backdrop-blur-xl 2xl:block">
+        <aside className="nexus-activity absolute right-4 top-[350px] z-30 hidden w-[245px] rounded-lg border border-dyd-cyan/20 bg-dyd-ink/80 p-4 shadow-2xl backdrop-blur-xl 2xl:block">
           <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-dyd-cyan">{visualText.activity}</p>
           <div className="space-y-2">
             {visualActivity.map(([event, location], index) => (
@@ -1534,6 +1518,28 @@ function HeroVisual({ language }: { language: Language }) {
             <div className="activity-graph mt-2 h-7" />
           </div>
         </aside>
+
+        <div className="nexus-metric-strip absolute bottom-5 left-1/2 z-20 hidden w-[calc(100%-2.5rem)] max-w-[1560px] -translate-x-1/2 rounded-lg border border-dyd-cyan/20 bg-dyd-ink/72 px-5 py-3 shadow-2xl backdrop-blur-xl xl:grid">
+          {[
+            [Rocket, "+250", "Proyectos Exitosos"],
+            [UsersRound, "+98%", "Satisfacción Clientes"],
+            [Bot, "+12K", "Automatizaciones Activas"],
+            [BarChart3, "+24/7", "IA Monitoreando"],
+            [Star, "+5 Años", "Innovando Juntos"],
+          ].map(([MetricIcon, value, label]) => {
+            const Icon = MetricIcon as typeof Rocket;
+
+            return (
+              <div key={label as string} className="flex items-center justify-center gap-3 border-r border-dyd-silver/10 last:border-r-0">
+                <Icon size={28} className="text-dyd-cyan" aria-hidden="true" />
+                <div>
+                  <p className="text-xl font-black text-dyd-cyan">{value as string}</p>
+                  <p className="text-xs text-dyd-text">{label as string}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
         </div>
       </motion.div>
     </div>
