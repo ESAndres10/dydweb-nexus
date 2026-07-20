@@ -33,27 +33,9 @@ import {
   X,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-
-const NexusDigitalFlower = dynamic(
-  () => import("./nexus-digital-flower").then((mod) => mod.NexusDigitalFlower),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="nexus-flower-canvas grid place-items-center">
-        <div className="holo-core">
-          <div className="holo-core-inner">
-            <Bot size={44} />
-            <strong>NEXUS</strong>
-            <span>IA</span>
-          </div>
-        </div>
-      </div>
-    ),
-  }
-);
+import { NexusDigitalFlower } from "./nexus-digital-flower";
 
 const menu = [
   ["Inicio", "inicio"],

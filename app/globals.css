@@ -426,6 +426,10 @@ a {
   height: 100%;
   min-height: 430px;
   width: 100%;
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  --grav-x: 0px;
+  --grav-y: 0px;
   transform-style: preserve-3d;
 }
 
@@ -454,6 +458,183 @@ a {
   mask-image: radial-gradient(ellipse at center, black 0 45%, transparent 68%);
   opacity: 0.48;
   transform: rotate(24deg);
+}
+
+.nexus-circuit-flower {
+  position: absolute;
+  inset: 8%;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at center, transparent 0 18%, rgba(18, 199, 232, 0.18) 18.4% 18.8%, transparent 19.2%),
+    repeating-conic-gradient(from 9deg, transparent 0 10deg, rgba(18, 199, 232, 0.18) 10deg 10.8deg, transparent 11deg 24deg);
+  opacity: 0.7;
+  filter: drop-shadow(0 0 20px rgba(18, 199, 232, 0.22));
+  animation: digital-flower-breathe 6.5s ease-in-out infinite;
+}
+
+.nexus-flower-depth {
+  position: absolute;
+  inset: 0;
+  transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+  transform-style: preserve-3d;
+  transition: transform 160ms ease-out;
+  animation: nexus-flower-slow-rotate 34s linear infinite;
+}
+
+.nexus-flower-petal {
+  --reach: 62px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 118px;
+  width: 66px;
+  border: 0;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  opacity: 0;
+  transform:
+    translate(-50%, -50%)
+    rotate(var(--angle))
+    translateY(calc(var(--reach) * -1))
+    translate(var(--grav-x), var(--grav-y))
+    scale(0.18);
+  transform-origin: 50% 100%;
+  transition:
+    opacity 700ms ease var(--delay),
+    transform 900ms cubic-bezier(0.2, 0.8, 0.2, 1) var(--delay),
+    filter 220ms ease;
+  transform-style: preserve-3d;
+}
+
+.nexus-flower-canvas.is-open .nexus-flower-petal {
+  --reach: 190px;
+  opacity: 0.9;
+  transform:
+    translate(-50%, -50%)
+    rotate(var(--angle))
+    translateY(calc(var(--reach) * -1))
+    translate(var(--grav-x), var(--grav-y))
+    scale(1);
+}
+
+.nexus-flower-canvas.is-open .nexus-flower-petal.is-active,
+.nexus-flower-petal:hover {
+  --reach: 208px;
+  opacity: 1;
+  filter: drop-shadow(0 0 24px rgba(18, 199, 232, 0.72));
+}
+
+.nexus-petal-shape {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(159, 247, 255, 0.46);
+  border-radius: 58% 58% 48% 48% / 72% 72% 36% 36%;
+  background:
+    radial-gradient(circle at 34% 20%, rgba(255, 255, 255, 0.92), transparent 18%),
+    linear-gradient(160deg, rgba(216, 226, 238, 0.55), rgba(18, 199, 232, 0.52) 42%, rgba(11, 77, 255, 0.48));
+  box-shadow:
+    inset 0 0 22px rgba(255, 255, 255, 0.22),
+    inset 0 -24px 38px rgba(11, 77, 255, 0.28),
+    0 0 20px rgba(18, 199, 232, 0.26);
+  transform: rotateX(18deg) rotateY(8deg);
+  animation: petal-breathe 4.8s ease-in-out infinite;
+}
+
+.nexus-flower-energy {
+  position: absolute;
+  left: 50%;
+  bottom: -116px;
+  height: 130px;
+  width: 2px;
+  border-radius: 999px;
+  background: linear-gradient(to top, rgba(18, 199, 232, 0.06), rgba(18, 199, 232, 0.88), rgba(216, 226, 238, 0.2));
+  box-shadow: 0 0 16px rgba(18, 199, 232, 0.65);
+  transform: translateX(-50%);
+  animation: data-flow 2.2s linear infinite;
+}
+
+.nexus-petal-label {
+  position: absolute;
+  left: 50%;
+  top: -34px;
+  width: max-content;
+  max-width: 150px;
+  border: 1px solid rgba(18, 199, 232, 0.28);
+  border-radius: 0.5rem;
+  background: rgba(5, 7, 13, 0.62);
+  padding: 0.38rem 0.55rem;
+  color: #eaf8ff;
+  font-size: 0.66rem;
+  font-weight: 800;
+  line-height: 1.1;
+  text-align: center;
+  text-shadow: 0 0 10px rgba(18, 199, 232, 0.82);
+  transform: translateX(-50%) rotate(calc(var(--angle) * -1));
+  backdrop-filter: blur(10px);
+}
+
+.nexus-flower-core {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: grid;
+  height: 128px;
+  width: 128px;
+  place-items: center;
+  border: 1px solid rgba(159, 247, 255, 0.46);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 36% 26%, rgba(255, 255, 255, 0.92), transparent 18%),
+    radial-gradient(circle at center, rgba(18, 199, 232, 0.82), rgba(11, 77, 255, 0.76) 54%, rgba(5, 7, 13, 0.92));
+  box-shadow:
+    0 0 32px rgba(18, 199, 232, 0.74),
+    0 0 76px rgba(11, 77, 255, 0.38),
+    inset 0 0 28px rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%) translateZ(55px);
+  animation: core-pulse 3.8s ease-in-out infinite;
+}
+
+.nexus-flower-core strong,
+.nexus-flower-core small {
+  position: relative;
+  z-index: 2;
+}
+
+.nexus-flower-core strong {
+  align-self: end;
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+}
+
+.nexus-flower-core small {
+  align-self: start;
+  color: #bdf6ff;
+  font-size: 0.52rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+}
+
+.nexus-core-orbit {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border: 1px solid rgba(18, 199, 232, 0.45);
+  border-radius: 999px;
+  transform: translate(-50%, -50%) rotateX(68deg);
+}
+
+.nexus-core-orbit.orbit-a {
+  height: 176px;
+  width: 255px;
+  animation: portal-spin 7s linear infinite;
+}
+
+.nexus-core-orbit.orbit-b {
+  height: 210px;
+  width: 310px;
+  border-color: rgba(11, 77, 255, 0.42);
+  animation: portal-spin 10s linear infinite reverse;
 }
 
 .nexus-flower-label {
@@ -557,6 +738,24 @@ a {
     min-height: 320px;
   }
 
+  .nexus-flower-canvas.is-open .nexus-flower-petal {
+    --reach: 126px;
+  }
+
+  .nexus-flower-petal {
+    height: 82px;
+    width: 48px;
+  }
+
+  .nexus-petal-label {
+    display: none;
+  }
+
+  .nexus-flower-core {
+    height: 104px;
+    width: 104px;
+  }
+
   .mobile-holo-nodes {
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -591,6 +790,25 @@ a {
 
   .nexus-live-panel a {
     width: 100%;
+  }
+}
+
+@keyframes nexus-flower-slow-rotate {
+  from {
+    transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) rotateZ(0deg);
+  }
+  to {
+    transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) rotateZ(360deg);
+  }
+}
+
+@keyframes petal-breathe {
+  0%,
+  100% {
+    transform: rotateX(18deg) rotateY(8deg) scale(0.98);
+  }
+  50% {
+    transform: rotateX(23deg) rotateY(-6deg) scale(1.04);
   }
 }
 
