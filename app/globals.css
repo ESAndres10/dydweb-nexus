@@ -414,6 +414,110 @@ a {
   opacity: 0.92;
 }
 
+.nexus-flower-wrap {
+  height: min(560px, 58vw);
+  width: min(720px, 72vw);
+  filter: drop-shadow(0 0 34px rgba(18, 199, 232, 0.28));
+  perspective: 1200px;
+}
+
+.nexus-flower-canvas {
+  position: relative;
+  height: 100%;
+  min-height: 430px;
+  width: 100%;
+  transform-style: preserve-3d;
+}
+
+.nexus-flower-canvas::before {
+  content: "";
+  position: absolute;
+  inset: 8% 14%;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(18, 199, 232, 0.16), transparent 34%),
+    repeating-conic-gradient(from 0deg, rgba(18, 199, 232, 0.14) 0 1deg, transparent 1deg 18deg);
+  filter: blur(0.2px);
+  opacity: 0.76;
+  animation: digital-flower-breathe 5.8s ease-in-out infinite;
+}
+
+.nexus-flower-canvas::after {
+  content: "";
+  position: absolute;
+  inset: 15% 20%;
+  border-radius: 999px;
+  background:
+    linear-gradient(rgba(18, 199, 232, 0.11) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(18, 199, 232, 0.11) 1px, transparent 1px);
+  background-size: 22px 22px;
+  mask-image: radial-gradient(ellipse at center, black 0 45%, transparent 68%);
+  opacity: 0.48;
+  transform: rotate(24deg);
+}
+
+.nexus-flower-label {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  transform: translate(-50%, -50%);
+  color: white;
+  pointer-events: none;
+  text-align: center;
+  text-shadow: 0 0 18px rgba(18, 199, 232, 0.95);
+}
+
+.nexus-flower-label strong {
+  font-size: 0.96rem;
+  letter-spacing: 0.08em;
+}
+
+.nexus-flower-label span {
+  margin-top: 0.1rem;
+  color: #bdf6ff;
+  font-size: 0.52rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+}
+
+.nexus-live-console {
+  height: 128px;
+  overflow: hidden;
+  position: relative;
+}
+
+.nexus-live-console::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, #05070d 0%, transparent 22%, transparent 76%, #05070d 100%);
+  pointer-events: none;
+}
+
+.nexus-live-line {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem;
+  padding: 0.28rem 0;
+  font-size: 0.73rem;
+  line-height: 1.25;
+  animation: nexus-console-scroll 12s linear infinite;
+}
+
+.nexus-live-line strong {
+  color: white;
+  font-weight: 700;
+}
+
+.nexus-live-line small {
+  grid-column: 2;
+  color: #9fb0c8;
+  font-size: 0.68rem;
+}
+
 @media (max-width: 720px) {
   .ai-hologram {
     display: flex;
@@ -438,70 +542,19 @@ a {
     opacity: 0.45;
   }
 
-  .holo-core-wrap {
+  .nexus-flower-wrap {
     position: relative !important;
     left: auto !important;
     top: auto !important;
     display: grid;
     place-items: center;
+    height: 330px;
+    width: 100%;
     transform: none !important;
   }
 
-  .holo-core {
-    height: 136px;
-    width: 136px;
-  }
-
-  .holo-core-inner {
-    height: 92px;
-    width: 92px;
-  }
-
-  .orbit-one {
-    height: 210px;
-    width: 210px;
-  }
-
-  .orbit-two {
-    height: 250px;
-    width: 250px;
-  }
-
-  .orbit-three {
-    height: 292px;
-    width: 292px;
-  }
-
-  .nexus-portal {
-    position: relative !important;
-    left: auto !important;
-    top: auto !important;
-    height: 92px;
-    width: min(280px, 82vw);
-    margin: -1.2rem auto -0.35rem;
-    transform: none !important;
-  }
-
-  .portal-beam {
-    top: -150px;
-    height: 180px;
-    width: 64px;
-    opacity: 0.58;
-  }
-
-  .ring-a {
-    height: 56px;
-    width: 210px;
-  }
-
-  .ring-b {
-    height: 82px;
-    width: 260px;
-  }
-
-  .ring-c {
-    height: 108px;
-    width: 320px;
+  .nexus-flower-canvas {
+    min-height: 320px;
   }
 
   .mobile-holo-nodes {
@@ -525,18 +578,18 @@ a {
     transform: none;
   }
 
-  .nexus-detail-card {
+  .nexus-live-panel {
     position: relative !important;
     bottom: auto !important;
     left: auto !important;
     width: 100% !important;
   }
 
-  .nexus-detail-card .grid {
+  .nexus-live-panel .grid {
     grid-template-columns: 1fr;
   }
 
-  .nexus-detail-card a {
+  .nexus-live-panel a {
     width: 100%;
   }
 }
@@ -551,9 +604,32 @@ a {
   .holo-particle,
   .portal-beam,
   .portal-ring,
+  .nexus-flower-canvas::before,
+  .nexus-live-line,
   .status-bar::after {
     animation: none !important;
     transition: none !important;
+  }
+}
+
+@keyframes digital-flower-breathe {
+  0%,
+  100% {
+    opacity: 0.42;
+    transform: scale(0.96) rotate(0deg);
+  }
+  50% {
+    opacity: 0.82;
+    transform: scale(1.04) rotate(8deg);
+  }
+}
+
+@keyframes nexus-console-scroll {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-128px);
   }
 }
 

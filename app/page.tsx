@@ -33,8 +33,27 @@ import {
   X,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+
+const NexusDigitalFlower = dynamic(
+  () => import("./nexus-digital-flower").then((mod) => mod.NexusDigitalFlower),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="nexus-flower-canvas grid place-items-center">
+        <div className="holo-core">
+          <div className="holo-core-inner">
+            <Bot size={44} />
+            <strong>NEXUS</strong>
+            <span>IA</span>
+          </div>
+        </div>
+      </div>
+    ),
+  }
+);
 
 const menu = [
   ["Inicio", "inicio"],
@@ -1415,25 +1434,8 @@ function HeroVisual({ language }: { language: Language }) {
           ))}
         </div>
 
-        <div className="holo-core-wrap absolute left-1/2 top-[42%] z-10 -translate-x-1/2 -translate-y-1/2 2xl:left-[47%]">
-          <div className="holo-orbit orbit-one" />
-          <div className="holo-orbit orbit-two" />
-          <div className="holo-orbit orbit-three" />
-          <div className="holo-core">
-            <div className="holo-core-inner">
-              <Bot size={54} />
-              <strong>NEXUS</strong>
-              <span>{visualText.core}</span>
-            </div>
-          </div>
-          <div className="holo-wave" />
-        </div>
-
-        <div className="nexus-portal absolute left-1/2 top-[68%] z-10 -translate-x-1/2 2xl:left-[47%]">
-          <div className="portal-beam" />
-          <div className="portal-ring ring-a" />
-          <div className="portal-ring ring-b" />
-          <div className="portal-ring ring-c" />
+        <div className="nexus-flower-wrap absolute left-1/2 top-[46%] z-10 -translate-x-1/2 -translate-y-1/2 2xl:left-[47%]">
+          <NexusDigitalFlower nodes={visualNodes} activeIndex={activeNode} onSelect={selectNode} />
         </div>
 
         {visualNodes.map((node, index) => {
@@ -1470,24 +1472,44 @@ function HeroVisual({ language }: { language: Language }) {
           })}
         </div>
 
-        <div className="nexus-detail-card absolute bottom-4 left-4 z-30 w-[min(390px,calc(100%-2rem))]">
-          <div className="rounded-lg border border-dyd-cyan/20 bg-dyd-ink/80 p-4 shadow-2xl backdrop-blur-xl">
-            <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-dyd-cyan">
-              <ActiveIcon size={20} />
-              {active.title}
+        <div className="nexus-live-panel absolute bottom-4 left-4 z-30 w-[min(420px,calc(100%-2rem))]">
+          <div className="rounded-lg border border-dyd-cyan/25 bg-dyd-ink/82 p-4 shadow-2xl backdrop-blur-xl">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-dyd-cyan">Nexus Live</p>
+                <p className="mt-1 text-[11px] text-dyd-text">Consola de innovación, servicios y señales activas</p>
+              </div>
+              <span className="rounded-full bg-dyd-cyan/10 px-2 py-1 text-[10px] font-semibold text-dyd-cyan">LIVE</span>
             </div>
-            <p className="text-sm leading-6 text-dyd-text">{active.description}</p>
-            <div className="mt-3 grid grid-cols-2 gap-2">
-              {active.benefits.map((benefit) => (
-                <span key={benefit} className="flex items-center gap-2 rounded-md border border-dyd-silver/15 bg-dyd-silver/[0.05] px-2 py-1.5 text-xs text-white">
-                  <CheckCircle2 size={14} className="shrink-0 text-dyd-cyan" />
-                  {benefit}
-                </span>
+
+            <div className="nexus-live-console rounded-md border border-dyd-silver/10 bg-dyd-black/45 p-3">
+              {[...visualActivity, ...visualActivity].map(([event, location], index) => (
+                <div key={`${event}-${index}`} className="nexus-live-line">
+                  <span className="text-dyd-cyan">&gt;</span>
+                  <strong>{event}</strong>
+                  <small>{location}</small>
+                </div>
               ))}
             </div>
-            <a href="#servicios" className="mt-4 inline-flex h-10 items-center justify-center rounded-md bg-gradient-to-r from-dyd-blue to-dyd-cyan px-4 text-sm font-semibold">
-              {visualText.more}
-            </a>
+
+            <div className="mt-4 border-t border-dyd-silver/10 pt-4">
+              <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-dyd-cyan">
+                <ActiveIcon size={20} />
+                {active.title}
+              </div>
+              <p className="text-sm leading-6 text-dyd-text">{active.description}</p>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                {active.benefits.map((benefit) => (
+                  <span key={benefit} className="flex items-center gap-2 rounded-md border border-dyd-silver/15 bg-dyd-silver/[0.05] px-2 py-1.5 text-xs text-white">
+                    <CheckCircle2 size={14} className="shrink-0 text-dyd-cyan" />
+                    {benefit}
+                  </span>
+                ))}
+              </div>
+              <a href="#servicios" className="mt-4 inline-flex h-10 items-center justify-center rounded-md bg-gradient-to-r from-dyd-blue to-dyd-cyan px-4 text-sm font-semibold">
+                {visualText.more}
+              </a>
+            </div>
           </div>
         </div>
 
