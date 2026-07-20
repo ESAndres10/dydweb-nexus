@@ -415,8 +415,8 @@ a {
 }
 
 .nexus-flower-wrap {
-  height: min(560px, 58vw);
-  width: min(720px, 72vw);
+  height: min(500px, 52vw);
+  width: min(620px, 62vw);
   filter: drop-shadow(0 0 34px rgba(18, 199, 232, 0.28));
   perspective: 1200px;
 }
@@ -424,7 +424,7 @@ a {
 .nexus-flower-canvas {
   position: relative;
   height: 100%;
-  min-height: 430px;
+  min-height: 390px;
   width: 100%;
   --tilt-x: 0deg;
   --tilt-y: 0deg;
@@ -482,12 +482,12 @@ a {
 }
 
 .nexus-flower-petal {
-  --reach: 62px;
+  --reach: 48px;
   position: absolute;
   left: 50%;
   top: 50%;
-  height: 118px;
-  width: 66px;
+  height: 94px;
+  width: 50px;
   border: 0;
   background: transparent;
   color: white;
@@ -508,8 +508,8 @@ a {
 }
 
 .nexus-flower-canvas.is-open .nexus-flower-petal {
-  --reach: 190px;
-  opacity: 0.9;
+  --reach: 148px;
+  opacity: 0.82;
   transform:
     translate(-50%, -50%)
     rotate(var(--angle))
@@ -520,7 +520,7 @@ a {
 
 .nexus-flower-canvas.is-open .nexus-flower-petal.is-active,
 .nexus-flower-petal:hover {
-  --reach: 208px;
+  --reach: 162px;
   opacity: 1;
   filter: drop-shadow(0 0 24px rgba(18, 199, 232, 0.72));
 }
@@ -544,8 +544,8 @@ a {
 .nexus-flower-energy {
   position: absolute;
   left: 50%;
-  bottom: -116px;
-  height: 130px;
+  bottom: -88px;
+  height: 104px;
   width: 2px;
   border-radius: 999px;
   background: linear-gradient(to top, rgba(18, 199, 232, 0.06), rgba(18, 199, 232, 0.88), rgba(216, 226, 238, 0.2));
@@ -554,33 +554,13 @@ a {
   animation: data-flow 2.2s linear infinite;
 }
 
-.nexus-petal-label {
-  position: absolute;
-  left: 50%;
-  top: -34px;
-  width: max-content;
-  max-width: 150px;
-  border: 1px solid rgba(18, 199, 232, 0.28);
-  border-radius: 0.5rem;
-  background: rgba(5, 7, 13, 0.62);
-  padding: 0.38rem 0.55rem;
-  color: #eaf8ff;
-  font-size: 0.66rem;
-  font-weight: 800;
-  line-height: 1.1;
-  text-align: center;
-  text-shadow: 0 0 10px rgba(18, 199, 232, 0.82);
-  transform: translateX(-50%) rotate(calc(var(--angle) * -1));
-  backdrop-filter: blur(10px);
-}
-
 .nexus-flower-core {
   position: absolute;
   left: 50%;
   top: 50%;
   display: grid;
-  height: 128px;
-  width: 128px;
+  height: 116px;
+  width: 116px;
   place-items: center;
   border: 1px solid rgba(159, 247, 255, 0.46);
   border-radius: 999px;
@@ -625,14 +605,14 @@ a {
 }
 
 .nexus-core-orbit.orbit-a {
-  height: 176px;
-  width: 255px;
+  height: 156px;
+  width: 225px;
   animation: portal-spin 7s linear infinite;
 }
 
 .nexus-core-orbit.orbit-b {
-  height: 210px;
-  width: 310px;
+  height: 188px;
+  width: 278px;
   border-color: rgba(11, 77, 255, 0.42);
   animation: portal-spin 10s linear infinite reverse;
 }
@@ -745,10 +725,6 @@ a {
   .nexus-flower-petal {
     height: 82px;
     width: 48px;
-  }
-
-  .nexus-petal-label {
-    display: none;
   }
 
   .nexus-flower-core {

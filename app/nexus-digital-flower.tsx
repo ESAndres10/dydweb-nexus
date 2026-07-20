@@ -67,7 +67,6 @@ export function NexusDigitalFlower({ nodes, activeIndex, onSelect }: NexusDigita
             >
               <span className="nexus-flower-energy" />
               <span className="nexus-petal-shape" />
-              <span className="nexus-petal-label">{node.label}</span>
             </button>
           );
         })}
