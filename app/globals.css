@@ -738,6 +738,165 @@ a {
   grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
+.nexus-svg-flower {
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+}
+
+.nexus-svg-flower .nexus-flower-depth {
+  display: grid;
+  place-items: center;
+  transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+}
+
+.nexus-flower-svg {
+  display: block;
+  width: min(100%, 660px);
+  height: auto;
+  overflow: visible;
+}
+
+.nexus-svg-back-orbits ellipse {
+  fill: none;
+  stroke: rgba(18, 199, 232, 0.22);
+  stroke-width: 0.8;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.nexus-svg-back-orbits ellipse:nth-child(1) {
+  transform: rotate(-8deg);
+}
+
+.nexus-svg-back-orbits ellipse:nth-child(2) {
+  transform: rotate(16deg);
+}
+
+.nexus-svg-back-orbits ellipse:nth-child(3) {
+  transform: rotate(38deg);
+  opacity: 0.55;
+}
+
+.nexus-svg-petal {
+  cursor: pointer;
+  opacity: 0;
+  outline: none;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: opacity 650ms ease var(--delay), filter 220ms ease;
+}
+
+.nexus-svg-flower.is-open .nexus-svg-petal {
+  opacity: 0.82;
+}
+
+.nexus-svg-flower.is-open .nexus-svg-petal.is-active,
+.nexus-svg-petal:hover {
+  opacity: 1;
+  filter: drop-shadow(0 0 18px rgba(18, 199, 232, 0.62));
+}
+
+.nexus-svg-petal-path {
+  fill: url("#nexus-petal-fill");
+  stroke: rgba(159, 247, 255, 0.78);
+  stroke-width: 0.9;
+  stroke-opacity: 0.58;
+  vector-effect: non-scaling-stroke;
+}
+
+.nexus-svg-petal.is-active .nexus-svg-petal-path,
+.nexus-svg-petal:hover .nexus-svg-petal-path {
+  stroke-opacity: 0.94;
+}
+
+.nexus-svg-energy {
+  stroke: rgba(18, 199, 232, 0.36);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.nexus-svg-petal.is-active .nexus-svg-energy {
+  stroke: rgba(244, 251, 255, 0.78);
+  stroke-width: 1.6;
+}
+
+.nexus-svg-particle {
+  opacity: var(--o, 0.65);
+  animation: nexus-svg-twinkle 3.4s ease-in-out infinite;
+}
+
+.nexus-svg-badge {
+  overflow: visible;
+  pointer-events: none;
+}
+
+.nexus-svg-badge-inner {
+  display: grid;
+  height: 28px;
+  width: 28px;
+  place-items: center;
+  border: 1px solid rgba(244, 251, 255, 0.52);
+  border-radius: 0.55rem;
+  background: rgba(5, 20, 31, 0.72);
+  color: #bdf7ef;
+  box-shadow: 0 0 16px rgba(18, 199, 232, 0.3);
+}
+
+.nexus-svg-rays line {
+  animation: nexus-ray-pulse 2.6s ease-in-out infinite;
+}
+
+.nexus-svg-core circle:first-child {
+  fill: rgba(11, 77, 255, 0.28);
+  stroke: rgba(159, 247, 255, 0.38);
+  stroke-width: 1;
+  filter: drop-shadow(0 0 24px rgba(18, 199, 232, 0.62));
+}
+
+.nexus-svg-core circle:last-child {
+  fill: #ffffff;
+  filter: drop-shadow(0 0 14px rgba(244, 251, 255, 0.95));
+}
+
+.nexus-svg-core-label {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 4;
+  display: grid;
+  min-width: 112px;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  text-shadow: 0 0 18px rgba(18, 199, 232, 0.9);
+  pointer-events: none;
+}
+
+.nexus-svg-core-label strong {
+  color: #f4fbff;
+  font-size: 1.02rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  line-height: 1.05;
+}
+
+.nexus-svg-core-label small {
+  margin-top: 0.35rem;
+  color: #bdf7ef;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+}
+
+.nexus-svg-core-label em {
+  margin-top: 0.42rem;
+  color: #2fffc8;
+  font-size: 0.58rem;
+  font-style: normal;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
 @media (max-width: 720px) {
   .ai-hologram {
     display: flex;
@@ -777,6 +936,10 @@ a {
     min-height: 340px;
   }
 
+  .nexus-flower-svg {
+    width: min(100%, 390px);
+  }
+
   .nexus-flower-canvas.is-open .nexus-flower-petal {
     --reach: 118px;
   }
@@ -805,6 +968,15 @@ a {
 
   .nexus-flower-core em {
     font-size: 0.48rem;
+  }
+
+  .nexus-svg-core-label strong {
+    font-size: 0.78rem;
+  }
+
+  .nexus-svg-core-label small,
+  .nexus-svg-core-label em {
+    font-size: 0.46rem;
   }
 
   .mobile-holo-nodes {
@@ -864,6 +1036,26 @@ a {
   }
 }
 
+@keyframes nexus-svg-twinkle {
+  0%,
+  100% {
+    opacity: var(--o, 0.65);
+  }
+  50% {
+    opacity: calc(var(--o, 0.65) * 0.34);
+  }
+}
+
+@keyframes nexus-ray-pulse {
+  0%,
+  100% {
+    opacity: 0.82;
+  }
+  50% {
+    opacity: 0.22;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .ai-hologram,
   .ai-hologram::after,
@@ -876,6 +1068,8 @@ a {
   .portal-ring,
   .nexus-flower-canvas::before,
   .nexus-live-line,
+  .nexus-svg-particle,
+  .nexus-svg-rays line,
   .status-bar::after {
     animation: none !important;
     transition: none !important;
