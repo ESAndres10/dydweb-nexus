@@ -35,7 +35,6 @@ import {
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { NexusDigitalFlower } from "./nexus-digital-flower";
 
 const menu = [
   ["Inicio", "inicio"],
@@ -1202,324 +1201,312 @@ function ScheduleMeeting({
 }
 
 function HeroVisual({ language }: { language: Language }) {
-  const [activeNode, setActiveNode] = useState(0);
-  const [activation, setActivation] = useState(false);
+  const [activeSolution, setActiveSolution] = useState(0);
   const [activityIndex, setActivityIndex] = useState(0);
-  const nodeText =
-    language === "en"
-      ? [
-          {
-            label: "Artificial Intelligence",
-            title: "Artificial Intelligence",
-            description: "We automate business processes with intelligent agents and generative AI tools.",
-            benefits: ["Automation", "AI agents", "Integrations", "Data processing"],
-          },
-          {
-            label: "Web Development",
-            title: "Web Development",
-            description: "We build fast, secure and scalable platforms that turn visitors into business opportunities.",
-            benefits: ["Corporate sites", "Landing pages", "E-commerce", "Custom portals"],
-          },
-          {
-            label: "Digital Strategy",
-            title: "Digital Strategy",
-            description: "We design growth roadmaps with technology, automation and positioning to accelerate results.",
-            benefits: ["Digital roadmap", "Priorities", "Scalability", "Growth"],
-          },
-          {
-            label: "Smart SEO",
-            title: "Smart SEO",
-            description: "We optimize architecture, content and performance so your brand gains organic visibility.",
-            benefits: ["Technical SEO", "Local SEO", "Strategic content", "Continuous measurement"],
-          },
-          {
-            label: "Premium UX",
-            title: "Premium UX Experience",
-            description: "We create clean, futuristic and easy-to-use interfaces so every visit becomes trust.",
-            benefits: ["Premium design", "Clarity", "Trust", "Interaction"],
-          },
-          {
-            label: "Data Analytics",
-            title: "Data Analytics",
-            description: "We turn scattered data into clear indicators, executive dashboards and actionable decisions.",
-            benefits: ["Dashboards", "KPIs", "Business Intelligence", "Reports"],
-          },
-          {
-            label: "Commercial Conversion",
-            title: "Commercial Conversion",
-            description: "We optimize forms, messages and calls to action to turn traffic into real opportunities.",
-            benefits: ["Leads", "Funnels", "CTA", "Follow-up"],
-          },
-          {
-            label: "CRM Automation",
-            title: "CRM Automation",
-            description: "We connect sales, follow-up and support into intelligent flows that save time and improve response.",
-            benefits: ["Sales funnel", "Lead scoring", "WhatsApp", "Automated reports"],
-          },
-          {
-            label: "Cloud Integrations",
-            title: "Cloud Integrations",
-            description: "We connect tools, APIs and cloud services so your digital operation works as one system.",
-            benefits: ["APIs", "Cloudflare", "Google", "Automation"],
-          },
-          {
-            label: "Custom Software",
-            title: "Custom Software",
-            description: "We design custom business systems to operate, integrate data and scale critical processes.",
-            benefits: ["ERP", "CRM", "APIs", "Dashboards"],
-          },
-        ]
-      : hologramNodes.map(({ label, title, description, benefits }) => ({ label, title, description, benefits }));
-  const visualNodes = hologramNodes.map((node, index) => ({ ...node, ...nodeText[index] }));
-  const visualStatus =
-    language === "en"
-      ? [
-          ["AI operational", "98%", Bot],
-          ["Servers", "100%", Server],
-          ["Security", "99%", ShieldCheck],
-          ["Automations", "96%", MonitorCog],
-          ["Performance", "97%", Gauge],
-        ]
-      : systemStatus;
-  const visualActivity =
-    language === "en"
-      ? [
-          ["New project started", "Bogota, Colombia"],
-          ["Automation executed", "Madrid, Spain"],
-          ["SEO report generated", "Mexico City, MX"],
-          ["System updated", "Cloudflare Edge"],
-        ]
-      : activityFeed;
-  const visualText =
+
+  const content =
     language === "en"
       ? {
-          portal: "Nexus Portal",
-          core: "AI",
-          more: "Explore services",
+          eyebrow: "DYDWEB NEXUS · DIGITAL GROWTH SYSTEM",
+          title: "We build the digital engine your business needs to sell, automate and scale.",
+          description:
+            "A premium technology partner for companies that need more than a website: strategy, software, AI, SEO, automation and data working as one system.",
+          primary: "Start my project",
+          secondary: "View services",
+          command: "Nexus Command Center",
+          commandText: "From idea to measurable digital operation.",
+          active: "Active opportunity",
+          live: "Live",
           system: "System status",
-          online: "Online",
-          activity: "Real-time activity",
-          active: "Nexus AI active 24/7",
-          activeText: "Monitoring, optimizing and scaling your growth.",
+          activity: "Execution flow",
+          metrics: [
+            ["+250", "Successful projects", Rocket],
+            ["+98%", "Client satisfaction", UsersRound],
+            ["+12K", "Active automations", Bot],
+            ["24/7", "AI monitoring", BarChart3],
+            ["+5 years", "Building growth", Star],
+          ],
+          stages: ["Diagnosis", "Architecture", "Launch", "Automation", "Measurement"],
+          trust: ["Fast launch", "Secure stack", "SEO foundation", "Data-driven growth"],
         }
       : {
-          portal: "Portal Nexus",
-          core: "IA",
-          more: "Conocer más",
+          eyebrow: "DYDWEB NEXUS · SISTEMA DE CRECIMIENTO DIGITAL",
+          title: "Construimos el motor digital que tu negocio necesita para vender, automatizar y escalar.",
+          description:
+            "Un socio tecnológico premium para empresas que necesitan más que una página web: estrategia, software, IA, SEO, automatización y datos trabajando como un solo sistema.",
+          primary: "Empezar mi proyecto",
+          secondary: "Ver servicios",
+          command: "Centro de Operaciones Nexus",
+          commandText: "De la idea a una operación digital medible.",
+          active: "Oportunidad activa",
+          live: "En vivo",
           system: "Estado del sistema",
-          online: "En linea",
-          activity: "Actividad en tiempo real",
-          active: "Nexus IA activa 24/7",
-          activeText: "Monitoreando, optimizando y escalando tu crecimiento.",
-  };
-  const active = visualNodes[activeNode];
-  const ActiveIcon = active.icon;
+          activity: "Flujo de ejecución",
+          metrics: [
+            ["+250", "Proyectos exitosos", Rocket],
+            ["+98%", "Satisfacción clientes", UsersRound],
+            ["+12K", "Automatizaciones activas", Bot],
+            ["24/7", "IA monitoreando", BarChart3],
+            ["+5 años", "Construyendo crecimiento", Star],
+          ],
+          stages: ["Diagnóstico", "Arquitectura", "Lanzamiento", "Automatización", "Medición"],
+          trust: ["Lanzamiento rápido", "Stack seguro", "Base SEO", "Crecimiento medible"],
+        };
+
+  const solutions =
+    language === "en"
+      ? [
+          {
+            icon: Globe2,
+            title: "High-converting websites",
+            text: "Premium digital presence designed to build trust and capture qualified leads.",
+            tags: ["Corporate web", "Landing pages", "SEO"],
+          },
+          {
+            icon: Code2,
+            title: "Custom software",
+            text: "Internal platforms, portals and business systems built around your operation.",
+            tags: ["Dashboards", "APIs", "CRM"],
+          },
+          {
+            icon: Bot,
+            title: "AI and automation",
+            text: "Agents, workflows and intelligent follow-up that reduce manual work.",
+            tags: ["Agents", "WhatsApp", "Workflows"],
+          },
+          {
+            icon: TrendingUp,
+            title: "Growth and analytics",
+            text: "SEO, conversion and metrics so every decision has evidence behind it.",
+            tags: ["SEO", "KPIs", "Reports"],
+          },
+        ]
+      : [
+          {
+            icon: Globe2,
+            title: "Webs que convierten",
+            text: "Presencia digital premium diseñada para generar confianza y captar prospectos calificados.",
+            tags: ["Web corporativa", "Landing pages", "SEO"],
+          },
+          {
+            icon: Code2,
+            title: "Software a medida",
+            text: "Plataformas internas, portales y sistemas empresariales construidos alrededor de tu operación.",
+            tags: ["Dashboards", "APIs", "CRM"],
+          },
+          {
+            icon: Bot,
+            title: "IA y automatización",
+            text: "Agentes, flujos y seguimiento inteligente para reducir trabajo manual y responder más rápido.",
+            tags: ["Agentes", "WhatsApp", "Flujos"],
+          },
+          {
+            icon: TrendingUp,
+            title: "Crecimiento y analítica",
+            text: "SEO, conversión y métricas para que cada decisión tenga evidencia detrás.",
+            tags: ["SEO", "KPIs", "Reportes"],
+          },
+        ];
+
+  const status =
+    language === "en"
+      ? [
+          ["Strategy", "98%", Rocket],
+          ["Development", "100%", Code2],
+          ["Automation", "96%", MonitorCog],
+          ["Performance", "97%", Gauge],
+        ]
+      : [
+          ["Estrategia", "98%", Rocket],
+          ["Desarrollo", "100%", Code2],
+          ["Automatización", "96%", MonitorCog],
+          ["Rendimiento", "97%", Gauge],
+        ];
+
+  const activity =
+    language === "en"
+      ? [
+          ["Digital roadmap defined", "Growth path"],
+          ["Lead capture optimized", "Commercial system"],
+          ["Automation deployed", "Operations"],
+          ["Metrics report generated", "Decision making"],
+        ]
+      : [
+          ["Ruta digital definida", "Crecimiento"],
+          ["Captación optimizada", "Sistema comercial"],
+          ["Automatización desplegada", "Operación"],
+          ["Reporte de métricas generado", "Decisiones"],
+        ];
 
   useEffect(() => {
-    const timer = window.setInterval(() => {
-      setActivation(true);
-      setActiveNode((current) => (current + 1) % hologramNodes.length);
-      window.setTimeout(() => setActivation(false), 2600);
-    }, 10000);
+    const solutionTimer = window.setInterval(() => {
+      setActiveSolution((current) => (current + 1) % solutions.length);
+    }, 4200);
     const activityTimer = window.setInterval(() => {
-      setActivityIndex((current) => (current + 1) % activityFeed.length);
-    }, 3200);
+      setActivityIndex((current) => (current + 1) % activity.length);
+    }, 3000);
 
     return () => {
-      window.clearInterval(timer);
+      window.clearInterval(solutionTimer);
       window.clearInterval(activityTimer);
     };
-  }, []);
+  }, [activity.length, solutions.length]);
 
-  const selectNode = (index: number) => {
-    setActiveNode(index);
-    setActivation(true);
-    window.setTimeout(() => setActivation(false), 1800);
-  };
+  const active = solutions[activeSolution];
+  const ActiveIcon = active.icon;
 
   return (
     <div className="relative left-1/2 w-screen -translate-x-1/2">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.15, duration: 0.7 }}
-        className="relative"
-      >
-        <div className="hero-mesh absolute -inset-8 opacity-90 blur-2xl" />
-        <div
-          data-portal-version="mobile-v2"
-          className={`ai-hologram nexus-stage relative h-[calc(100vh-4rem)] min-h-[760px] w-full overflow-hidden border-y border-dyd-cyan/15 bg-dyd-ink/70 shadow-[inset_0_1px_0_rgba(18,199,232,0.16),inset_0_-1px_0_rgba(18,199,232,0.12)] backdrop-blur-xl ${
-            activation ? "is-activating" : ""
-          }`}
-        >
-          <div className="absolute left-4 top-4 z-20 rounded-md border border-dyd-cyan/25 bg-dyd-ink/75 px-3 py-2 text-xs uppercase tracking-[0.2em] text-dyd-cyan">
-            {visualText.portal}
-          </div>
-
-          <div className="absolute right-4 top-4 z-20 rounded-md border border-dyd-silver/15 bg-dyd-silver/5 px-3 py-2 text-xs text-dyd-text">
-            D&D WEB Ops
-          </div>
-
-        <svg className="holo-lines pointer-events-none absolute inset-0 z-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="holo-line" x1="0" x2="1" y1="0" y2="1">
-              <stop offset="0%" stopColor="#0B4DFF" stopOpacity="0.22" />
-              <stop offset="55%" stopColor="#12C7E8" stopOpacity="0.95" />
-              <stop offset="100%" stopColor="#D8E2EE" stopOpacity="0.34" />
-            </linearGradient>
-          </defs>
-          {hologramNodes.map((node, index) => (
-            <line
-              key={node.id}
-              x1="50"
-              y1="50"
-              x2={node.dot.x}
-              y2={node.dot.y}
-              className={`holo-connection ${index === activeNode ? "is-active" : ""}`}
-              stroke="url(#holo-line)"
-              strokeWidth={index === activeNode ? "0.42" : "0.22"}
-            />
-          ))}
-        </svg>
-
-        <div className="holo-particles absolute inset-0 z-0">
-          {Array.from({ length: 12 }).map((_, index) => (
-            <span
-              key={index}
-              className="holo-particle"
-              style={{
-                ["--i" as string]: index,
-                ["--mx" as string]: "0px",
-                ["--my" as string]: "0px",
-              }}
-            />
-          ))}
-        </div>
-
-        <div className="nexus-flower-wrap absolute left-1/2 top-[46%] z-10 -translate-x-1/2 -translate-y-1/2 2xl:left-[47%]">
-          <NexusDigitalFlower nodes={visualNodes} activeIndex={activeNode} onSelect={selectNode} />
-        </div>
-
-        <div className="mobile-holo-nodes z-30 hidden">
-          {visualNodes.slice(0, 8).map((node, index) => {
-            const NodeIcon = node.icon;
-
-            return (
-              <button
-                key={node.id}
-                type="button"
-                onClick={() => selectNode(index)}
-                className={`holo-node ${index === activeNode ? "is-selected" : "is-dimmed"}`}
-              >
-                <NodeIcon size={18} aria-hidden="true" />
-                <span>{node.label}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        <div className="nexus-live-panel absolute left-5 top-20 z-30 w-[min(330px,calc(100%-2rem))]">
-          <div className="rounded-lg border border-dyd-cyan/25 bg-dyd-ink/82 p-4 shadow-2xl backdrop-blur-xl">
-            <div className="mb-3 flex items-center justify-between gap-3">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-dyd-cyan">Nexus Live</p>
-                <p className="mt-1 text-[11px] text-dyd-text">Consola de innovación, servicios y señales activas</p>
+      <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="relative">
+        <div className="hero-mesh absolute -inset-8 opacity-80 blur-2xl" />
+        <div className="growth-command relative overflow-hidden border-y border-dyd-cyan/15 bg-dyd-ink/80 px-4 py-10 shadow-[inset_0_1px_0_rgba(18,199,232,0.14),inset_0_-1px_0_rgba(18,199,232,0.12)] sm:px-6 lg:px-8">
+          <div className="growth-command-bg" aria-hidden="true" />
+          <div className="relative z-10 mx-auto grid min-h-[720px] max-w-7xl items-center gap-8 py-6 lg:grid-cols-[0.92fr_1.08fr]">
+            <section className="max-w-3xl">
+              <div className="mb-5 inline-flex items-center gap-2 rounded-md border border-dyd-cyan/30 bg-dyd-cyan/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-dyd-cyan">
+                <span className="h-2 w-2 rounded-full bg-dyd-cyan shadow-[0_0_14px_rgba(18,199,232,0.9)]" />
+                {content.eyebrow}
               </div>
-              <span className="rounded-full bg-dyd-cyan/10 px-2 py-1 text-[10px] font-semibold text-dyd-cyan">LIVE</span>
-            </div>
 
-            <div className="nexus-live-console rounded-md border border-dyd-silver/10 bg-dyd-black/45 p-3">
-              {[...visualActivity, ...visualActivity].map(([event, location], index) => (
-                <div key={`${event}-${index}`} className="nexus-live-line">
-                  <span className="text-dyd-cyan">&gt;</span>
-                  <strong>{event}</strong>
-                  <small>{location}</small>
-                </div>
-              ))}
-            </div>
+              <h1 className="text-balance text-4xl font-black leading-[1.02] text-white md:text-6xl xl:text-7xl">
+                {content.title}
+              </h1>
+              <p className="mt-6 max-w-2xl text-lg leading-8 text-dyd-text">
+                {content.description}
+              </p>
 
-            <div className="mt-4 border-t border-dyd-silver/10 pt-4">
-              <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-dyd-cyan">
-                <ActiveIcon size={20} />
-                {active.title}
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <a href="#contacto" className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-gradient-to-r from-dyd-blue to-dyd-cyan px-5 text-sm font-bold text-white shadow-glow transition hover:brightness-110">
+                  {content.primary} <ArrowRight size={18} />
+                </a>
+                <a href="#servicios" className="inline-flex h-12 items-center justify-center gap-2 rounded-md border border-dyd-cyan/30 bg-dyd-silver/[0.04] px-5 text-sm font-bold text-dyd-silver transition hover:bg-dyd-cyan hover:text-dyd-ink">
+                  {content.secondary} <ChevronRight size={18} />
+                </a>
               </div>
-              <p className="text-sm leading-6 text-dyd-text">{active.description}</p>
-              <div className="mt-3 grid grid-cols-2 gap-2">
-                {active.benefits.map((benefit) => (
-                  <span key={benefit} className="flex items-center gap-2 rounded-md border border-dyd-silver/15 bg-dyd-silver/[0.05] px-2 py-1.5 text-xs text-white">
-                    <CheckCircle2 size={14} className="shrink-0 text-dyd-cyan" />
-                    {benefit}
-                  </span>
+
+              <div className="mt-8 grid gap-3 sm:grid-cols-2">
+                {content.trust.map((item) => (
+                  <div key={item} className="flex items-center gap-2 rounded-md border border-dyd-silver/15 bg-dyd-silver/[0.05] px-3 py-2 text-sm font-semibold text-white">
+                    <CheckCircle2 size={16} className="text-dyd-cyan" />
+                    {item}
+                  </div>
                 ))}
               </div>
-              <a href="#servicios" className="mt-4 inline-flex h-10 items-center justify-center rounded-md bg-gradient-to-r from-dyd-blue to-dyd-cyan px-4 text-sm font-semibold">
-                {visualText.more}
-              </a>
+            </section>
+
+            <section className="growth-console relative">
+              <div className="growth-console-shell">
+                <div className="mb-5 flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-dyd-cyan">{content.command}</p>
+                    <p className="mt-2 text-sm text-dyd-text">{content.commandText}</p>
+                  </div>
+                  <span className="rounded-full bg-dyd-cyan/10 px-3 py-1 text-xs font-bold text-dyd-cyan">{content.live}</span>
+                </div>
+
+                <div className="growth-map">
+                  <div className="growth-core">
+                    <span>NEXUS</span>
+                    <strong>CORE</strong>
+                  </div>
+                  {content.stages.map((stage, index) => (
+                    <button
+                      key={stage}
+                      type="button"
+                      onClick={() => setActiveSolution(index % solutions.length)}
+                      className={`growth-stage stage-${index + 1} ${index % solutions.length === activeSolution ? "is-active" : ""}`}
+                    >
+                      <span>{String(index + 1).padStart(2, "0")}</span>
+                      {stage}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="mt-5 grid gap-3 lg:grid-cols-[1.05fr_0.95fr]">
+                  <div className="rounded-lg border border-dyd-cyan/20 bg-dyd-black/35 p-4">
+                    <div className="mb-3 flex items-center gap-2 text-dyd-cyan">
+                      <ActiveIcon size={22} />
+                      <p className="text-sm font-black">{active.title}</p>
+                    </div>
+                    <p className="text-sm leading-6 text-dyd-text">{active.text}</p>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {active.tags.map((tag) => (
+                        <span key={tag} className="rounded-md border border-dyd-silver/15 bg-dyd-silver/[0.06] px-2.5 py-1.5 text-xs font-semibold text-white">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="rounded-lg border border-dyd-silver/15 bg-dyd-silver/[0.04] p-4">
+                    <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-dyd-cyan">{content.system}</p>
+                    <div className="space-y-3">
+                      {status.map(([label, value, Icon]) => (
+                        <div key={label as string}>
+                          <div className="mb-1.5 flex items-center justify-between text-xs">
+                            <span className="flex items-center gap-2 text-dyd-text">
+                              <Icon size={14} className="text-dyd-cyan" />
+                              {label as string}
+                            </span>
+                            <span className="font-bold text-white">{value as string}</span>
+                          </div>
+                          <div className="h-1.5 rounded-full bg-dyd-silver/10">
+                            <div className="status-bar h-1.5 rounded-full bg-gradient-to-r from-dyd-blue to-dyd-cyan" style={{ width: value as string }} />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <div className="relative z-10 mx-auto grid max-w-7xl gap-4 pb-6 lg:grid-cols-[1fr_0.95fr]">
+            <div className="grid gap-3 md:grid-cols-4">
+              {solutions.map((solution, index) => {
+                const Icon = solution.icon;
+                return (
+                  <button
+                    key={solution.title}
+                    type="button"
+                    onClick={() => setActiveSolution(index)}
+                    className={`solution-command-card ${index === activeSolution ? "is-active" : ""}`}
+                  >
+                    <Icon size={22} />
+                    <span>{solution.title}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="rounded-lg border border-dyd-cyan/20 bg-dyd-ink/72 p-4 shadow-2xl backdrop-blur-xl">
+              <div className="mb-3 flex items-center justify-between">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-dyd-cyan">{content.activity}</p>
+                <span className="text-[10px] font-semibold text-dyd-text">{content.active}</span>
+              </div>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {activity.map(([event, area], index) => (
+                  <div key={event} className={`rounded-md border border-dyd-silver/15 bg-dyd-silver/[0.05] p-3 ${index === activityIndex ? "activity-active" : ""}`}>
+                    <p className="text-xs font-bold text-white">{event}</p>
+                    <p className="mt-1 text-[11px] text-dyd-text">{area}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
 
-        <aside className="nexus-side-panel absolute right-4 top-[76px] z-30 hidden w-[245px] rounded-lg border border-dyd-cyan/20 bg-dyd-ink/80 p-4 shadow-2xl backdrop-blur-xl 2xl:block">
-          <div className="mb-4 flex items-center justify-between">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-dyd-cyan">{visualText.system}</p>
-            <span className="rounded-full bg-dyd-silver/15 px-2 py-1 text-[10px] font-semibold text-dyd-silver">{visualText.online}</span>
-          </div>
-          <div className="space-y-3">
-            {visualStatus.map(([label, value, Icon]) => (
-              <div key={label as string}>
-                <div className="mb-1.5 flex items-center justify-between text-xs">
-                  <span className="flex items-center gap-2 text-dyd-text">
-                    <Icon size={14} className="text-dyd-cyan" />
-                    {label as string}
-                  </span>
-                  <span className="font-semibold text-white">{value as string}</span>
-                </div>
-                <div className="h-1.5 rounded-full bg-dyd-silver/10">
-                  <div className="status-bar h-1.5 rounded-full bg-gradient-to-r from-dyd-blue to-dyd-cyan" style={{ width: value as string }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </aside>
-
-        <aside className="nexus-activity absolute right-4 top-[350px] z-30 hidden w-[245px] rounded-lg border border-dyd-cyan/20 bg-dyd-ink/80 p-4 shadow-2xl backdrop-blur-xl 2xl:block">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-dyd-cyan">{visualText.activity}</p>
-          <div className="space-y-2">
-            {visualActivity.map(([event, location], index) => (
-              <div key={event} className={`rounded-md border border-dyd-silver/15 bg-dyd-silver/[0.05] p-2.5 ${index === activityIndex ? "activity-active" : ""}`}>
-                <p className="text-xs font-semibold text-white">{event}</p>
-                <p className="mt-1 text-[11px] text-dyd-text">{location}</p>
-              </div>
-            ))}
-          </div>
-          <div className="mt-4 rounded-md border border-dyd-cyan/20 bg-dyd-cyan/10 p-3">
-            <p className="text-xs font-semibold text-white">{visualText.active}</p>
-            <p className="mt-1 text-[11px] leading-4 text-dyd-text">{visualText.activeText}</p>
-            <div className="activity-graph mt-2 h-7" />
-          </div>
-        </aside>
-
-        <div className="nexus-metric-strip absolute bottom-5 left-1/2 z-20 hidden w-[calc(100%-2.5rem)] max-w-[1560px] -translate-x-1/2 rounded-lg border border-dyd-cyan/20 bg-dyd-ink/72 px-5 py-3 shadow-2xl backdrop-blur-xl xl:grid">
-          {[
-            [Rocket, "+250", "Proyectos Exitosos"],
-            [UsersRound, "+98%", "Satisfacción Clientes"],
-            [Bot, "+12K", "Automatizaciones Activas"],
-            [BarChart3, "+24/7", "IA Monitoreando"],
-            [Star, "+5 Años", "Innovando Juntos"],
-          ].map(([MetricIcon, value, label]) => {
-            const Icon = MetricIcon as typeof Rocket;
-
-            return (
-              <div key={label as string} className="flex items-center justify-center gap-3 border-r border-dyd-silver/10 last:border-r-0">
-                <Icon size={28} className="text-dyd-cyan" aria-hidden="true" />
+          <div className="relative z-10 mx-auto grid max-w-7xl gap-3 rounded-lg border border-dyd-cyan/20 bg-dyd-black/35 p-4 shadow-2xl backdrop-blur-xl md:grid-cols-5">
+            {content.metrics.map(([value, label, Icon]) => (
+              <div key={label as string} className="flex items-center gap-3 border-dyd-silver/10 md:border-r md:last:border-r-0">
+                <Icon size={26} className="text-dyd-cyan" />
                 <div>
                   <p className="text-xl font-black text-dyd-cyan">{value as string}</p>
                   <p className="text-xs text-dyd-text">{label as string}</p>
                 </div>
               </div>
-            );
-          })}
-        </div>
+            ))}
+          </div>
         </div>
       </motion.div>
     </div>

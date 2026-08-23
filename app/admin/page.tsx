@@ -1510,22 +1510,38 @@ export default function AdminPage() {
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <span className="text-sm font-semibold text-dyd-silver">Contenido del artículo</span>
                     <div className="flex flex-wrap gap-2">
-                      {([
-                        ["Izquierda", AlignLeft, () => alignSelectedText("left")],
-                        ["Centrar", AlignCenter, () => alignSelectedText("center")],
-                        ["Derecha", AlignRight, () => alignSelectedText("right")],
-                        ["Justificar", AlignJustify, () => alignSelectedText("justify")],
-                      ] as [string, LucideIcon, () => void][]).map(([label, Icon, action]) => (
-                        <button
-                          key={label}
-                          type="button"
-                          onClick={action}
-                          title={label}
-                          className="grid h-9 w-9 place-items-center rounded-md border border-dyd-silver/15 bg-dyd-black/35 text-dyd-silver transition hover:border-dyd-cyan hover:text-dyd-cyan"
-                        >
-                          <Icon size={17} />
-                        </button>
-                      ))}
+                      <button
+                        type="button"
+                        onClick={() => alignSelectedText("left")}
+                        title="Izquierda"
+                        className="grid h-9 w-9 place-items-center rounded-md border border-dyd-silver/15 bg-dyd-black/35 text-dyd-silver transition hover:border-dyd-cyan hover:text-dyd-cyan"
+                      >
+                        <AlignLeft size={17} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => alignSelectedText("center")}
+                        title="Centrar"
+                        className="grid h-9 w-9 place-items-center rounded-md border border-dyd-silver/15 bg-dyd-black/35 text-dyd-silver transition hover:border-dyd-cyan hover:text-dyd-cyan"
+                      >
+                        <AlignCenter size={17} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => alignSelectedText("right")}
+                        title="Derecha"
+                        className="grid h-9 w-9 place-items-center rounded-md border border-dyd-silver/15 bg-dyd-black/35 text-dyd-silver transition hover:border-dyd-cyan hover:text-dyd-cyan"
+                      >
+                        <AlignRight size={17} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => alignSelectedText("justify")}
+                        title="Justificar"
+                        className="grid h-9 w-9 place-items-center rounded-md border border-dyd-silver/15 bg-dyd-black/35 text-dyd-silver transition hover:border-dyd-cyan hover:text-dyd-cyan"
+                      >
+                        <AlignJustify size={17} />
+                      </button>
                       <button
                         type="button"
                         onClick={insertInlineImage}
