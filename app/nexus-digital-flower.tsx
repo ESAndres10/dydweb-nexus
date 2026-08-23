@@ -60,6 +60,7 @@ export function NexusDigitalFlower({ nodes, activeIndex, onSelect }: NexusDigita
               key={node.id}
               type="button"
               aria-label={node.label}
+              data-label={node.label}
               onClick={() => onSelect(index)}
               onPointerEnter={() => onSelect(index)}
               className={`nexus-flower-petal ${active ? "is-active" : ""}`}
@@ -71,8 +72,8 @@ export function NexusDigitalFlower({ nodes, activeIndex, onSelect }: NexusDigita
               <span className="nexus-flower-energy" />
               <span className="nexus-petal-shape" />
               <span className="nexus-petal-content">
-                <NodeIcon size={28} aria-hidden="true" />
-                <span>{node.label}</span>
+                <NodeIcon size={24} aria-hidden="true" />
+                <span className="nexus-petal-signal" aria-hidden="true" />
               </span>
             </button>
           );
@@ -82,7 +83,7 @@ export function NexusDigitalFlower({ nodes, activeIndex, onSelect }: NexusDigita
           <span className="nexus-core-orbit orbit-a" />
           <span className="nexus-core-orbit orbit-b" />
           <strong>NEXUS CORE</strong>
-          <small>Inteligencia Adaptativa</small>
+          <small>AI POWERED</small>
           <em>ONLINE</em>
         </div>
       </div>
