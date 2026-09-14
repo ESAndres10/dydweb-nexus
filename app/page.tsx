@@ -34,7 +34,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const menu = [
   ["Inicio", "inicio"],
@@ -253,6 +253,19 @@ const chatbotTopics = [
 
 type Language = "es" | "en";
 
+type VantaEffect = {
+  destroy: () => void;
+};
+
+function supportsWebGL() {
+  try {
+    const canvas = document.createElement("canvas");
+    return Boolean(canvas.getContext("webgl") || canvas.getContext("experimental-webgl"));
+  } catch {
+    return false;
+  }
+}
+
 async function submitLeadToSheets(payload: Record<string, unknown>) {
   try {
     const response = await fetch("/api/leads", {
@@ -276,11 +289,11 @@ const siteCopy = {
     pageLinks: { about: "Quiénes Somos", packages: "Paquetes", questions: "Preguntas", more: "Más" },
     menu: ["Inicio", "Servicios", "Casos", "Contacto"],
     moreMenu: ["Proceso", "Soluciones", "Noticias"],
-    heroBadge: "Tecnología, inversión e impacto social",
-    heroBefore: "Transformamos ideas en",
-    heroHighlight: "soluciones digitales",
-    heroAfter: "que impulsan el crecimiento empresarial.",
-    heroText: "Desarrollo de software, inteligencia artificial, diseño web, SEO, automatización y marketing digital en un solo lugar.",
+    heroBadge: "Tecnología simple para vender más",
+    heroBefore: "Consigue más clientes con",
+    heroHighlight: "web, software e IA",
+    heroAfter: "que trabajan por ti.",
+    heroText: "Creamos experiencias digitales que atraen, venden y automatizan tareas para que tu negocio crezca sin complicarte.",
     primaryCta: "Solicitar cotización",
     secondaryCta: "Ver proyectos",
     stats: ["soluciones entregadas", "sectores atendidos", "satisfacción proyectada", "operación digital"],
@@ -480,11 +493,11 @@ const siteCopy = {
     pageLinks: { about: "About Us", packages: "Packages", questions: "FAQ", more: "More" },
     menu: ["Home", "Services", "Cases", "Contact"],
     moreMenu: ["Process", "Solutions", "News"],
-    heroBadge: "Technology, investment and social impact",
-    heroBefore: "We transform ideas into",
-    heroHighlight: "digital solutions",
-    heroAfter: "that accelerate business growth.",
-    heroText: "Software development, artificial intelligence, web design, SEO, automation and digital marketing in one place.",
+    heroBadge: "Simple technology to sell more",
+    heroBefore: "Get more customers with",
+    heroHighlight: "web, software and AI",
+    heroAfter: "working for you.",
+    heroText: "We create digital experiences that attract, sell and automate tasks so your business can grow without added complexity.",
     primaryCta: "Request a quote",
     secondaryCta: "View projects",
     stats: ["solutions delivered", "sectors served", "projected satisfaction", "digital operation"],
@@ -1518,7 +1531,10 @@ export default function Home() {
   const [language, setLanguage] = useState<Language>("es");
   const [contactSent, setContactSent] = useState(false);
   const [contactError, setContactError] = useState(false);
+  const [vantaFallback, setVantaFallback] = useState(false);
+  const heroVantaRef = useRef<HTMLDivElement | null>(null);
   const copy = siteCopy[language];
+  const heroMetricIcons = [Globe2, Gauge, ShieldCheck, Rocket];
   const updateLanguage = (item: Language) => {
     setLanguage(item);
     window.localStorage.setItem("dydweb-language", item);
@@ -1529,6 +1545,81 @@ export default function Home() {
     if (savedLanguage === "es" || savedLanguage === "en") {
       setLanguage(savedLanguage);
     }
+  }, []);
+
+  useEffect(() => {
+    let vantaEffect: VantaEffect | null = null;
+    let cancelled = false;
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (reducedMotion || !heroVantaRef.current) {
+      return undefined;
+    }
+
+    if (!supportsWebGL()) {
+      setVantaFallback(true);
+      return undefined;
+    }
+
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+    async function initVanta() {
+      try {
+        const [birdsModule, threeModule] = await Promise.all([
+          import("vanta/dist/vanta.birds.min"),
+          import("three"),
+        ]);
+
+        if (cancelled || !heroVantaRef.current) {
+          return;
+        }
+
+        const BIRDS = (
+          birdsModule as {
+            default?: (options: Record<string, unknown>) => VantaEffect;
+          }
+        ).default;
+
+        if (!BIRDS) {
+          setVantaFallback(true);
+          return;
+        }
+
+        const THREE = (threeModule as { default?: unknown }).default ?? threeModule;
+
+        vantaEffect = BIRDS({
+          el: heroVantaRef.current,
+          THREE,
+          mouseControls: true,
+          touchControls: true,
+          gyroControls: false,
+          backgroundAlpha: 0,
+          backgroundColor: 0xeaf6ff,
+          color1: 0x2684ff,
+          color2: 0x6d6cff,
+          colorMode: "variance",
+          birdSize: isMobile ? 0.55 : 0.86,
+          wingSpan: isMobile ? 16 : 24,
+          speedLimit: isMobile ? 1.05 : 1.9,
+          separation: isMobile ? 46 : 32,
+          alignment: isMobile ? 34 : 28,
+          cohesion: isMobile ? 24 : 30,
+          quantity: isMobile ? 1.8 : 4.2,
+        });
+        setVantaFallback(false);
+      } catch {
+        vantaEffect = null;
+        setVantaFallback(true);
+      }
+    }
+
+    void initVanta();
+
+    return () => {
+      cancelled = true;
+      vantaEffect?.destroy();
+    };
   }, []);
 
   const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -1560,10 +1651,10 @@ export default function Home() {
 
   return (
     <main className="min-h-screen overflow-hidden bg-dyd-black text-white">
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-dyd-silver/15 bg-dyd-ink/82 shadow-[0_14px_45px_rgba(0,0,0,0.22)] backdrop-blur-xl">
+      <header className="fixed inset-x-0 top-0 z-50 border-b border-[#d8ecff]/75 bg-white/78 shadow-[0_14px_45px_rgba(35,93,150,0.12)] backdrop-blur-xl">
         <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <a href="#inicio" className="flex items-center">
-            <span className="relative block h-12 w-40 overflow-hidden rounded-md border border-dyd-cyan/20 bg-dyd-black/70">
+            <span className="relative block h-12 w-40 overflow-hidden rounded-md border border-[#d8ecff] bg-white/82 shadow-[0_12px_28px_rgba(46,131,232,0.12)]">
               <Image
                 src="/logo-dydweb-nexus-header-wide.png"
                 alt="DYDWEB"
@@ -1576,27 +1667,27 @@ export default function Home() {
           </a>
           <div className="hidden items-center gap-1 lg:flex">
             {menu.map(([, id], index) => (
-              <a key={id} href={`#${id}`} className="rounded-md px-3 py-2 text-sm font-medium text-dyd-text transition hover:bg-dyd-silver/10 hover:text-white">
+              <a key={id} href={`#${id}`} className="rounded-md px-3 py-2 text-sm font-semibold text-[#253044] transition hover:bg-[#e7f4ff] hover:text-[#2e83e8]">
                 {copy.menu[index]}
               </a>
             ))}
-            <a href="/nosotros" className="rounded-md px-3 py-2 text-sm font-medium text-dyd-text transition hover:bg-dyd-silver/10 hover:text-white">
+            <a href="/nosotros" className="rounded-md px-3 py-2 text-sm font-semibold text-[#253044] transition hover:bg-[#e7f4ff] hover:text-[#2e83e8]">
               {copy.pageLinks.about}
             </a>
-            <a href="/servicios" className="rounded-md px-3 py-2 text-sm font-medium text-dyd-text transition hover:bg-dyd-silver/10 hover:text-white">
+            <a href="/servicios" className="rounded-md px-3 py-2 text-sm font-semibold text-[#253044] transition hover:bg-[#e7f4ff] hover:text-[#2e83e8]">
               {copy.pageLinks.packages}
             </a>
-            <a href="/preguntas" className="rounded-md px-3 py-2 text-sm font-medium text-dyd-text transition hover:bg-dyd-silver/10 hover:text-white">
+            <a href="/preguntas" className="rounded-md px-3 py-2 text-sm font-semibold text-[#253044] transition hover:bg-[#e7f4ff] hover:text-[#2e83e8]">
               {copy.pageLinks.questions}
             </a>
             <div className="group relative">
               <button
                 type="button"
-                className="inline-flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium text-dyd-text transition hover:bg-dyd-silver/10 hover:text-white"
+                className="inline-flex items-center gap-1 rounded-md px-3 py-2 text-sm font-semibold text-[#253044] transition hover:bg-[#e7f4ff] hover:text-[#2e83e8]"
               >
                 {copy.pageLinks.more} <ChevronDown size={15} />
               </button>
-              <div className="invisible absolute right-0 top-full z-50 w-56 translate-y-2 rounded-lg border border-dyd-silver/15 bg-dyd-ink/95 p-2 opacity-0 shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl transition group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+              <div className="invisible absolute right-0 top-full z-50 w-56 translate-y-2 rounded-lg border border-[#d8ecff] bg-white/95 p-2 opacity-0 shadow-[0_18px_60px_rgba(35,93,150,0.18)] backdrop-blur-xl transition group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
                 {moreMenu.map(([, id], index) => {
                   const href = id === "noticias" ? "/noticias" : `#${id}`;
 
@@ -1604,7 +1695,7 @@ export default function Home() {
                     <a
                       key={id}
                       href={href}
-                      className="block rounded-md px-3 py-2 text-sm font-medium text-dyd-text transition hover:bg-dyd-cyan/10 hover:text-white"
+                      className="block rounded-md px-3 py-2 text-sm font-semibold text-[#253044] transition hover:bg-[#e7f4ff] hover:text-[#2e83e8]"
                     >
                       {copy.moreMenu[index]}
                     </a>
@@ -1613,44 +1704,44 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div className="hidden items-center rounded-md border border-dyd-silver/15 bg-dyd-silver/5 p-1 lg:flex" aria-label={copy.languageLabel}>
+          <div className="hidden items-center rounded-md border border-[#d8ecff] bg-white/70 p-1 lg:flex" aria-label={copy.languageLabel}>
             {(["es", "en"] as const).map((item) => (
               <button
                 key={item}
                 type="button"
                 onClick={() => updateLanguage(item)}
                 className={`h-8 rounded px-2.5 text-xs font-semibold transition ${
-                  language === item ? "bg-dyd-cyan text-dyd-ink" : "text-dyd-text hover:text-white"
+                  language === item ? "bg-[#2e83e8] text-white" : "text-[#536179] hover:text-[#2e83e8]"
                 }`}
               >
                 {item.toUpperCase()}
               </button>
             ))}
           </div>
-          <a href="#contacto" className="hidden rounded-md bg-gradient-to-r from-dyd-blue to-dyd-cyan px-4 py-2 text-sm font-semibold text-white shadow-glow transition hover:brightness-110 lg:inline-flex">
+          <a href="#contacto" className="hidden rounded-md bg-[#2e83e8] px-4 py-2 text-sm font-semibold text-white shadow-[0_12px_24px_rgba(46,131,232,0.25)] transition hover:bg-[#176ed7] lg:inline-flex">
             {copy.quote}
           </a>
-          <a href="#agendar" className="hidden rounded-md border border-dyd-cyan/35 px-4 py-2 text-sm font-semibold text-dyd-silver transition hover:bg-dyd-cyan hover:text-dyd-ink xl:inline-flex">
+          <a href="#agendar" className="hidden rounded-md border border-[#c7e6ff] bg-white/55 px-4 py-2 text-sm font-semibold text-[#253044] transition hover:bg-[#e7f4ff] hover:text-[#2e83e8] xl:inline-flex">
             {copy.scheduleShort}
           </a>
           <button
             aria-label={copy.openMenu}
-            className="grid h-10 w-10 place-items-center rounded-md border border-dyd-silver/20 text-dyd-silver lg:hidden"
+            className="grid h-10 w-10 place-items-center rounded-md border border-[#c7e6ff] text-[#253044] lg:hidden"
             onClick={() => setOpen((value) => !value)}
           >
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>
         </nav>
         {open ? (
-          <div className="border-t border-dyd-silver/15 bg-dyd-ink/95 px-4 py-4 lg:hidden">
-            <div className="mb-3 flex rounded-md border border-dyd-silver/15 bg-dyd-silver/5 p-1">
+          <div className="border-t border-[#d8ecff] bg-white/95 px-4 py-4 text-[#253044] lg:hidden">
+            <div className="mb-3 flex rounded-md border border-[#d8ecff] bg-[#f5fbff] p-1">
               {(["es", "en"] as const).map((item) => (
                 <button
                   key={item}
                   type="button"
                   onClick={() => updateLanguage(item)}
                   className={`h-9 flex-1 rounded text-xs font-semibold transition ${
-                    language === item ? "bg-dyd-cyan text-dyd-ink" : "text-dyd-text"
+                    language === item ? "bg-[#2e83e8] text-white" : "text-[#536179]"
                   }`}
                 >
                   {item.toUpperCase()}
@@ -1658,29 +1749,29 @@ export default function Home() {
               ))}
             </div>
             {menu.map(([, id], index) => (
-              <a key={id} href={`#${id}`} onClick={() => setOpen(false)} className="block rounded-md px-3 py-3 text-sm text-dyd-text hover:bg-dyd-silver/10 hover:text-white">
+              <a key={id} href={`#${id}`} onClick={() => setOpen(false)} className="block rounded-md px-3 py-3 text-sm font-semibold text-[#253044] hover:bg-[#e7f4ff] hover:text-[#2e83e8]">
                 {copy.menu[index]}
               </a>
             ))}
-            <a href="/nosotros" onClick={() => setOpen(false)} className="block rounded-md px-3 py-3 text-sm text-dyd-text hover:bg-dyd-silver/10 hover:text-white">
+            <a href="/nosotros" onClick={() => setOpen(false)} className="block rounded-md px-3 py-3 text-sm font-semibold text-[#253044] hover:bg-[#e7f4ff] hover:text-[#2e83e8]">
               {copy.pageLinks.about}
             </a>
-            <a href="/servicios" onClick={() => setOpen(false)} className="block rounded-md px-3 py-3 text-sm text-dyd-text hover:bg-dyd-silver/10 hover:text-white">
+            <a href="/servicios" onClick={() => setOpen(false)} className="block rounded-md px-3 py-3 text-sm font-semibold text-[#253044] hover:bg-[#e7f4ff] hover:text-[#2e83e8]">
               {copy.pageLinks.packages}
             </a>
-            <a href="/preguntas" onClick={() => setOpen(false)} className="block rounded-md px-3 py-3 text-sm text-dyd-text hover:bg-dyd-silver/10 hover:text-white">
+            <a href="/preguntas" onClick={() => setOpen(false)} className="block rounded-md px-3 py-3 text-sm font-semibold text-[#253044] hover:bg-[#e7f4ff] hover:text-[#2e83e8]">
               {copy.pageLinks.questions}
             </a>
-            <a href="#agendar" onClick={() => setOpen(false)} className="block rounded-md px-3 py-3 text-sm text-dyd-text hover:bg-dyd-silver/10 hover:text-white">
+            <a href="#agendar" onClick={() => setOpen(false)} className="block rounded-md px-3 py-3 text-sm font-semibold text-[#253044] hover:bg-[#e7f4ff] hover:text-[#2e83e8]">
               {copy.scheduleShort}
             </a>
-            <div className="mt-2 border-t border-dyd-silver/10 pt-2">
-              <p className="px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-dyd-cyan">{copy.pageLinks.more}</p>
+            <div className="mt-2 border-t border-[#d8ecff] pt-2">
+              <p className="px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#2e83e8]">{copy.pageLinks.more}</p>
               {moreMenu.map(([, id], index) => {
                 const href = id === "noticias" ? "/noticias" : `#${id}`;
 
                 return (
-                  <a key={id} href={href} onClick={() => setOpen(false)} className="block rounded-md px-3 py-2.5 text-sm text-dyd-text hover:bg-dyd-silver/10 hover:text-white">
+                  <a key={id} href={href} onClick={() => setOpen(false)} className="block rounded-md px-3 py-2.5 text-sm font-semibold text-[#253044] hover:bg-[#e7f4ff] hover:text-[#2e83e8]">
                     {copy.moreMenu[index]}
                   </a>
                 );
@@ -1690,55 +1781,54 @@ export default function Home() {
         ) : null}
       </header>
 
-      <section id="inicio" className="relative pt-16">
-        <div className="grid-surface absolute inset-0 h-[58rem]" />
-        <div className="relative mx-auto flex min-h-[calc(100vh-5rem)] max-w-none flex-col gap-12 px-3 pb-16 pt-0 sm:px-5 lg:px-8">
-          <HeroVisual language={language} />
-
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-            className="mx-auto max-w-5xl text-center"
-          >
-            <div className="mb-6 inline-flex items-center gap-2 rounded-md border border-dyd-cyan/35 bg-dyd-cyan/10 px-3 py-2 text-sm text-dyd-cyan">
-              <Sparkles size={16} />
-              {copy.heroBadge}
-            </div>
-            <h1 className="text-balance mx-auto max-w-5xl text-4xl font-semibold leading-tight md:text-6xl">
-              {copy.heroBefore}{" "}
-              <span className="bg-gradient-to-r from-dyd-blue via-dyd-cyan to-dyd-royal bg-clip-text text-transparent">
-                {copy.heroHighlight}
-              </span>{" "}
-              {copy.heroAfter}
-            </h1>
-            <p className="mx-auto mt-5 max-w-3xl text-base leading-7 text-dyd-text md:text-lg">{copy.heroText}</p>
-            <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
-              <ButtonLink href="#contacto">
-                {copy.primaryCta} <ArrowRight size={18} />
-              </ButtonLink>
-              <ButtonLink href="#casos" variant="secondary">
-                {copy.secondaryCta} <ChevronRight size={18} />
-              </ButtonLink>
-            </div>
-            <div className="mx-auto mt-8 grid max-w-4xl grid-cols-2 gap-3 md:grid-cols-4">
-              {stats.map(([value], index) => (
-                <div key={copy.stats[index]} className="premium-card rounded-lg p-3">
-                  <p className="text-2xl font-bold text-white">{value}</p>
-                  <p className="mt-1 text-sm text-dyd-text">{copy.stats[index]}</p>
+      <section id="inicio" className="light-hero-section relative overflow-hidden pt-16 text-dyd-ink">
+        <div className="light-hero-bg absolute inset-0" />
+        <div className="light-hero-shell relative flex min-h-[calc(100vh-4rem)] flex-col pb-12 pt-8 sm:pb-14 lg:pb-16">
+          <div ref={heroVantaRef} className={`vanta-birds-layer vanta-birds-ambient${vantaFallback ? " vanta-birds-fallback" : ""}`} aria-hidden="true" />
+          <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-5 sm:px-8 lg:px-10">
+            <div className="relative z-[1] grid flex-1 items-center gap-10 py-12 lg:py-16">
+              <div className="max-w-5xl">
+                <div className="mb-7 inline-flex items-center gap-3 rounded-full bg-white/72 px-5 py-2 text-sm font-semibold text-[#253044] shadow-[0_12px_36px_rgba(45,118,194,0.12)] ring-1 ring-[#c7e6ff]/75">
+                  <Sparkles size={17} className="text-[#2e83e8]" />
+                  {copy.heroBadge}
                 </div>
-              ))}
+                <h1 className="hero-display text-balance max-w-5xl text-4xl font-extrabold leading-[1.08] tracking-normal text-black sm:text-5xl md:text-6xl lg:text-[4.25rem]">
+                  {copy.heroBefore}{" "}
+                  <span className="text-[#2e83e8]">
+                    {copy.heroHighlight}
+                  </span>{" "}
+                  {copy.heroAfter}
+                </h1>
+                <p className="mt-7 max-w-2xl text-base leading-8 text-[#253044] sm:text-lg">
+                  {copy.heroText}
+                </p>
+                <div className="mt-9 flex flex-col gap-4 sm:flex-row">
+                  <a href="#contacto" className="inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-[#2e83e8] px-8 text-base font-bold text-white shadow-[0_20px_40px_rgba(46,131,232,0.28)] transition hover:-translate-y-0.5 hover:bg-[#176ed7]">
+                    {copy.primaryCta} <ArrowRight size={19} />
+                  </a>
+                  <a href="#casos" className="inline-flex min-h-14 items-center justify-center gap-3 rounded-2xl bg-white px-7 text-base font-bold text-[#253044] shadow-[0_18px_38px_rgba(31,55,91,0.12)] ring-1 ring-[#dbeeff] transition hover:-translate-y-0.5 hover:text-[#2e83e8]">
+                    <span className="grid h-8 w-8 place-items-center rounded-full bg-[#253044] text-white">
+                      <Play size={15} fill="currentColor" />
+                    </span>
+                    {copy.secondaryCta}
+                  </a>
+                </div>
+              </div>
             </div>
-          </motion.div>
-        </div>
-        <div className="relative mx-auto max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
-          <div className="glass flex flex-wrap items-center justify-center gap-x-8 gap-y-3 rounded-lg px-5 py-4 text-sm text-dyd-text">
-            {copy.proof.map((item) => (
-              <span key={item} className="inline-flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-dyd-cyan" />
-                {item}
-              </span>
-            ))}
+
+            <div className="relative z-[1] grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {stats.map(([value], index) => {
+                const MetricIcon = heroMetricIcons[index];
+
+                return (
+                  <div key={copy.stats[index]} className="light-metric-card rounded-2xl px-4 py-4">
+                    <MetricIcon className="mb-3 text-[#2e83e8]" size={20} />
+                    <p className="text-2xl font-black text-black">{value}</p>
+                    <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-[#536179]">{copy.stats[index]}</p>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>
