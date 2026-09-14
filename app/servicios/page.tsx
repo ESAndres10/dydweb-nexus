@@ -509,7 +509,7 @@ export default function ServicesPage() {
           </div>
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-dyd-cyan">{copy.footerContact}</h3>
-            <p className="mt-4 text-sm text-dyd-text">WhatsApp +57 350 862 9779</p>
+            <p className="mt-4 text-sm text-dyd-text">Atención por WhatsApp</p>
             <p className="mt-2 text-sm text-dyd-text">Colombia</p>
             <a
               href={whatsappUrl}

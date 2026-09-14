@@ -89,7 +89,6 @@ const organizationJsonLd = {
   },
   contactPoint: {
     "@type": "ContactPoint",
-    telephone: "+57-350-862-9779",
     contactType: "sales",
     areaServed: ["CO", "US", "LATAM"],
     availableLanguage: ["Spanish", "English"],
