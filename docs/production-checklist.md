@@ -21,7 +21,6 @@ Antes de publicar DYDWEB:
 4. Probar formularios:
    - Formulario principal de contacto.
    - Chatbot de WhatsApp.
-   - Formulario de agenda con Google Calendar.
 
 5. Confirmar en Google Sheets:
    - Que la hoja tenga la pestaña `Leads`.
