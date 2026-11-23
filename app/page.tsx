@@ -1754,8 +1754,8 @@ export default function Home() {
         <div className="relative isolate overflow-hidden bg-[#07111f] text-white">
           <video
             ref={heroVideoRef}
-            src="/dydweb-banner.mp4"
-            poster="/dydweb-banner-poster.jpg"
+            src="/dydweb-banner-hd.mp4"
+            poster="/dydweb-banner-hd-poster.jpg"
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 h-full w-full object-cover"
             preload="none"
