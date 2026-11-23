@@ -323,11 +323,9 @@ const siteCopy = {
     solutionsLink: "Soluciones",
     resourcesLink: "Recursos",
     companyLink: "Empresa",
-    heroBadge: "Desarrollo · Web · Software · IA",
-    heroBefore: "Consigue más clientes con",
-    heroHighlight: "sitios web, software e IA",
-    heroAfter: "que trabajan por ti",
-    heroText: "Creamos soluciones digitales a la medida para simplificar tus procesos, impulsar tus ventas y hacer crecer tu empresa.",
+    heroBefore: "Consigue más clientes",
+    heroHighlight: "en línea",
+    heroText: "Creamos sitios web, software e IA para tu negocio.",
     primaryCta: "Solicitar asesoría",
     secondaryCta: "Ver proyectos",
     playHeroVideo: "Reproducir video de fondo",
@@ -532,11 +530,9 @@ const siteCopy = {
     solutionsLink: "Solutions",
     resourcesLink: "Resources",
     companyLink: "Company",
-    heroBadge: "Development · Web · Software · AI",
-    heroBefore: "Get more customers with",
-    heroHighlight: "websites, software and AI",
-    heroAfter: "that work for you",
-    heroText: "We build digital solutions around your business to simplify your work, boost sales and help you grow.",
+    heroBefore: "Get more customers",
+    heroHighlight: "online",
+    heroText: "We build websites, software and AI for your business.",
     primaryCta: "Talk to an advisor",
     secondaryCta: "View projects",
     playHeroVideo: "Play background video",
@@ -1771,7 +1767,7 @@ export default function Home() {
           />
           <div aria-hidden="true" className="home-video-scrim pointer-events-none absolute inset-0" />
 
-          <div className="home-container relative flex flex-col justify-between pb-8 sm:pb-10 md:min-h-[clamp(34rem,66vh,45rem)]">
+          <div className="home-container relative flex min-h-[clamp(29rem,73svh,34rem)] flex-col justify-end pb-8 pt-48 sm:pb-10 md:min-h-[clamp(31rem,68svh,42rem)] md:pb-12 lg:pb-14">
             <button
               type="button"
               onClick={toggleHeroVideo}
@@ -1781,19 +1777,15 @@ export default function Home() {
               {heroVideoPlaying ? <Pause size={17} aria-hidden="true" /> : <Play size={17} aria-hidden="true" />}
             </button>
 
-            <div className="max-w-[40rem] pb-8 pt-[4.5rem] sm:pb-12 md:py-16 lg:py-[4.5rem]">
-              <p className="mb-4 inline-block rounded-full border border-[#a5d3ff]/40 bg-[#08172a]/80 px-3 py-1 text-xs font-bold text-[#cae6ff] sm:mb-5">
-                {copy.heroBadge}
-              </p>
-              <h1 className="hero-display text-balance text-[2rem] leading-[1.08] sm:text-[2.625rem] lg:text-[2.875rem] xl:text-[3.125rem]">
+            <div className="max-w-[27rem]">
+              <h1 className="hero-display text-balance text-[1.875rem] leading-[1.12] sm:text-[2.25rem] lg:text-[2.625rem]">
                 {copy.heroBefore}{" "}
-                <span className="text-[#9bd6ff]">{copy.heroHighlight}</span>{" "}
-                {copy.heroAfter}
+                <span className="text-[#9bd6ff]">{copy.heroHighlight}</span>
               </h1>
-              <p className="mt-4 max-w-lg text-pretty text-base leading-relaxed text-[#dbe8f7] sm:mt-5 sm:text-lg">
+              <p className="mt-3 text-pretty text-base leading-relaxed text-[#e6effb] sm:text-lg">
                 {copy.heroText}
               </p>
-              <div className="mt-6 flex flex-wrap gap-3 sm:mt-7">
+              <div className="mt-5 flex flex-wrap gap-3">
                 <a href="#contacto" className="home-primary-button inline-flex min-h-12 gap-2 rounded-lg px-4 text-sm sm:px-5">
                   {copy.primaryCta} <ArrowRight size={17} aria-hidden="true" />
                 </a>
@@ -1803,22 +1795,24 @@ export default function Home() {
                 </a>
               </div>
             </div>
+          </div>
+        </div>
 
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:gap-4">
-              {stats.map(([value], index) => {
-                const MetricIcon = heroMetricIcons[index];
+        <div className="border-b border-[#e2edf8] bg-[#f7fbff]">
+          <div className="home-container grid grid-cols-2 gap-x-4 gap-y-5 py-5 sm:py-6 md:grid-cols-4">
+            {stats.map(([value], index) => {
+              const MetricIcon = heroMetricIcons[index];
 
-                return (
-                  <div key={copy.stats[index]} className="flex min-h-[5rem] items-center gap-2.5 rounded-lg border border-white/20 bg-[#08172a]/80 px-3 py-3 lg:gap-3 lg:px-5">
-                    <MetricIcon className="h-5 w-5 shrink-0 text-[#9bd6ff] lg:h-7 lg:w-7" aria-hidden="true" />
-                    <div>
-                      <p className="text-xl font-extrabold leading-tight sm:text-2xl">{value}</p>
-                      <p className="mt-1 text-xs font-semibold leading-tight text-[#dbe8f7] sm:text-sm">{copy.stats[index]}</p>
-                    </div>
+              return (
+                <div key={copy.stats[index]} className="flex items-center gap-2.5 lg:gap-3">
+                  <MetricIcon className="h-5 w-5 shrink-0 text-[#0872e9] lg:h-7 lg:w-7" aria-hidden="true" />
+                  <div>
+                    <p className="text-xl font-extrabold leading-tight text-[#0b1930] sm:text-2xl">{value}</p>
+                    <p className="mt-1 text-xs font-semibold leading-tight text-[#34465e] sm:text-sm">{copy.stats[index]}</p>
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
