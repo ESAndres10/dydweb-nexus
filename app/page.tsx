@@ -4,16 +4,20 @@ import {
   ArrowRight,
   BarChart3,
   Bot,
-  BriefcaseBusiness,
   CalendarDays,
+  Check,
   CheckCircle2,
   ChevronDown,
+  CirclePlay,
   ChevronRight,
   CircleDollarSign,
-  Clock,
   Code2,
+  Factory,
   Gauge,
   Globe2,
+  GraduationCap,
+  HeartHandshake,
+  Landmark,
   Layers3,
   LockKeyhole,
   Menu,
@@ -26,8 +30,10 @@ import {
   Send,
   Server,
   ShieldCheck,
-  Sparkles,
+  ShoppingBag,
   Star,
+  Stethoscope,
+  Ticket,
   TrendingUp,
   UsersRound,
   X,
@@ -35,19 +41,6 @@ import {
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-
-const menu = [
-  ["Inicio", "inicio"],
-  ["Servicios", "servicios"],
-  ["Casos", "casos"],
-  ["Contacto", "contacto"],
-] as const;
-
-const moreMenu = [
-  ["Proceso", "proceso"],
-  ["Soluciones", "soluciones"],
-  ["Noticias", "noticias"],
-] as const;
 
 const stats = [
   ["42+", "soluciones entregadas"],
@@ -134,11 +127,16 @@ const lab = [
 
 const news = [
   ["Desarrollo Web", "Desarrollo web empresarial: la guía definitiva para hacer crecer tu empresa en 2026", "/noticias/desarrollo-web-empresarial"],
-  ["IA", "Cómo los agentes inteligentes están cambiando el servicio al cliente"],
-  ["SEO", "Arquitectura técnica para posicionar plataformas empresariales"],
+  ["Inteligencia artificial", "Chatbots para atender consultas y dar seguimiento por WhatsApp", "/chatbots-whatsapp-empresas"],
+  ["SEO", "SEO técnico para que tus clientes encuentren tu negocio", "/seo-tecnico-para-negocios"],
 ];
 
-const techStack = ["Next.js", "TypeScript", "Tailwind CSS", "Framer Motion", "Node.js", "PostgreSQL", "Cloudflare", "Docker"];
+const sectorIcons = [GraduationCap, Stethoscope, ShoppingBag, Factory, Ticket, Landmark, HeartHandshake];
+const caseImages = [
+  "/dydweb-proyecto-comercio.webp",
+  "/dydweb-proyecto-educacion.webp",
+  "/dydweb-proyecto-fundacion.webp",
+];
 
 const hologramNodes = [
   {
@@ -284,23 +282,27 @@ async function submitLeadToSheets(payload: Record<string, unknown>) {
 const siteCopy = {
   es: {
     languageLabel: "Idioma",
-    quote: "Cotizar",
+    quote: "Cotizar proyecto",
     openMenu: "Abrir menú",
-    pageLinks: { about: "Quiénes Somos", packages: "Paquetes", questions: "Preguntas", more: "Más" },
-    menu: ["Inicio", "Servicios", "Casos", "Contacto"],
-    moreMenu: ["Proceso", "Soluciones", "Noticias"],
-    heroBadge: "Tecnología simple para vender más",
+    closeMenu: "Cerrar menú",
+    pageLinks: { about: "Quiénes Somos", packages: "Paquetes", questions: "Preguntas" },
+    menu: ["Inicio", "Servicios", "Proyectos", "Contacto"],
+    solutionsLink: "Soluciones",
+    resourcesLink: "Recursos",
+    companyLink: "Empresa",
+    heroBadge: "Desarrollo · Web · Software · IA",
     heroBefore: "Consigue más clientes con",
-    heroHighlight: "web, software e IA",
-    heroAfter: "que trabajan por ti.",
-    heroText: "Creamos experiencias digitales que atraen, venden y automatizan tareas para que tu negocio crezca sin complicarte.",
-    primaryCta: "Solicitar cotización",
+    heroHighlight: "sitios web, software e IA",
+    heroAfter: "que trabajan por ti",
+    heroText: "Creamos soluciones digitales a la medida para simplificar tus procesos, impulsar tus ventas y hacer crecer tu empresa.",
+    primaryCta: "Solicitar asesoría",
     secondaryCta: "Ver proyectos",
+    heroImageAlt: "Portátil y móvil con una vista de ejemplo de un panel de ventas",
     stats: ["soluciones entregadas", "sectores atendidos", "satisfacción proyectada", "operación digital"],
     proof: ["Software", "IA", "SEO", "Automatización", "Branding", "Audiovisual", "Cloudflare", "PostgreSQL"],
     sections: {
       services: {
-        eyebrow: "Servicios",
+        eyebrow: "Nuestras soluciones",
         title: "Capacidades digitales integradas para vender, operar y escalar",
         text: "DYDWEB combina ingeniería, estrategia, contenido y automatización para crear activos digitales que no se quedan en una vitrina.",
       },
@@ -321,23 +323,23 @@ const siteCopy = {
       },
       trust: {
         eyebrow: "Confianza operativa",
-        title: "Construimos con estandares de seguridad, velocidad y seguimiento comercial",
-        text: "Cada entrega se piensa para crecer: infraestructura estable, datos medibles, soporte claro y experiencia lista para convertir visitantes en oportunidades.",
+        title: "Seguridad, velocidad y seguimiento comercial",
+        text: "Cuidamos la operación de tu plataforma desde el lanzamiento y te ayudamos a mejorarla a medida que crece tu negocio.",
       },
       cases: {
-        eyebrow: "Casos de exito",
-        title: "Proyectos disenados alrededor de resultados medibles",
+        eyebrow: "Proyectos",
+        title: "Proyectos diseñados alrededor de resultados medibles",
         text: "Cada caso presenta el problema, la solución, la tecnología útilizada y el impacto obtenido.",
       },
       news: {
         eyebrow: "Centro de noticias",
-        title: "Contenido tecnologico preparado para SEO",
-        text: "Categorías, etiquetas, comentarios y distribución social para sostener autoridad tecnológica y captación orgánica.",
+        title: "Recursos para tomar mejores decisiones digitales",
+        text: "Guías sobre desarrollo web, atención al cliente y posicionamiento para que elijas el siguiente paso con más claridad.",
       },
       admin: {
-        eyebrow: "Portal y administracion",
-        title: "Base funcional para cliente privado y dashboard administrativo",
-        text: "La experiencia pública muestra como escalar hacia roles, clientes, proyectos, noticias, donaciones, inversiónistas y configuración general.",
+        eyebrow: "Portal y administración",
+        title: "Toda tu operación en un solo lugar",
+        text: "Reúne proyectos, clientes y reportes en un portal con acceso privado para tu equipo.",
       },
       audience: {
         eyebrow: "Para quien es",
@@ -358,7 +360,7 @@ const siteCopy = {
       ["Lanzamiento", "Activamos SEO, analítica, seguridad, velocidad y seguimiento comercial."],
     ],
     quoteWizard: {
-      goalLabel: "Que necesitas construir",
+      goalLabel: "¿Qué necesitas construir?",
       urgencyLabel: "Prioridad",
       scopeLabel: "Alcance",
       resultTitle: "Ruta sugerida",
@@ -406,9 +408,9 @@ const siteCopy = {
     investorCards: ["Inversión requerida", "Socios estrategicos", "Pitch deck", "Proyección de crecimiento"],
     investorFields: ["Nombre", "Empresa", "Correo", "Descripción del proyecto", "Inversión requerida", "Pitch Deck", "Video de presentación"],
     investorButton: "Registrar interés",
-    searchPlaceholder: "Buscar noticias, IA, SEO o desarrollo web",
-    searchButton: "Buscar",
-    newsCardText: "Artículo optimizado con Schema Markup, Open Graph, etiquetas y lectura rápida.",
+    exploreNews: "Explorar noticias",
+    caseDetails: "Ver detalles",
+    caseImageCaption: "Vista ilustrativa",
     caseLabels: { problem: "Problema", solution: "Solución", tech: "Tecnologías" },
     adminCards: [
       ["Portal de clientes", "Proyectos, avance, entregables, facturas, soporte e historial de servicios."],
@@ -428,11 +430,11 @@ const siteCopy = {
     ],
     contactEyebrow: "Contacto",
     contactTitle: "Hablemos de la próxima solución digital de tu empresa",
-    contactText: "El formulario inteligente captura servicio de interés, presupuesto y contexto comercial para priorizar oportunidades.",
+    contactText: "Cuéntanos qué necesitas y en qué etapa está tu proyecto. Te ayudaremos a definir un primer paso.",
     faqCtaTitle: "Resuelve tus dudas antes de iniciar",
-    faqCtaText: "Movimos las preguntas frecuentes y rutas por tipo de cliente a una sección dedicada para mantener esta página más ligera.",
+    faqCtaText: "Consulta respuestas sobre tiempos, costos e integraciones antes de iniciar tu proyecto.",
     faqCtaButton: "Ver preguntas frecuentes",
-    servicesCtaTitle: "Quieres comparar servicios y paquetes?",
+    servicesCtaTitle: "¿Quieres comparar servicios y paquetes?",
     servicesCtaText: "Revisa alcances, rutas sugeridas y entregables antes de elegir el siguiente paso.",
     servicesCtaButton: "Ver servicios y paquetes",
     contactFields: ["Nombre", "Empresa", "Correo", "WhatsApp"],
@@ -442,7 +444,7 @@ const siteCopy = {
     messagePlaceholder: "Mensaje",
     contactButton: "Quiero transformar mi negocio",
     contactSuccess: "Gracias. Recibimos tu información y la enviaremos al equipo comercial.",
-    contactError: "No pudimos registrar la información todavía. Revisa la configuración de Google Sheets o contáctanos por WhatsApp.",
+    contactError: "No pudimos enviar tu mensaje. Inténtalo de nuevo o contáctanos por WhatsApp.",
     scheduleShort: "Agendar",
     scheduleEyebrow: "Agenda una reunión",
     scheduleTitle: "Conversemos 20 minutos sobre tu proyecto",
@@ -488,23 +490,27 @@ const siteCopy = {
   },
   en: {
     languageLabel: "Language",
-    quote: "Get a quote",
+    quote: "Get a project quote",
     openMenu: "Open menu",
-    pageLinks: { about: "About Us", packages: "Packages", questions: "FAQ", more: "More" },
-    menu: ["Home", "Services", "Cases", "Contact"],
-    moreMenu: ["Process", "Solutions", "News"],
-    heroBadge: "Simple technology to sell more",
+    closeMenu: "Close menu",
+    pageLinks: { about: "About Us", packages: "Packages", questions: "FAQ" },
+    menu: ["Home", "Services", "Projects", "Contact"],
+    solutionsLink: "Solutions",
+    resourcesLink: "Resources",
+    companyLink: "Company",
+    heroBadge: "Development · Web · Software · AI",
     heroBefore: "Get more customers with",
-    heroHighlight: "web, software and AI",
-    heroAfter: "working for you.",
-    heroText: "We create digital experiences that attract, sell and automate tasks so your business can grow without added complexity.",
-    primaryCta: "Request a quote",
+    heroHighlight: "websites, software and AI",
+    heroAfter: "that work for you",
+    heroText: "We build digital solutions around your business to simplify your work, boost sales and help you grow.",
+    primaryCta: "Talk to an advisor",
     secondaryCta: "View projects",
+    heroImageAlt: "Laptop and phone showing a sample sales dashboard",
     stats: ["solutions delivered", "sectors served", "projected satisfaction", "digital operation"],
     proof: ["Software", "AI", "SEO", "Automation", "Branding", "Audiovisual", "Cloudflare", "PostgreSQL"],
     sections: {
       services: {
-        eyebrow: "Services",
+        eyebrow: "Our solutions",
         title: "Integrated digital capabilities to sell, operate and scale",
         text: "DYDWEB combines engineering, strategy, content and automation to create digital assets that go far beyond a showcase.",
       },
@@ -525,8 +531,8 @@ const siteCopy = {
       },
       trust: {
         eyebrow: "Operational trust",
-        title: "We build with security, speed and commercial tracking standards",
-        text: "Every delivery is designed to grow: stable infrastructure, measurable data, clear support and an experience ready to turn visitors into opportunities.",
+        title: "Security, speed and sales tracking",
+        text: "We take care of your platform from launch and help you improve it as your business grows.",
       },
       cases: {
         eyebrow: "Success cases",
@@ -535,13 +541,13 @@ const siteCopy = {
       },
       news: {
         eyebrow: "News hub",
-        title: "Technology content prepared for SEO",
-        text: "Categories, tags, comments and social distribution to support authority and organic acquisition.",
+        title: "Resources for better digital decisions",
+        text: "Guides to web development, customer service and search visibility to help you plan your next step.",
       },
       admin: {
         eyebrow: "Portal and administration",
-        title: "Functional foundation for private clients and admin dashboard",
-        text: "The public experience shows how to scale toward roles, clients, projects, news, donations, investors and general configuration.",
+        title: "Manage your work in one place",
+        text: "Bring projects, customers and reports together in a private portal for your team.",
       },
       audience: {
         eyebrow: "Who it is for",
@@ -638,8 +644,8 @@ const siteCopy = {
     ],
     news: [
       ["Web Development", "Enterprise web development: the guide to growing your company in 2026", "/noticias/desarrollo-web-empresarial"],
-      ["AI", "How intelligent agents are changing customer service"],
-      ["SEO", "Technical architecture to position enterprise platforms"],
+      ["Artificial intelligence", "Chatbots for customer support and follow-up on WhatsApp", "/chatbots-whatsapp-empresas"],
+      ["SEO", "Technical SEO to help customers find your business", "/seo-tecnico-para-negocios"],
     ],
     labEyebrow: "Innovation Lab",
     labTitle: "A lab for building proprietary products, SaaS and AI tools",
@@ -658,9 +664,9 @@ const siteCopy = {
     investorCards: ["Required investment", "Strategic partners", "Pitch deck", "Growth projection"],
     investorFields: ["Name", "Company", "Email", "Project description", "Required investment", "Pitch Deck", "Presentation video"],
     investorButton: "Register interest",
-    searchPlaceholder: "Search news, AI, SEO or web development",
-    searchButton: "Search",
-    newsCardText: "Article optimized with Schema Markup, Open Graph, tags and fast reading.",
+    exploreNews: "Explore articles",
+    caseDetails: "View details",
+    caseImageCaption: "Illustrative preview",
     caseLabels: { problem: "Problem", solution: "Solution", tech: "Technologies" },
     adminCards: [
       ["Client portal", "Projects, progress, deliverables, invoices, support and service history."],
@@ -680,9 +686,9 @@ const siteCopy = {
     ],
     contactEyebrow: "Contact",
     contactTitle: "Let us talk about your company's next digital solution",
-    contactText: "The smart form captures service interest, budget and business context to prioritize opportunities.",
+    contactText: "Tell us what you need and where you are in the process. We'll help you figure out the first step.",
     faqCtaTitle: "Clear your questions before starting",
-    faqCtaText: "We moved FAQs and visitor routes into a dedicated section to keep this page lighter.",
+    faqCtaText: "Find answers about timelines, costs and integrations before you start your project.",
     faqCtaButton: "View FAQ",
     servicesCtaTitle: "Want to compare services and packages?",
     servicesCtaText: "Review scopes, suggested routes and deliverables before choosing the next step.",
@@ -694,7 +700,7 @@ const siteCopy = {
     messagePlaceholder: "Message",
     contactButton: "Transform my business",
     contactSuccess: "Thank you. We received your information and will send it to the commercial team.",
-    contactError: "We could not register the information yet. Check the Google Sheets configuration or contact us on WhatsApp.",
+    contactError: "We couldn't send your message. Please try again or contact us on WhatsApp.",
     scheduleShort: "Schedule",
     scheduleEyebrow: "Schedule a meeting",
     scheduleTitle: "Let us talk for 20 minutes about your project",
@@ -828,20 +834,19 @@ function WhatsAppChatbot({ language }: { language: Language }) {
         <motion.div
           initial={{ opacity: 0, y: 18, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          className="w-[min(410px,calc(100vw-2rem))] overflow-hidden rounded-lg border border-dyd-cyan/25 bg-dyd-ink/95 shadow-[0_26px_90px_rgba(0,0,0,0.45),0_0_45px_rgba(22,199,243,0.14)] backdrop-blur-2xl"
+          className="home-surface max-h-[calc(100dvh-6rem)] w-[min(25rem,calc(100vw-2.5rem))] overflow-y-auto shadow-[0_12px_40px_rgba(28,70,122,0.18)]"
         >
-          <div className="border-b border-dyd-silver/10 bg-gradient-to-r from-dyd-blue/20 via-dyd-cyan/12 to-transparent p-4">
+          <div className="border-b border-[#e3edf8] bg-[#f3f8ff] p-4">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-dyd-cyan">Nexus Assistant</p>
-                <h3 className="mt-1 text-lg font-semibold text-white">{chat.title}</h3>
-                <p className="mt-1 text-sm leading-5 text-dyd-text">{chat.text}</p>
+                <h3 className="text-lg font-extrabold">{chat.title}</h3>
+                <p className="home-muted mt-1 text-sm leading-5">{chat.text}</p>
               </div>
               <button
                 type="button"
                 aria-label={chat.close}
                 onClick={() => setOpen(false)}
-                className="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-dyd-silver/15 text-dyd-text transition hover:border-dyd-cyan/50 hover:text-white"
+                className="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-[#d9e7f6] bg-white text-[#215083] hover:bg-[#e7f2ff]"
               >
                 <X size={17} />
               </button>
@@ -858,7 +863,7 @@ function WhatsAppChatbot({ language }: { language: Language }) {
                     setTopic(quickTopic);
                     setMessageDraft(quickMessage);
                   }}
-                  className="rounded-md border border-dyd-cyan/20 bg-dyd-cyan/[0.07] px-3 py-2 text-left text-xs font-semibold leading-4 text-dyd-silver transition hover:border-dyd-cyan hover:bg-dyd-cyan/15 hover:text-white"
+                  className="home-choice px-2 text-left text-xs"
                 >
                   {label}
                 </button>
@@ -870,12 +875,9 @@ function WhatsAppChatbot({ language }: { language: Language }) {
                 <button
                   key={item}
                   type="button"
+                  aria-pressed={topic === item}
                   onClick={() => setTopic(item)}
-                  className={`rounded-md border px-3 py-2 text-xs font-semibold transition ${
-                    topic === item
-                      ? "border-dyd-cyan bg-dyd-cyan/15 text-white"
-                      : "border-dyd-silver/15 bg-dyd-silver/[0.04] text-dyd-text hover:border-dyd-cyan/50 hover:text-white"
-                  }`}
+                  className="home-choice px-2 text-xs"
                 >
                   {item}
                 </button>
@@ -888,27 +890,31 @@ function WhatsAppChatbot({ language }: { language: Language }) {
               <input
                 name="name"
                 required
-                className="h-11 rounded-md border border-dyd-silver/15 bg-dyd-black/70 px-3 text-sm text-white outline-none placeholder:text-dyd-text focus:border-dyd-cyan"
+                className="home-field"
                 placeholder={chat.name}
+                aria-label={chat.name}
               />
               <input
                 name="contact"
                 required
-                className="h-11 rounded-md border border-dyd-silver/15 bg-dyd-black/70 px-3 text-sm text-white outline-none placeholder:text-dyd-text focus:border-dyd-cyan"
+                className="home-field"
                 placeholder={chat.contact}
+                aria-label={chat.contact}
               />
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
               <input
                 name="company"
-                className="h-11 rounded-md border border-dyd-silver/15 bg-dyd-black/70 px-3 text-sm text-white outline-none placeholder:text-dyd-text focus:border-dyd-cyan"
+                className="home-field"
                 placeholder={chat.company}
+                aria-label={chat.company}
               />
               <input
                 name="budget"
-                className="h-11 rounded-md border border-dyd-silver/15 bg-dyd-black/70 px-3 text-sm text-white outline-none placeholder:text-dyd-text focus:border-dyd-cyan"
+                className="home-field"
                 placeholder={chat.budget}
+                aria-label={chat.budget}
               />
             </div>
 
@@ -917,19 +923,21 @@ function WhatsAppChatbot({ language }: { language: Language }) {
               required
               value={messageDraft}
               onChange={(event) => setMessageDraft(event.target.value)}
-              className="min-h-28 rounded-md border border-dyd-silver/15 bg-dyd-black/70 px-3 py-3 text-sm text-white outline-none placeholder:text-dyd-text focus:border-dyd-cyan"
+              className="home-field"
+              rows={3}
               placeholder={chat.message}
+              aria-label={chat.message}
             />
 
             {sent ? (
-              <p className="rounded-md border border-dyd-cyan/25 bg-dyd-cyan/10 px-3 py-2 text-xs font-medium text-dyd-silver">
+              <p role="status" className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-900">
                 {chat.success}
               </p>
             ) : null}
 
             <button
               type="submit"
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-gradient-to-r from-dyd-blue to-dyd-cyan text-sm font-semibold text-white shadow-glow transition hover:brightness-110"
+              className="home-primary-button inline-flex min-h-12 gap-2 rounded-lg px-3 text-sm"
             >
               {chat.submit} <Send size={17} />
             </button>
@@ -939,12 +947,13 @@ function WhatsAppChatbot({ language }: { language: Language }) {
 
       <button
         type="button"
-        aria-label="Abrir chatbot de WhatsApp"
+        aria-label={open ? chat.close : chat.floating}
+        aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
-        className="group inline-flex h-14 items-center gap-3 rounded-full border border-dyd-cyan/35 bg-dyd-ink/92 px-5 text-sm font-semibold text-white shadow-[0_18px_55px_rgba(0,0,0,0.35),0_0_28px_rgba(22,199,243,0.22)] backdrop-blur-xl transition hover:-translate-y-0.5 hover:border-dyd-cyan hover:shadow-glow"
+        className="inline-flex h-12 items-center gap-2 rounded-full border border-[#c7dff8] bg-white px-1.5 text-sm font-bold text-[#0f345b] shadow-[0_6px_24px_rgba(23,81,141,0.15)] transition hover:border-[#0873e9] sm:pr-4"
       >
-        <span className="grid h-9 w-9 place-items-center rounded-full bg-gradient-to-r from-dyd-blue to-dyd-cyan text-white">
-          <MessageCircle size={19} />
+        <span className="grid h-9 w-9 place-items-center rounded-full bg-[#0668d5] text-white">
+          <MessageCircle size={19} aria-hidden="true" />
         </span>
         <span className="hidden sm:inline">{chat.floating}</span>
       </button>
@@ -962,10 +971,10 @@ function SectionHeading({
   text: string;
 }) {
   return (
-    <div className="mx-auto mb-10 max-w-3xl text-center">
-      <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-dyd-cyan">{eyebrow}</p>
-      <h2 className="text-balance text-3xl font-semibold leading-tight text-white md:text-5xl">{title}</h2>
-      <p className="mt-4 text-base leading-7 text-dyd-text md:text-lg">{text}</p>
+    <div className="mx-auto mb-8 max-w-3xl text-center">
+      <p className="home-kicker mb-2">{eyebrow}</p>
+      <h2 className="home-heading text-balance text-[1.875rem] md:text-[2.5rem]">{title}</h2>
+      <p className="home-muted mx-auto mt-3 max-w-2xl text-pretty leading-relaxed">{text}</p>
     </div>
   );
 }
@@ -1003,48 +1012,45 @@ function QuickQuote({
   };
 
   return (
-    <section id="proceso" className="border-y border-dyd-silver/15 bg-dyd-panel/70 px-4 py-20 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl">
+    <section id="proceso" className="home-section home-tint border-y border-[#e8f0f8]">
+      <div className="home-container">
         <SectionHeading
           eyebrow={copy.sections.process.eyebrow}
           title={copy.sections.process.title}
           text={copy.sections.process.text}
         />
 
-        <div className="grid gap-8 lg:grid-cols-[1fr_0.95fr]">
+        <div className="grid gap-5 lg:grid-cols-[1fr_0.95fr]">
           <div className="grid gap-4 sm:grid-cols-2">
             {copy.processSteps.map(([title, text], index) => (
-              <article key={title} className="premium-card relative overflow-hidden rounded-lg p-6">
-                <div className="absolute right-4 top-4 text-5xl font-bold text-dyd-silver/[0.05]">0{index + 1}</div>
-                <div className="mb-5 grid h-12 w-12 place-items-center rounded-md border border-dyd-cyan/25 bg-dyd-cyan/10 text-dyd-cyan">
+              <article key={title} className="home-surface p-5 sm:p-6">
+                <div className="mb-4 grid h-11 w-11 place-items-center rounded-md bg-[#edf5ff] text-[#076bd8]" aria-hidden="true">
                   {index === 0 ? <Search size={24} /> : null}
                   {index === 1 ? <Layers3 size={24} /> : null}
                   {index === 2 ? <Code2 size={24} /> : null}
                   {index === 3 ? <Rocket size={24} /> : null}
                 </div>
-                <h3 className="text-xl font-semibold">{title}</h3>
-                <p className="mt-3 text-sm leading-6 text-dyd-text">{text}</p>
+                <h3 className="text-lg font-extrabold">{title}</h3>
+                <p className="home-muted mt-2 text-sm leading-relaxed">{text}</p>
               </article>
             ))}
           </div>
 
-          <div className="premium-card rounded-lg p-6">
-            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-dyd-cyan">{copy.sections.quote.eyebrow}</p>
-            <h3 className="text-2xl font-semibold leading-tight text-white">{copy.sections.quote.title}</h3>
-            <p className="mt-3 text-sm leading-6 text-dyd-text">{copy.sections.quote.text}</p>
+          <div id="cotizar" className="home-surface scroll-mt-20 p-5 sm:p-6">
+            <h3 className="home-heading text-2xl">{copy.sections.quote.eyebrow}</h3>
+            <p className="home-muted mt-2 text-sm leading-relaxed">{copy.sections.quote.text}</p>
 
             <div className="mt-6 space-y-5">
               <div>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-dyd-text">{quote.goalLabel}</p>
-                <div className="grid gap-2">
+                <p className="mb-2 text-sm font-bold">{quote.goalLabel}</p>
+                <div className="grid grid-cols-3 gap-2" role="group" aria-label={quote.goalLabel}>
                   {quote.goals.map(([label], index) => (
                     <button
                       key={label}
                       type="button"
+                      aria-pressed={goalIndex === index}
                       onClick={() => setGoalIndex(index)}
-                      className={`rounded-md border px-4 py-3 text-left text-sm font-semibold transition ${
-                        goalIndex === index ? "border-dyd-cyan bg-dyd-cyan/15 text-white" : "border-dyd-silver/15 bg-dyd-silver/[0.04] text-dyd-text hover:border-dyd-cyan/45 hover:text-white"
-                      }`}
+                      className="home-choice text-xs"
                     >
                       {label}
                     </button>
@@ -1054,16 +1060,15 @@ function QuickQuote({
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-dyd-text">{quote.urgencyLabel}</p>
-                  <div className="grid grid-cols-3 gap-2">
+                  <p className="mb-2 text-sm font-bold">{quote.urgencyLabel}</p>
+                  <div className="grid grid-cols-3 gap-2" role="group" aria-label={quote.urgencyLabel}>
                     {quote.urgencies.map((item, index) => (
                       <button
                         key={item}
                         type="button"
+                        aria-pressed={urgencyIndex === index}
                         onClick={() => setUrgencyIndex(index)}
-                        className={`h-10 rounded-md border text-xs font-semibold transition ${
-                          urgencyIndex === index ? "border-dyd-cyan bg-dyd-cyan/15 text-white" : "border-dyd-silver/15 bg-dyd-silver/[0.04] text-dyd-text"
-                        }`}
+                        className="home-choice text-xs"
                       >
                         {item}
                       </button>
@@ -1072,16 +1077,15 @@ function QuickQuote({
                 </div>
 
                 <div>
-                  <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-dyd-text">{quote.scopeLabel}</p>
-                  <div className="grid grid-cols-3 gap-2">
+                  <p className="mb-2 text-sm font-bold">{quote.scopeLabel}</p>
+                  <div className="grid grid-cols-3 gap-2" role="group" aria-label={quote.scopeLabel}>
                     {quote.scopes.map((item, index) => (
                       <button
                         key={item}
                         type="button"
+                        aria-pressed={scopeIndex === index}
                         onClick={() => setScopeIndex(index)}
-                        className={`h-10 rounded-md border text-xs font-semibold transition ${
-                          scopeIndex === index ? "border-dyd-cyan bg-dyd-cyan/15 text-white" : "border-dyd-silver/15 bg-dyd-silver/[0.04] text-dyd-text"
-                        }`}
+                        className="home-choice text-xs"
                       >
                         {item}
                       </button>
@@ -1090,22 +1094,22 @@ function QuickQuote({
                 </div>
               </div>
 
-              <div className="rounded-lg border border-dyd-cyan/25 bg-dyd-cyan/10 p-4">
+              <div className="rounded-md border border-[#dcecff] bg-[#f2f8ff] p-4" aria-live="polite">
                 <div className="flex items-center gap-3">
-                  <CircleDollarSign className="text-dyd-cyan" />
+                  <CircleDollarSign className="shrink-0 text-[#0873e9]" aria-hidden="true" />
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-dyd-cyan">{quote.resultTitle}</p>
-                    <p className="mt-1 text-xl font-semibold text-white">{selectedGoal[1]}</p>
+                    <p className="home-kicker">{quote.resultTitle}</p>
+                    <p className="mt-1 text-xl font-extrabold">{selectedGoal[1]}</p>
                   </div>
                 </div>
-                <p className="mt-3 text-sm leading-6 text-dyd-silver">{selectedGoal[2]}</p>
-                <p className="mt-2 text-xs leading-5 text-dyd-text">{quote.resultNote}</p>
+                <p className="home-muted mt-2 text-sm leading-relaxed">{selectedGoal[2]}</p>
+                <p className="home-muted mt-1 text-xs leading-relaxed">{quote.resultNote}</p>
               </div>
 
               <button
                 type="button"
                 onClick={sendQuote}
-                className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-md bg-gradient-to-r from-dyd-blue to-dyd-cyan text-sm font-semibold text-white shadow-glow transition hover:brightness-110"
+                className="home-primary-button inline-flex min-h-12 w-full gap-2 rounded-lg px-3 text-sm"
               >
                 {quote.button} <Send size={17} />
               </button>
@@ -1139,7 +1143,7 @@ function ScheduleMeeting({
     const company = String(formData.get("company") || "").trim();
     const contact = String(formData.get("contact") || "").trim();
     const start = new Date(`${date}T${time}:00`);
-    const end = new Date(start.getTime() + 30 * 60 * 1000);
+    const end = new Date(start.getTime() + 20 * 60 * 1000);
 
     const details = [
       `${copy.scheduleService}: ${service}`,
@@ -1173,39 +1177,37 @@ function ScheduleMeeting({
   };
 
   return (
-    <section id="agendar" className="border-y border-dyd-silver/15 bg-dyd-panel/70 px-4 py-20 sm:px-6 lg:px-8">
-      <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+    <section id="agendar" className="home-section home-tint border-b border-[#e8f0f8]">
+      <div className="home-container grid items-center gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:gap-10">
         <div>
-          <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-dyd-cyan">{copy.scheduleEyebrow}</p>
-          <h2 className="text-3xl font-semibold md:text-5xl">{copy.scheduleTitle}</h2>
-          <p className="mt-5 text-lg leading-8 text-dyd-text">{copy.scheduleText}</p>
-          <div className="mt-8 grid gap-3 sm:grid-cols-3">
-            {[CalendarDays, MessageCircle, Clock].map((Icon, index) => (
-              <div key={index} className="premium-card rounded-lg p-4">
-                <Icon className="mb-3 text-dyd-cyan" />
-                <p className="text-sm font-semibold text-white">{[copy.scheduleDay, copy.scheduleService, copy.scheduleTime][index]}</p>
-              </div>
-            ))}
-          </div>
+          <p className="home-kicker mb-2">{copy.scheduleEyebrow}</p>
+          <h2 className="home-heading text-balance text-3xl md:text-[2.5rem]">{copy.scheduleTitle}</h2>
+          <p className="home-muted mt-3 max-w-lg leading-relaxed">{copy.scheduleText}</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="premium-card grid gap-3 rounded-lg p-6">
-          <div className="grid gap-3 md:grid-cols-3">
-            <input name="name" required className="h-12 rounded-md border border-dyd-silver/15 bg-dyd-ink/55 px-4 text-white outline-none placeholder:text-dyd-text focus:border-dyd-cyan" placeholder={copy.scheduleFields[0]} />
-            <input name="company" className="h-12 rounded-md border border-dyd-silver/15 bg-dyd-ink/55 px-4 text-white outline-none placeholder:text-dyd-text focus:border-dyd-cyan" placeholder={copy.scheduleFields[1]} />
-            <input name="contact" required className="h-12 rounded-md border border-dyd-silver/15 bg-dyd-ink/55 px-4 text-white outline-none placeholder:text-dyd-text focus:border-dyd-cyan" placeholder={copy.scheduleFields[2]} />
+        <form onSubmit={handleSubmit} className="home-surface grid min-w-0 gap-3 p-4 sm:p-6">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <input name="name" required autoComplete="name" className="home-field" placeholder={copy.scheduleFields[0]} aria-label={copy.scheduleFields[0]} />
+            <input name="company" autoComplete="organization" className="home-field" placeholder={copy.scheduleFields[1]} aria-label={copy.scheduleFields[1]} />
           </div>
-          <select value={service} onChange={(event) => setService(event.target.value)} className="h-12 rounded-md border border-dyd-silver/15 bg-dyd-ink/55 px-4 text-white outline-none focus:border-dyd-cyan">
+          <input name="contact" required className="home-field" placeholder={copy.scheduleFields[2]} aria-label={copy.scheduleFields[2]} />
+          <select value={service} onChange={(event) => setService(event.target.value)} className="home-field" aria-label={copy.scheduleService}>
             {copy.serviceOptions.map((option) => (
               <option key={option}>{option}</option>
             ))}
           </select>
-          <div className="grid gap-3 md:grid-cols-2">
-            <input type="date" required value={date} onChange={(event) => setDate(event.target.value)} className="h-12 rounded-md border border-dyd-silver/15 bg-dyd-ink/55 px-4 text-white outline-none focus:border-dyd-cyan" aria-label={copy.scheduleDay} />
-            <input type="time" required value={time} onChange={(event) => setTime(event.target.value)} className="h-12 rounded-md border border-dyd-silver/15 bg-dyd-ink/55 px-4 text-white outline-none focus:border-dyd-cyan" aria-label={copy.scheduleTime} />
+          <div className="grid grid-cols-2 gap-3">
+            <label className="grid min-w-0 gap-1 text-sm font-bold">
+              {copy.scheduleDay}
+              <input type="date" required value={date} onChange={(event) => setDate(event.target.value)} className="home-field font-normal" />
+            </label>
+            <label className="grid min-w-0 gap-1 text-sm font-bold">
+              {copy.scheduleTime}
+              <input type="time" required value={time} onChange={(event) => setTime(event.target.value)} className="home-field font-normal" />
+            </label>
           </div>
-          <button className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-gradient-to-r from-dyd-blue to-dyd-cyan font-semibold text-white shadow-glow">
-            {copy.scheduleButton} <CalendarDays size={18} />
+          <button className="home-primary-button inline-flex min-h-12 gap-2 rounded-lg px-3 text-sm">
+            {copy.scheduleButton} <CalendarDays size={18} aria-hidden="true" />
           </button>
         </form>
       </div>
@@ -1535,6 +1537,14 @@ export default function Home() {
   const heroVantaRef = useRef<HTMLDivElement | null>(null);
   const copy = siteCopy[language];
   const heroMetricIcons = [Globe2, Gauge, ShieldCheck, Rocket];
+  const homeLinks = [
+    { label: copy.menu[0], href: "#inicio" },
+    { label: copy.menu[1], href: "#servicios" },
+    { label: copy.solutionsLink, href: "#soluciones" },
+    { label: copy.menu[2], href: "#casos" },
+    { label: copy.resourcesLink, href: "/noticias" },
+    { label: copy.companyLink, href: "/nosotros" },
+  ];
   const updateLanguage = (item: Language) => {
     setLanguage(item);
     window.localStorage.setItem("dydweb-language", item);
@@ -1624,7 +1634,8 @@ export default function Home() {
 
   const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+    const form = event.currentTarget;
+    const formData = new FormData(form);
 
     setContactSent(false);
     setContactError(false);
@@ -1643,188 +1654,135 @@ export default function Home() {
 
     if (stored) {
       setContactSent(true);
-      event.currentTarget.reset();
+      form.reset();
     } else {
       setContactError(true);
     }
   };
 
   return (
-    <main className="min-h-screen overflow-hidden bg-dyd-black text-white">
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-[#d8ecff]/75 bg-white/78 shadow-[0_14px_45px_rgba(35,93,150,0.12)] backdrop-blur-xl">
-        <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+    <main className="home-page min-h-screen overflow-hidden">
+      <header className="fixed inset-x-0 top-0 z-50 border-b border-[#e2edf8] bg-[#fafcff]/95 text-[#15263d] backdrop-blur-xl">
+        <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-5 sm:px-8">
           <a href="#inicio" className="flex items-center">
-            <span className="relative block h-12 w-40 overflow-hidden rounded-md border border-[#d8ecff] bg-white/82 shadow-[0_12px_28px_rgba(46,131,232,0.12)]">
+            <span className="relative block h-10 w-36">
               <Image
                 src="/logo-dydweb-nexus-header-wide.png"
-                alt="DYDWEB"
+                alt="DYDWEB Nexus"
                 fill
                 priority
-                sizes="160px"
-                className="object-contain p-1"
+                sizes="144px"
+                className="object-contain object-left"
               />
             </span>
           </a>
-          <div className="hidden items-center gap-1 lg:flex">
-            {menu.map(([, id], index) => (
-              <a key={id} href={`#${id}`} className="rounded-md px-3 py-2 text-sm font-semibold text-[#253044] transition hover:bg-[#e7f4ff] hover:text-[#2e83e8]">
-                {copy.menu[index]}
+          <div className="hidden items-center gap-0.5 lg:flex xl:gap-2">
+            {homeLinks.map(({ label, href }) => (
+              <a key={href} href={href} className="whitespace-nowrap rounded-md px-2 py-2 text-sm font-semibold transition hover:bg-[#e7f2ff] hover:text-[#065cc8] xl:px-3">
+                {label}
               </a>
             ))}
-            <a href="/nosotros" className="rounded-md px-3 py-2 text-sm font-semibold text-[#253044] transition hover:bg-[#e7f4ff] hover:text-[#2e83e8]">
-              {copy.pageLinks.about}
-            </a>
-            <a href="/servicios" className="rounded-md px-3 py-2 text-sm font-semibold text-[#253044] transition hover:bg-[#e7f4ff] hover:text-[#2e83e8]">
-              {copy.pageLinks.packages}
-            </a>
-            <a href="/preguntas" className="rounded-md px-3 py-2 text-sm font-semibold text-[#253044] transition hover:bg-[#e7f4ff] hover:text-[#2e83e8]">
-              {copy.pageLinks.questions}
-            </a>
-            <div className="group relative">
-              <button
-                type="button"
-                className="inline-flex items-center gap-1 rounded-md px-3 py-2 text-sm font-semibold text-[#253044] transition hover:bg-[#e7f4ff] hover:text-[#2e83e8]"
-              >
-                {copy.pageLinks.more} <ChevronDown size={15} />
-              </button>
-              <div className="invisible absolute right-0 top-full z-50 w-56 translate-y-2 rounded-lg border border-[#d8ecff] bg-white/95 p-2 opacity-0 shadow-[0_18px_60px_rgba(35,93,150,0.18)] backdrop-blur-xl transition group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
-                {moreMenu.map(([, id], index) => {
-                  const href = id === "noticias" ? "/noticias" : `#${id}`;
-
-                  return (
-                    <a
-                      key={id}
-                      href={href}
-                      className="block rounded-md px-3 py-2 text-sm font-semibold text-[#253044] transition hover:bg-[#e7f4ff] hover:text-[#2e83e8]"
-                    >
-                      {copy.moreMenu[index]}
-                    </a>
-                  );
-                })}
-              </div>
-            </div>
           </div>
-          <div className="hidden items-center rounded-md border border-[#d8ecff] bg-white/70 p-1 lg:flex" aria-label={copy.languageLabel}>
-            {(["es", "en"] as const).map((item) => (
-              <button
-                key={item}
-                type="button"
-                onClick={() => updateLanguage(item)}
-                className={`h-8 rounded px-2.5 text-xs font-semibold transition ${
-                  language === item ? "bg-[#2e83e8] text-white" : "text-[#536179] hover:text-[#2e83e8]"
-                }`}
-              >
-                {item.toUpperCase()}
-              </button>
-            ))}
-          </div>
-          <a href="#contacto" className="hidden rounded-md bg-[#2e83e8] px-4 py-2 text-sm font-semibold text-white shadow-[0_12px_24px_rgba(46,131,232,0.25)] transition hover:bg-[#176ed7] lg:inline-flex">
-            {copy.quote}
-          </a>
-          <a href="#agendar" className="hidden rounded-md border border-[#c7e6ff] bg-white/55 px-4 py-2 text-sm font-semibold text-[#253044] transition hover:bg-[#e7f4ff] hover:text-[#2e83e8] xl:inline-flex">
-            {copy.scheduleShort}
-          </a>
-          <button
-            aria-label={copy.openMenu}
-            className="grid h-10 w-10 place-items-center rounded-md border border-[#c7e6ff] text-[#253044] lg:hidden"
-            onClick={() => setOpen((value) => !value)}
-          >
-            {open ? <X size={20} /> : <Menu size={20} />}
-          </button>
-        </nav>
-        {open ? (
-          <div className="border-t border-[#d8ecff] bg-white/95 px-4 py-4 text-[#253044] lg:hidden">
-            <div className="mb-3 flex rounded-md border border-[#d8ecff] bg-[#f5fbff] p-1">
+          <div className="flex shrink-0 items-center gap-2">
+            <div className="flex items-center rounded-md border border-[#e2edf8] bg-white p-0.5" role="group" aria-label={copy.languageLabel}>
               {(["es", "en"] as const).map((item) => (
                 <button
                   key={item}
                   type="button"
+                  aria-pressed={language === item}
                   onClick={() => updateLanguage(item)}
-                  className={`h-9 flex-1 rounded text-xs font-semibold transition ${
-                    language === item ? "bg-[#2e83e8] text-white" : "text-[#536179]"
+                  className={`h-8 rounded px-2 text-xs font-semibold transition ${
+                    language === item ? "bg-[#e4f0ff] text-[#065cc8]" : "text-[#536179] hover:text-[#065cc8]"
                   }`}
                 >
                   {item.toUpperCase()}
                 </button>
               ))}
             </div>
-            {menu.map(([, id], index) => (
-              <a key={id} href={`#${id}`} onClick={() => setOpen(false)} className="block rounded-md px-3 py-3 text-sm font-semibold text-[#253044] hover:bg-[#e7f4ff] hover:text-[#2e83e8]">
-                {copy.menu[index]}
-              </a>
-            ))}
-            <a href="/nosotros" onClick={() => setOpen(false)} className="block rounded-md px-3 py-3 text-sm font-semibold text-[#253044] hover:bg-[#e7f4ff] hover:text-[#2e83e8]">
-              {copy.pageLinks.about}
+            <a href="#contacto" className="home-primary-button hidden min-h-10 whitespace-nowrap rounded-lg px-3 text-sm lg:inline-flex xl:px-4">
+              {copy.menu[3]}
             </a>
-            <a href="/servicios" onClick={() => setOpen(false)} className="block rounded-md px-3 py-3 text-sm font-semibold text-[#253044] hover:bg-[#e7f4ff] hover:text-[#2e83e8]">
-              {copy.pageLinks.packages}
+            <a href="#cotizar" className="hidden min-h-10 items-center whitespace-nowrap rounded-lg border border-[#dbe8f6] bg-[#f1f6fb] px-3 text-sm font-bold transition hover:bg-[#e5f0ff] lg:inline-flex xl:px-4">
+              {copy.quote}
             </a>
-            <a href="/preguntas" onClick={() => setOpen(false)} className="block rounded-md px-3 py-3 text-sm font-semibold text-[#253044] hover:bg-[#e7f4ff] hover:text-[#2e83e8]">
-              {copy.pageLinks.questions}
-            </a>
-            <a href="#agendar" onClick={() => setOpen(false)} className="block rounded-md px-3 py-3 text-sm font-semibold text-[#253044] hover:bg-[#e7f4ff] hover:text-[#2e83e8]">
-              {copy.scheduleShort}
-            </a>
-            <div className="mt-2 border-t border-[#d8ecff] pt-2">
-              <p className="px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#2e83e8]">{copy.pageLinks.more}</p>
-              {moreMenu.map(([, id], index) => {
-                const href = id === "noticias" ? "/noticias" : `#${id}`;
-
-                return (
-                  <a key={id} href={href} onClick={() => setOpen(false)} className="block rounded-md px-3 py-2.5 text-sm font-semibold text-[#253044] hover:bg-[#e7f4ff] hover:text-[#2e83e8]">
-                    {copy.moreMenu[index]}
-                  </a>
-                );
-              })}
-            </div>
+            <button
+              type="button"
+              aria-label={open ? copy.closeMenu : copy.openMenu}
+              aria-expanded={open}
+              aria-controls="home-mobile-nav"
+              className="grid h-10 w-10 place-items-center rounded-md border border-[#dbe8f6] lg:hidden"
+              onClick={() => setOpen((value) => !value)}
+            >
+              {open ? <X size={20} /> : <Menu size={20} />}
+            </button>
           </div>
-        ) : null}
+        </nav>
+        <div id="home-mobile-nav" hidden={!open} className="max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-[#e2edf8] bg-white px-5 py-3 lg:hidden">
+          {[
+            ...homeLinks,
+            { label: copy.pageLinks.packages, href: "/servicios" },
+            { label: copy.pageLinks.questions, href: "/preguntas" },
+            { label: copy.scheduleShort, href: "#agendar" },
+            { label: copy.menu[3], href: "#contacto" },
+            { label: copy.quote, href: "#cotizar" },
+          ].map(({ label, href }) => (
+            <a key={href} href={href} onClick={() => setOpen(false)} className="block rounded-md px-3 py-3 text-sm font-semibold hover:bg-[#e7f2ff] hover:text-[#065cc8]">
+              {label}
+            </a>
+          ))}
+        </div>
       </header>
 
-      <section id="inicio" className="light-hero-section relative overflow-hidden pt-16 text-dyd-ink">
-        <div className="light-hero-bg absolute inset-0" />
-        <div className="light-hero-shell relative flex min-h-[calc(100vh-4rem)] flex-col pb-12 pt-8 sm:pb-14 lg:pb-16">
+      <section id="inicio" className="relative isolate overflow-hidden pt-16">
+        <div className="light-hero-bg pointer-events-none absolute inset-x-0 bottom-0 top-16" aria-hidden="true" />
+        <div className="relative">
           <div ref={heroVantaRef} className={`vanta-birds-layer vanta-birds-ambient${vantaFallback ? " vanta-birds-fallback" : ""}`} aria-hidden="true" />
-          <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-5 sm:px-8 lg:px-10">
-            <div className="relative z-[1] grid flex-1 items-center gap-10 py-12 lg:py-16">
-              <div className="max-w-5xl">
-                <div className="mb-7 inline-flex items-center gap-3 rounded-full bg-white/72 px-5 py-2 text-sm font-semibold text-[#253044] shadow-[0_12px_36px_rgba(45,118,194,0.12)] ring-1 ring-[#c7e6ff]/75">
-                  <Sparkles size={17} className="text-[#2e83e8]" />
+          <div className="home-container relative z-10 pb-10 pt-8 sm:pb-12 sm:pt-10 lg:pt-12">
+            <div className="grid items-center gap-7 md:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-10">
+              <div>
+                <p className="mb-4 inline-block rounded-full border border-[#c7e0ff] bg-white/80 px-3 py-1 text-xs font-bold text-[#0858bb] sm:mb-5">
                   {copy.heroBadge}
-                </div>
-                <h1 className="hero-display text-balance max-w-5xl text-4xl font-extrabold leading-[1.08] tracking-normal text-black sm:text-5xl md:text-6xl lg:text-[4.25rem]">
+                </p>
+                <h1 className="hero-display text-balance text-[2rem] leading-[1.08] sm:text-[2.625rem] lg:text-[2.875rem] xl:text-[3.125rem]">
                   {copy.heroBefore}{" "}
-                  <span className="text-[#2e83e8]">
-                    {copy.heroHighlight}
-                  </span>{" "}
+                  <span className="text-[#065fcf]">{copy.heroHighlight}</span>{" "}
                   {copy.heroAfter}
                 </h1>
-                <p className="mt-7 max-w-2xl text-base leading-8 text-[#253044] sm:text-lg">
+                <p className="mt-4 max-w-lg text-pretty text-base leading-relaxed text-[#34465e] sm:mt-5 sm:text-lg">
                   {copy.heroText}
                 </p>
-                <div className="mt-9 flex flex-col gap-4 sm:flex-row">
-                  <a href="#contacto" className="inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-[#2e83e8] px-8 text-base font-bold text-white shadow-[0_20px_40px_rgba(46,131,232,0.28)] transition hover:-translate-y-0.5 hover:bg-[#176ed7]">
-                    {copy.primaryCta} <ArrowRight size={19} />
+                <div className="mt-6 flex flex-wrap gap-3 sm:mt-7">
+                  <a href="#contacto" className="home-primary-button inline-flex min-h-12 gap-2 rounded-lg px-4 text-sm sm:px-5">
+                    {copy.primaryCta} <ArrowRight size={17} aria-hidden="true" />
                   </a>
-                  <a href="#casos" className="inline-flex min-h-14 items-center justify-center gap-3 rounded-2xl bg-white px-7 text-base font-bold text-[#253044] shadow-[0_18px_38px_rgba(31,55,91,0.12)] ring-1 ring-[#dbeeff] transition hover:-translate-y-0.5 hover:text-[#2e83e8]">
-                    <span className="grid h-8 w-8 place-items-center rounded-full bg-[#253044] text-white">
-                      <Play size={15} fill="currentColor" />
-                    </span>
+                  <a href="#casos" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-[#9fc9fa] bg-white/90 px-4 text-sm font-bold text-[#0959b8] transition hover:border-[#0872e9] hover:bg-[#edf6ff] sm:px-5">
+                    <CirclePlay size={19} aria-hidden="true" />
                     {copy.secondaryCta}
                   </a>
                 </div>
               </div>
+              <Image
+                src="/dydweb-hero-dispositivos.webp"
+                alt={copy.heroImageAlt}
+                width={1280}
+                height={853}
+                sizes="(min-width: 1280px) 620px, (min-width: 768px) 50vw, 90vw"
+                priority
+                className="mx-auto h-auto w-full max-w-xl md:max-w-none"
+              />
             </div>
 
-            <div className="relative z-[1] grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-8 md:grid-cols-4 lg:gap-4">
               {stats.map(([value], index) => {
                 const MetricIcon = heroMetricIcons[index];
 
                 return (
-                  <div key={copy.stats[index]} className="light-metric-card rounded-2xl px-4 py-4">
-                    <MetricIcon className="mb-3 text-[#2e83e8]" size={20} />
-                    <p className="text-2xl font-black text-black">{value}</p>
-                    <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-[#536179]">{copy.stats[index]}</p>
+                  <div key={copy.stats[index]} className="light-metric-card flex min-h-[5rem] items-center gap-2.5 rounded-lg px-3 py-3 lg:gap-3 lg:px-5">
+                    <MetricIcon className="h-5 w-5 shrink-0 text-[#0872e9] lg:h-7 lg:w-7" aria-hidden="true" />
+                    <div>
+                      <p className="text-xl font-extrabold leading-tight sm:text-2xl">{value}</p>
+                      <p className="mt-1 text-xs font-semibold leading-tight text-[#34465e] sm:text-sm">{copy.stats[index]}</p>
+                    </div>
                   </div>
                 );
               })}
@@ -1833,24 +1791,24 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="servicios" className="px-4 py-20 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
+      <section id="servicios" className="home-section">
+        <div className="home-container">
           <SectionHeading
             eyebrow={copy.sections.services.eyebrow}
             title={copy.sections.services.title}
             text={copy.sections.services.text}
           />
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {copy.services.map(({ icon: Icon, title, items }) => (
-              <article key={title} className="premium-card group rounded-lg p-6 transition hover:-translate-y-1 hover:border-dyd-cyan/50">
-                <div className="mb-5 grid h-12 w-12 place-items-center rounded-md border border-dyd-cyan/25 bg-dyd-cyan/10 text-dyd-cyan transition group-hover:bg-dyd-cyan group-hover:text-dyd-ink">
-                  <Icon size={26} />
+              <article key={title} className="home-surface p-5 lg:p-6">
+                <div className="mb-3 grid h-10 w-10 place-items-center rounded-md bg-[#edf5ff] text-[#076bd8]">
+                  <Icon size={23} aria-hidden="true" />
                 </div>
-                <h3 className="text-xl font-semibold">{title}</h3>
-                <ul className="mt-5 space-y-3">
+                <h3 className="text-lg font-extrabold">{title}</h3>
+                <ul className="mt-3 space-y-1.5">
                   {items.map((item) => (
-                    <li key={item} className="flex items-center gap-3 text-sm text-dyd-text">
-                      <CheckCircle2 size={16} className="shrink-0 text-dyd-blue" />
+                    <li key={item} className="home-muted flex items-start gap-2 text-sm">
+                      <Check size={16} className="mt-0.5 shrink-0 text-[#0873e9]" aria-hidden="true" />
                       {item}
                     </li>
                   ))}
@@ -1858,12 +1816,12 @@ export default function Home() {
               </article>
             ))}
           </div>
-          <div className="mt-8 flex flex-col gap-4 rounded-lg border border-dyd-cyan/20 bg-dyd-panel/70 p-5 md:flex-row md:items-center md:justify-between">
+          <div className="mt-5 flex flex-col items-start gap-4 border-y border-[#deebf9] bg-[#f2f8ff] p-5 md:flex-row md:items-center md:justify-between">
             <div>
-              <h3 className="text-xl font-semibold text-white">{copy.servicesCtaTitle}</h3>
-              <p className="mt-2 text-sm leading-6 text-dyd-text">{copy.servicesCtaText}</p>
+              <h3 className="text-lg font-extrabold">{copy.servicesCtaTitle}</h3>
+              <p className="home-muted mt-1 text-sm leading-relaxed">{copy.servicesCtaText}</p>
             </div>
-            <a href="/servicios" className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-md border border-dyd-cyan/35 px-5 text-sm font-semibold text-dyd-silver transition hover:bg-dyd-cyan hover:text-dyd-ink">
+            <a href="/servicios" className="home-primary-button inline-flex min-h-11 gap-2 rounded-lg px-4 text-sm md:shrink-0">
               {copy.servicesCtaButton} <ChevronRight size={18} />
             </a>
           </div>
@@ -1872,45 +1830,23 @@ export default function Home() {
 
       <QuickQuote copy={copy} language={language} />
 
-      <section id="soluciones" className="border-y border-dyd-silver/15 bg-dyd-panel/70 px-4 py-20 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
+      <section id="soluciones" className="home-section">
+        <div className="home-container">
           <SectionHeading
             eyebrow={copy.sections.solutions.eyebrow}
             title={copy.sections.solutions.title}
             text={copy.sections.solutions.text}
           />
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {copy.sectors.map(([sector, useCase]) => (
-              <div key={sector} className="premium-card rounded-lg p-5">
-                <BriefcaseBusiness className="mb-4 text-dyd-blue" />
-                <h3 className="font-semibold">{sector}</h3>
-                <p className="mt-3 text-sm leading-6 text-dyd-text">{useCase}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="px-4 py-20 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
-          <SectionHeading
-            eyebrow={copy.sections.trust.eyebrow}
-            title={copy.sections.trust.title}
-            text={copy.sections.trust.text}
-          />
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {copy.trustCards.map(([title, text], index) => {
-              const TrustIcon = [ShieldCheck, Gauge, UsersRound, MessageCircle][index];
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {copy.sectors.map(([sector, useCase], index) => {
+              const Icon = sectorIcons[index];
               return (
-                <article key={title} className="premium-card group rounded-lg p-5 transition hover:-translate-y-1 hover:border-dyd-cyan/50">
-                  <div className="mb-4 flex items-center justify-between">
-                    <div className="grid h-11 w-11 place-items-center rounded-md border border-dyd-cyan/25 bg-dyd-cyan/10 text-dyd-cyan transition group-hover:bg-dyd-cyan group-hover:text-dyd-ink">
-                      <TrustIcon size={22} />
-                    </div>
-                    <span className="text-xs font-semibold text-dyd-silver/45">NEXUS 0{index + 1}</span>
+                <article key={sector} className="home-surface p-4">
+                  <div className="flex items-center gap-2.5">
+                    <Icon size={22} className="shrink-0 text-[#076bd8]" aria-hidden="true" />
+                    <h3 className="font-extrabold">{sector}</h3>
                   </div>
-                  <h3 className="text-lg font-semibold">{title}</h3>
-                  <p className="mt-3 text-sm leading-6 text-dyd-text">{text}</p>
+                  <p className="home-muted mt-2 text-sm leading-relaxed">{useCase}</p>
                 </article>
               );
             })}
@@ -1918,125 +1854,145 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="casos" className="px-4 py-20 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
+      <section className="home-tint border-y border-[#e8f0f8] py-10 sm:py-12">
+        <div className="home-container grid items-center gap-6 lg:grid-cols-[0.85fr_1.15fr_auto] lg:gap-10">
+          <div>
+            <p className="home-kicker mb-2">{copy.sections.trust.eyebrow}</p>
+            <h2 className="home-heading text-balance text-3xl">{copy.sections.trust.title}</h2>
+            <p className="home-muted mt-3 leading-relaxed">{copy.sections.trust.text}</p>
+          </div>
+          <ul className="grid gap-x-5 gap-y-4 sm:grid-cols-2">
+            {copy.trustCards.map(([title, text]) => (
+              <li key={title} className="flex gap-2.5">
+                <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-[#0873e9]" aria-hidden="true" />
+                <div>
+                  <h3 className="text-sm font-extrabold">{title}</h3>
+                  <p className="home-muted mt-1 text-sm leading-relaxed">{text}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <ShieldCheck className="hidden text-[#0869d7] xl:block" size={88} strokeWidth={1.2} aria-hidden="true" />
+        </div>
+      </section>
+
+      <section id="casos" className="home-section">
+        <div className="home-container">
           <SectionHeading
             eyebrow={copy.sections.cases.eyebrow}
             title={copy.sections.cases.title}
             text={copy.sections.cases.text}
           />
-          <div className="grid gap-4 lg:grid-cols-3">
+          <div className="grid items-start gap-5 md:grid-cols-3">
             {copy.cases.map((item, index) => (
-              <article key={item.client} className="premium-card overflow-hidden rounded-lg p-0">
-                <div className="border-b border-dyd-silver/10 bg-gradient-to-br from-dyd-blue/18 via-dyd-cyan/10 to-transparent p-5">
-                  <div className="mb-5 flex items-center justify-between">
-                    <h3 className="text-xl font-semibold">{item.client}</h3>
-                    <Star className="text-dyd-blue" size={20} />
-                  </div>
-                  <div className="rounded-lg border border-dyd-silver/15 bg-dyd-black/55 p-3">
-                    <div className="mb-3 flex gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-dyd-cyan" />
-                      <span className="h-2 w-2 rounded-full bg-dyd-blue" />
-                      <span className="h-2 w-2 rounded-full bg-dyd-silver/45" />
-                    </div>
-                    <div className="grid gap-2">
-                      <div className="h-2 rounded-full bg-dyd-silver/15" />
-                      <div className="grid grid-cols-[1fr_0.5fr] gap-2">
-                        <div className="h-16 rounded-md border border-dyd-cyan/20 bg-dyd-cyan/10" />
-                        <div className="grid gap-2">
-                          <div className="h-7 rounded-md bg-dyd-blue/25" />
-                          <div className="h-7 rounded-md bg-dyd-silver/10" />
-                        </div>
+              <article key={item.client} className="home-surface overflow-hidden">
+                <Image
+                  src={caseImages[index]}
+                  alt=""
+                  width={960}
+                  height={540}
+                  sizes="(min-width: 1280px) 390px, (min-width: 768px) 33vw, 90vw"
+                  className="aspect-video w-full object-cover"
+                />
+                <div className="p-5">
+                  <p className="home-muted mb-1 text-xs">{copy.caseImageCaption}</p>
+                  <h3 className="text-xl font-extrabold">{item.client}</h3>
+                  <p className="mt-3 text-2xl font-extrabold text-[#087359]">{copy.caseMetrics[index][0]}</p>
+                  <p className="home-muted mt-1 min-h-10 text-sm leading-relaxed">{item.result}</p>
+                  <details className="group mt-4 border-t border-[#e4edf7] pt-3">
+                    <summary className="home-link flex cursor-pointer list-none items-center justify-between gap-2 text-sm">
+                      {copy.caseDetails}
+                      <ChevronDown size={17} className="transition-transform group-open:rotate-180" aria-hidden="true" />
+                    </summary>
+                    <dl className="home-muted mt-3 space-y-2 text-sm leading-relaxed">
+                      <div><dt className="inline font-bold text-[#15263d]">{copy.caseLabels.problem}</dt>{" "}<dd className="inline">{item.problem}</dd></div>
+                      <div><dt className="inline font-bold text-[#15263d]">{copy.caseLabels.solution}</dt>{" "}<dd className="inline">{item.solution}</dd></div>
+                      <div><dt className="inline font-bold text-[#15263d]">{copy.caseLabels.tech}</dt>{" "}<dd className="inline">{item.tech}</dd></div>
+                    </dl>
+                  </details>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="noticias" className="home-section home-tint border-y border-[#e8f0f8]">
+        <div className="home-container grid gap-6 xl:grid-cols-[0.8fr_2.2fr] xl:items-center xl:gap-8">
+          <div>
+            <p className="home-kicker mb-2">{copy.sections.news.eyebrow}</p>
+            <h2 className="home-heading text-balance text-3xl">{copy.sections.news.title}</h2>
+            <p className="home-muted mt-3 max-w-xl leading-relaxed">{copy.sections.news.text}</p>
+            <a href="/noticias" className="home-primary-button mt-5 inline-flex min-h-11 gap-2 rounded-lg px-4 text-sm">
+              {copy.exploreNews} <ArrowRight size={17} aria-hidden="true" />
+            </a>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-3">
+            {copy.news.map(([category, title, href], index) => {
+              const TopicIcon = index === 1 ? Bot : Search;
+              return (
+                <article key={href} className="home-surface">
+                  <a href={href} className="group block h-full rounded-lg">
+                    {index === 0 ? (
+                      <Image
+                        src="/noticias/desarrollo-web-empresarial.png"
+                        alt=""
+                        width={720}
+                        height={405}
+                        sizes="(min-width: 640px) 32vw, 90vw"
+                        className="aspect-video w-full rounded-t-lg object-cover"
+                      />
+                    ) : (
+                      <div className="grid aspect-video place-items-center rounded-t-lg bg-[#eaf4ff] text-[#076bd8]">
+                        <TopicIcon size={48} strokeWidth={1.45} aria-hidden="true" />
                       </div>
+                    )}
+                    <div className="p-4">
+                      <p className="home-kicker">{category}</p>
+                      <h3 className="mt-2 font-extrabold leading-snug group-hover:text-[#075bbf]">{title}</h3>
                     </div>
-                  </div>
-                </div>
-                <div className="p-6">
-                  <div className="mb-5 rounded-md border border-dyd-cyan/25 bg-dyd-cyan/10 p-4">
-                    <p className="text-3xl font-semibold text-white">{copy.caseMetrics[index][0]}</p>
-                    <p className="mt-1 text-xs font-semibold uppercase tracking-[0.16em] text-dyd-cyan">{copy.caseMetrics[index][1]}</p>
-                  </div>
-                  <p className="text-sm leading-6 text-dyd-text"><strong className="text-white">{copy.caseLabels.problem}:</strong> {item.problem}</p>
-                  <p className="mt-3 text-sm leading-6 text-dyd-text"><strong className="text-white">{copy.caseLabels.solution}:</strong> {item.solution}</p>
-                  <p className="mt-3 text-sm leading-6 text-dyd-text"><strong className="text-white">{copy.caseLabels.tech}:</strong> {item.tech}</p>
-                  <div className="mt-5 rounded-md border border-dyd-silver/15 bg-dyd-silver/[0.04] p-4 text-sm font-semibold text-dyd-silver">{item.result}</div>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="noticias" className="px-4 py-20 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
-          <SectionHeading
-            eyebrow={copy.sections.news.eyebrow}
-            title={copy.sections.news.title}
-            text={copy.sections.news.text}
-          />
-          <div className="mb-6 flex flex-col gap-3 md:flex-row">
-            <label className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-dyd-text" size={18} />
-              <input
-                className="h-12 w-full rounded-md border border-dyd-silver/15 bg-dyd-ink/55 pl-12 pr-4 text-white outline-none placeholder:text-dyd-text focus:border-dyd-cyan"
-                placeholder={copy.searchPlaceholder}
-              />
-            </label>
-            <button className="h-12 rounded-md bg-gradient-to-r from-dyd-blue to-dyd-cyan px-5 text-sm font-semibold text-white">
-              {copy.searchButton}
-            </button>
-          </div>
-          <div className="grid gap-4 md:grid-cols-3">
-            {copy.news.map(([category, title, href]) => (
-              <article key={title} className="premium-card rounded-lg p-6">
-                <span className="rounded-md bg-dyd-cyan/10 px-3 py-1 text-xs font-semibold text-dyd-cyan">{category}</span>
-                <h3 className="mt-5 text-xl font-semibold leading-7">{title}</h3>
-                <p className="mt-3 text-sm leading-6 text-dyd-text">{copy.newsCardText}</p>
-                {href ? (
-                  <a
-                    href={href}
-                    className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-dyd-cyan transition hover:text-white"
-                  >
-                    Leer artículo <ArrowRight size={16} />
                   </a>
-                ) : null}
-              </article>
-            ))}
+                </article>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      <section className="border-y border-dyd-silver/15 bg-dyd-panel/70 px-4 py-20 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
-          <SectionHeading
-            eyebrow={copy.sections.admin.eyebrow}
-            title={copy.sections.admin.title}
-            text={copy.sections.admin.text}
-          />
-          <div className="grid gap-4 lg:grid-cols-3">
-            {[
-              [LockKeyhole, copy.adminCards[0][0], copy.adminCards[0][1]],
-              [BarChart3, copy.adminCards[1][0], copy.adminCards[1][1]],
-              [ShieldCheck, copy.adminCards[2][0], copy.adminCards[2][1]],
-            ].map(([Icon, title, text]) => (
-              <div key={title as string} className="premium-card rounded-lg p-6">
-                <Icon className="mb-4 text-dyd-cyan" />
-                <h3 className="text-xl font-semibold">{title as string}</h3>
-                <p className="mt-3 text-sm leading-6 text-dyd-text">{text as string}</p>
-              </div>
-            ))}
+      <section className="home-section">
+        <div className="home-container grid items-center gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:gap-12">
+          <div>
+            <p className="home-kicker mb-2">{copy.sections.admin.eyebrow}</p>
+            <h2 className="home-heading text-balance text-3xl md:text-[2.5rem]">{copy.sections.admin.title}</h2>
+            <p className="home-muted mt-3 max-w-md leading-relaxed">{copy.sections.admin.text}</p>
+          </div>
+          <div className="grid gap-3">
+            {copy.adminCards.map(([title, text], index) => {
+              const Icon = [LockKeyhole, BarChart3, ShieldCheck][index];
+              return (
+                <div key={title} className="home-surface flex gap-3.5 p-4">
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-md bg-[#edf5ff] text-[#076bd8]">
+                    <Icon size={21} aria-hidden="true" />
+                  </span>
+                  <div>
+                    <h3 className="font-extrabold">{title}</h3>
+                    <p className="home-muted mt-1 text-sm leading-relaxed">{text}</p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      <section className="px-4 py-12 sm:px-6 lg:px-8">
-        <div className="mx-auto flex max-w-7xl flex-col gap-5 rounded-lg border border-dyd-cyan/20 bg-dyd-panel/70 p-6 shadow-glow md:flex-row md:items-center md:justify-between">
+      <section className="border-y border-[#e8f0f8] py-8">
+        <div className="home-container flex flex-col items-start gap-5 md:flex-row md:items-center md:justify-between">
           <div className="max-w-3xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-dyd-cyan">{copy.sections.faq.eyebrow}</p>
-            <h2 className="mt-2 text-2xl font-semibold text-white">{copy.faqCtaTitle}</h2>
-            <p className="mt-2 text-sm leading-6 text-dyd-text">{copy.faqCtaText}</p>
+            <p className="home-kicker">{copy.sections.faq.eyebrow}</p>
+            <h2 className="home-heading mt-2 text-2xl">{copy.faqCtaTitle}</h2>
+            <p className="home-muted mt-2 text-sm leading-relaxed">{copy.faqCtaText}</p>
           </div>
-          <a href="/preguntas" className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-md bg-gradient-to-r from-dyd-blue to-dyd-cyan px-5 text-sm font-semibold text-white shadow-glow transition hover:brightness-110">
+          <a href="/preguntas" className="home-link inline-flex min-h-11 items-center gap-2 rounded-lg border border-[#b8d5f4] px-4 text-sm md:shrink-0">
             {copy.faqCtaButton} <ChevronRight size={18} />
           </a>
         </div>
@@ -2044,100 +2000,96 @@ export default function Home() {
 
       <ScheduleMeeting copy={copy} />
 
-      <section id="contacto" className="px-4 py-20 sm:px-6 lg:px-8">
-        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.9fr_1.1fr]">
+      <section id="contacto" className="home-section">
+        <div className="home-container grid items-start gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:gap-10">
           <div>
-            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-dyd-cyan">{copy.contactEyebrow}</p>
-            <h2 className="text-3xl font-semibold md:text-5xl">{copy.contactTitle}</h2>
-            <p className="mt-5 text-lg leading-8 text-dyd-text">{copy.contactText}</p>
-            <div className="mt-8 flex flex-wrap gap-2">
-              {techStack.map((tech) => (
-                <span key={tech} className="rounded-md border border-dyd-silver/15 bg-dyd-silver/5 px-3 py-2 text-sm font-medium text-dyd-text">{tech}</span>
-              ))}
-            </div>
+            <p className="home-kicker mb-2">{copy.contactEyebrow}</p>
+            <h2 className="home-heading text-balance text-3xl md:text-[2.5rem]">{copy.contactTitle}</h2>
+            <p className="home-muted mt-3 max-w-lg leading-relaxed">{copy.contactText}</p>
           </div>
-          <form onSubmit={handleContactSubmit} className="premium-card grid gap-3 rounded-lg p-6">
-            <div className="grid gap-3 md:grid-cols-2">
+          <form onSubmit={handleContactSubmit} className="home-surface grid min-w-0 gap-3 p-4 sm:p-6">
+            <div className="grid gap-3 sm:grid-cols-2">
               {copy.contactFields.map((field, index) => (
                 <input
                   key={field}
                   name={["name", "company", "email", "whatsapp"][index]}
+                  type={["text", "text", "email", "tel"][index]}
+                  autoComplete={["name", "organization", "email", "tel"][index]}
                   required={index === 0 || index === 2}
-                  className="h-12 rounded-md border border-dyd-silver/15 bg-dyd-ink/55 px-4 text-white outline-none placeholder:text-dyd-text focus:border-dyd-cyan"
+                  className="home-field"
                   placeholder={field}
+                  aria-label={field}
                 />
               ))}
             </div>
-            <select name="service" required className="h-12 rounded-md border border-dyd-silver/15 bg-dyd-ink/55 px-4 text-white outline-none placeholder:text-dyd-text focus:border-dyd-cyan">
+            <select name="service" required defaultValue="" className="home-field" aria-label={copy.serviceInterest}>
               <option value="">{copy.serviceInterest}</option>
               {copy.serviceOptions.map((option) => (
                 <option key={option}>{option}</option>
               ))}
             </select>
-            <input name="budget" className="h-12 rounded-md border border-dyd-silver/15 bg-dyd-ink/55 px-4 text-white outline-none placeholder:text-dyd-text focus:border-dyd-cyan" placeholder={copy.budgetPlaceholder} />
-            <textarea name="message" required className="min-h-32 rounded-md border border-dyd-silver/15 bg-dyd-ink/55 px-4 py-3 text-white outline-none placeholder:text-dyd-text focus:border-dyd-cyan" placeholder={copy.messagePlaceholder} />
+            <input name="budget" className="home-field" placeholder={copy.budgetPlaceholder} aria-label={copy.budgetPlaceholder} />
+            <textarea name="message" required rows={4} className="home-field" placeholder={copy.messagePlaceholder} aria-label={copy.messagePlaceholder} />
             {contactSent ? (
-              <p className="rounded-md border border-dyd-cyan/25 bg-dyd-cyan/10 px-3 py-2 text-sm font-medium text-dyd-silver">
+              <p role="status" className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-900">
                 {copy.contactSuccess}
               </p>
             ) : null}
             {contactError ? (
-              <p className="rounded-md border border-red-400/35 bg-red-500/10 px-3 py-2 text-sm font-medium text-red-100">
+              <p role="alert" className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-900">
                 {copy.contactError}
               </p>
             ) : null}
-            <button className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-gradient-to-r from-dyd-blue to-dyd-cyan font-semibold text-white">
-              {copy.contactButton} <MessageSquareText size={18} />
+            <button className="home-primary-button inline-flex min-h-12 gap-2 rounded-lg px-3 text-sm">
+              {copy.contactButton} <MessageSquareText size={18} aria-hidden="true" />
             </button>
           </form>
         </div>
       </section>
 
-      <footer className="border-t border-dyd-silver/15 bg-dyd-ink/78 px-4 py-12 sm:px-6 lg:px-8">
-        <div className="mx-auto grid max-w-7xl gap-8 md:grid-cols-[1.2fr_0.8fr_0.8fr_0.9fr]">
+      <footer className="border-t border-[#deebf9] bg-white pb-20 pt-10">
+        <div className="home-container grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-[1.2fr_0.8fr_0.8fr_1fr] md:gap-x-7">
           <div>
-            <span className="relative block h-12 w-40 overflow-hidden rounded-md border border-dyd-cyan/20 bg-dyd-black/70">
-              <Image src="/logo-dydweb-nexus-header-wide.png" alt="DYDWEB" fill sizes="160px" className="object-contain p-1" />
-            </span>
-            <p className="mt-4 text-sm leading-6 text-dyd-text">{copy.footerTagline}</p>
-            <p className="mt-3 text-xs leading-5 text-dyd-text">{copy.footerB}</p>
+            <a href="#inicio" className="relative block h-10 w-36 max-w-full">
+              <Image src="/logo-dydweb-nexus-header-wide.png" alt="DYDWEB Nexus" fill sizes="144px" className="object-contain object-left" />
+            </a>
+            <p className="home-muted mt-3 text-sm leading-relaxed">{copy.footerTagline}</p>
           </div>
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-dyd-cyan">{copy.footerQuickLinks}</h3>
-            <div className="mt-4 grid gap-2 text-sm text-dyd-text">
-              <a href="#inicio" className="hover:text-white">{copy.menu[0]}</a>
-              <a href="/nosotros" className="hover:text-white">{copy.pageLinks.about}</a>
-              <a href="/servicios" className="hover:text-white">{copy.pageLinks.packages}</a>
-              <a href="/preguntas" className="hover:text-white">{copy.pageLinks.questions}</a>
-              <a href="#agendar" className="hover:text-white">{copy.scheduleShort}</a>
-              <a href="#contacto" className="hover:text-white">{copy.menu[3]}</a>
+            <h3 className="text-sm font-extrabold">{copy.footerQuickLinks}</h3>
+            <div className="home-muted mt-3 grid gap-2 text-sm [&_a:hover]:text-[#075bbf]">
+              <a href="#inicio">{copy.menu[0]}</a>
+              <a href="/nosotros">{copy.pageLinks.about}</a>
+              <a href="/servicios">{copy.pageLinks.packages}</a>
+              <a href="/preguntas">{copy.pageLinks.questions}</a>
+              <a href="#agendar">{copy.scheduleShort}</a>
+              <a href="#contacto">{copy.menu[3]}</a>
             </div>
           </div>
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-dyd-cyan">{copy.footerServices}</h3>
-            <div className="mt-4 grid gap-2 text-sm text-dyd-text">
+            <h3 className="text-sm font-extrabold">{copy.footerServices}</h3>
+            <div className="home-muted mt-3 grid gap-2 text-sm [&_a:hover]:text-[#075bbf]">
               {copy.services.slice(0, 4).map((service) => (
-                <a key={service.title} href="#servicios" className="hover:text-white">{service.title}</a>
+                <a key={service.title} href="#servicios">{service.title}</a>
               ))}
             </div>
           </div>
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-dyd-cyan">{copy.footerContact}</h3>
-            <p className="mt-4 text-sm text-dyd-text">Atención por WhatsApp</p>
-            <p className="mt-2 text-sm text-dyd-text">Colombia</p>
+            <h3 className="text-sm font-extrabold">{copy.footerContact}</h3>
+            <p className="home-muted mt-3 text-sm">{language === "es" ? "Atención por WhatsApp" : "Support on WhatsApp"}</p>
+            <p className="home-muted mt-2 text-sm">Colombia</p>
             <a
               href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(copy.chatbot.leadIntro)}`}
               target="_blank"
               rel="noreferrer"
-              className="mt-5 inline-flex h-11 items-center justify-center gap-2 rounded-md bg-gradient-to-r from-dyd-blue to-dyd-cyan px-4 text-sm font-semibold text-white shadow-glow"
+              className="home-primary-button mt-4 inline-flex min-h-11 gap-2 rounded-lg px-3 py-2 text-sm"
             >
               {copy.footerAdvisor} <MessageCircle size={17} />
             </a>
           </div>
         </div>
-        <div className="mx-auto mt-10 flex max-w-7xl flex-col gap-2 border-t border-dyd-silver/10 pt-5 text-xs text-dyd-text md:flex-row md:items-center md:justify-between">
-          <p>{copy.footerA}</p>
-          <p>DYDWEB Nexus</p>
+        <div className="home-container mt-8">
+          <p className="home-muted border-t border-[#e3edf8] pt-5 text-xs">{copy.footerA}</p>
         </div>
       </footer>
 
