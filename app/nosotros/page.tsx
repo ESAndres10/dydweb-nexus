@@ -28,7 +28,7 @@ const pageCopy = {
   es: {
     languageLabel: "Idioma",
     back: "Volver al inicio",
-    nav: { home: "Inicio", about: "Quiénes Somos", services: "Servicios", questions: "Preguntas", schedule: "Agendar", contact: "Contacto" },
+    nav: { home: "Inicio", about: "Quiénes Somos", services: "Servicios", questions: "Preguntas", contact: "Contacto" },
     badge: "Identidad D&D WEB Nexus",
     titleBefore: "Creamos tecnología para empresas que no quieren",
     titleHighlight: "seguir haciendo lo mismo",
@@ -82,7 +82,7 @@ const pageCopy = {
   en: {
     languageLabel: "Language",
     back: "Back home",
-    nav: { home: "Home", about: "About Us", services: "Services", questions: "FAQ", schedule: "Schedule", contact: "Contact" },
+    nav: { home: "Home", about: "About Us", services: "Services", questions: "FAQ", contact: "Contact" },
     badge: "D&D WEB Nexus identity",
     titleBefore: "We build technology for companies that refuse to",
     titleHighlight: "keep doing business as usual",
@@ -175,7 +175,6 @@ export default function AboutPage() {
             <a href="/nosotros" className="rounded-md bg-dyd-cyan/10 px-3 py-2 text-sm font-medium text-white">{copy.nav.about}</a>
             <a href="/servicios" className="rounded-md px-3 py-2 text-sm font-medium text-dyd-text transition hover:bg-dyd-silver/10 hover:text-white">{copy.nav.services}</a>
             <a href="/preguntas" className="rounded-md px-3 py-2 text-sm font-medium text-dyd-text transition hover:bg-dyd-silver/10 hover:text-white">{copy.nav.questions}</a>
-            <a href="/#agendar" className="rounded-md px-3 py-2 text-sm font-medium text-dyd-text transition hover:bg-dyd-silver/10 hover:text-white">{copy.nav.schedule}</a>
             <a href="/#contacto" className="rounded-md px-3 py-2 text-sm font-medium text-dyd-text transition hover:bg-dyd-silver/10 hover:text-white">{copy.nav.contact}</a>
           </div>
           <div className="flex items-center gap-3">
@@ -372,7 +371,6 @@ export default function AboutPage() {
               <a href="/nosotros" className="hover:text-white">{copy.nav.about}</a>
               <a href="/servicios" className="hover:text-white">{copy.nav.services}</a>
               <a href="/preguntas" className="hover:text-white">{copy.nav.questions}</a>
-              <a href="/#agendar" className="hover:text-white">{copy.nav.schedule}</a>
               <a href="/#contacto" className="hover:text-white">{copy.nav.contact}</a>
             </div>
           </div>

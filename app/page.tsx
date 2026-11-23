@@ -4,13 +4,11 @@ import {
   ArrowRight,
   BarChart3,
   Bot,
-  CalendarDays,
   Check,
   CheckCircle2,
   ChevronDown,
   CirclePlay,
   ChevronRight,
-  CircleDollarSign,
   Code2,
   Factory,
   Gauge,
@@ -24,6 +22,7 @@ import {
   MessageCircle,
   MessageSquareText,
   MonitorCog,
+  Pause,
   Play,
   Rocket,
   Search,
@@ -33,10 +32,12 @@ import {
   ShoppingBag,
   Star,
   Stethoscope,
+  Tag,
   Ticket,
   TrendingUp,
   UsersRound,
   X,
+  type LucideIcon,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -49,36 +50,67 @@ const stats = [
   ["24/7", "operación digital"],
 ];
 
-const services = [
+const quoteServiceOrder = ["web", "ia", "software", "seo", "diseno", "audiovisual"] as const;
+
+type ServiceId = (typeof quoteServiceOrder)[number];
+
+type HomeService = {
+  id: ServiceId;
+  icon: LucideIcon;
+  title: string;
+  items: string[];
+  audience: string;
+  example: string;
+};
+
+const services: HomeService[] = [
   {
+    id: "software",
     icon: Code2,
     title: "Desarrollo de software",
     items: ["Sistemas empresariales", "ERP y CRM", "Portales corporativos", "APIs REST"],
+    audience: "Equipos que llevan sus operaciones en hojas de cálculo o herramientas desconectadas.",
+    example: "Un portal que reúne pedidos, inventario y seguimiento de clientes, con permisos según el rol de cada persona.",
   },
   {
+    id: "web",
     icon: Globe2,
     title: "Desarrollo web",
     items: ["Sitios corporativos", "Landing pages", "E-commerce", "Plataformas a medida"],
+    audience: "Negocios que quieren atraer más consultas, presentar su oferta o vender por internet.",
+    example: "Un sitio con catálogo, páginas de servicio y un formulario de cotización pensado para quienes navegan desde el móvil.",
   },
   {
+    id: "ia",
     icon: Bot,
     title: "Inteligencia artificial",
     items: ["Chatbots", "Automatización", "Agentes IA", "Procesamiento de datos"],
+    audience: "Equipos que atienden consultas repetitivas o dedican tiempo a copiar información entre sistemas.",
+    example: "Un asistente que responde preguntas frecuentes, recoge los datos de una consulta y la deriva al equipo cuando hace falta.",
   },
   {
+    id: "seo",
     icon: Search,
     title: "SEO",
     items: ["SEO técnico", "SEO local", "Contenido optimizado", "Estrategias de ranking"],
+    audience: "Empresas que ya tienen un sitio y quieren que sus clientes las encuentren al buscar sus servicios.",
+    example: "Una auditoría que identifica páginas difíciles de encontrar y un plan para mejorar su contenido, velocidad e indexación.",
   },
   {
+    id: "diseno",
     icon: Layers3,
     title: "Diseño gráfico",
     items: ["Branding", "Identidad corporativa", "Redes sociales", "Piezas publicitarias"],
+    audience: "Marcas que necesitan una identidad coherente para su web, sus redes o una campaña.",
+    example: "Un sistema de colores, tipografías y plantillas para que el equipo publique piezas con una imagen consistente.",
   },
   {
+    id: "audiovisual",
     icon: Play,
     title: "Producción audiovisual",
     items: ["Videos corporativos", "Motion graphics", "Edición profesional", "Contenido social"],
+    audience: "Equipos que quieren presentar un producto, explicar un servicio o lanzar una campaña en video.",
+    example: "Un video principal para la web con versiones cortas y subtituladas para redes sociales.",
   },
 ];
 
@@ -131,7 +163,21 @@ const news = [
   ["SEO", "SEO técnico para que tus clientes encuentren tu negocio", "/seo-tecnico-para-negocios"],
 ];
 
-const sectorIcons = [GraduationCap, Stethoscope, ShoppingBag, Factory, Ticket, Landmark, HeartHandshake];
+const newsImages = [
+  "/noticias/desarrollo-web-empresarial.png",
+  "/dydweb-recurso-chatbots.webp",
+  "/dydweb-recurso-seo.webp",
+];
+
+const sectorMedia = [
+  { icon: GraduationCap, image: "educacion" },
+  { icon: Stethoscope, image: "salud" },
+  { icon: ShoppingBag, image: "comercio" },
+  { icon: Factory, image: "industria" },
+  { icon: Ticket, image: "eventos" },
+  { icon: Landmark, image: "gobierno" },
+  { icon: HeartHandshake, image: "fundaciones" },
+];
 const caseImages = [
   "/dydweb-proyecto-comercio.webp",
   "/dydweb-proyecto-educacion.webp",
@@ -251,19 +297,6 @@ const chatbotTopics = [
 
 type Language = "es" | "en";
 
-type VantaEffect = {
-  destroy: () => void;
-};
-
-function supportsWebGL() {
-  try {
-    const canvas = document.createElement("canvas");
-    return Boolean(canvas.getContext("webgl") || canvas.getContext("experimental-webgl"));
-  } catch {
-    return false;
-  }
-}
-
 async function submitLeadToSheets(payload: Record<string, unknown>) {
   try {
     const response = await fetch("/api/leads", {
@@ -297,7 +330,8 @@ const siteCopy = {
     heroText: "Creamos soluciones digitales a la medida para simplificar tus procesos, impulsar tus ventas y hacer crecer tu empresa.",
     primaryCta: "Solicitar asesoría",
     secondaryCta: "Ver proyectos",
-    heroImageAlt: "Portátil y móvil con una vista de ejemplo de un panel de ventas",
+    playHeroVideo: "Reproducir video de fondo",
+    pauseHeroVideo: "Pausar video de fondo",
     stats: ["soluciones entregadas", "sectores atendidos", "satisfacción proyectada", "operación digital"],
     proof: ["Software", "IA", "SEO", "Automatización", "Branding", "Audiovisual", "Cloudflare", "PostgreSQL"],
     sections: {
@@ -312,9 +346,8 @@ const siteCopy = {
         text: "Guiamos cada proyecto con diagnóstico, diseño, desarrollo y optimización continua para que el resultado sea útil, medible y fácil de evolucionar.",
       },
       quote: {
-        eyebrow: "Cotización rápida",
-        title: "Calcula una ruta inicial antes de hablar con el equipo",
-        text: "Elige el tipo de proyecto, prioridad y alcance. Prepararemos un mensaje listo para WhatsApp con el contexto comercial.",
+        title: "Cotización rápida",
+        text: "Elige el tipo de proyecto, la prioridad y el alcance. Te enviamos una propuesta personalizada sin compromiso.",
       },
       solutions: {
         eyebrow: "Soluciones empresariales",
@@ -340,6 +373,7 @@ const siteCopy = {
         eyebrow: "Portal y administración",
         title: "Toda tu operación en un solo lugar",
         text: "Reúne proyectos, clientes y reportes en un portal con acceso privado para tu equipo.",
+        imageAlt: "Ejemplo de un portal de clientes con seguimiento de proyectos y documentos",
       },
       audience: {
         eyebrow: "Para quien es",
@@ -353,6 +387,14 @@ const siteCopy = {
       },
     },
     services,
+    serviceDetails: {
+      open: "Ver solución",
+      close: "Cerrar ficha",
+      audience: "¿Para quién es?",
+      includes: "Qué incluye",
+      example: "Ejemplo de aplicación",
+      quote: "Cotizar este servicio",
+    },
     processSteps: [
       ["Diagnóstico", "Entendemos objetivos, público, procesos, presupuesto y oportunidades de automatización."],
       ["Arquitectura", "Definimos experiencia, tecnología, integraciones, contenidos y plan de crecimiento."],
@@ -363,18 +405,20 @@ const siteCopy = {
       goalLabel: "¿Qué necesitas construir?",
       urgencyLabel: "Prioridad",
       scopeLabel: "Alcance",
-      resultTitle: "Ruta sugerida",
-      resultIntro: "Rango estimado inicial",
-      resultNote: "El valor final depende de integraciones, contenido, automatizaciones y entregables.",
-      button: "Enviar ruta por WhatsApp",
-      goals: [
-        ["Sitio web premium", "$900 - $1.800 USD", "Presencia corporativa, SEO base, formularios y experiencia visual premium."],
-        ["Automatización o IA", "$1.500 - $4.000 USD", "Chatbot, flujos comerciales, integraciones y captura inteligente de leads."],
-        ["Software a medida", "$3.000 - $9.000 USD", "Portal, dashboard, usuarios, base de datos, roles e integraciones."],
-      ],
+      proposalTitle: "Recibe una cotización personalizada",
+      proposalText: "Analizamos tu proyecto y te enviamos una propuesta con alcances, tiempos y valor, ajustada a tus necesidades.",
+      button: "Solicitar cotización por WhatsApp",
+      goals: {
+        web: "Sitio web premium",
+        ia: "Automatización o IA",
+        software: "Software a medida",
+        seo: "SEO",
+        diseno: "Diseño gráfico",
+        audiovisual: "Producción audiovisual",
+      },
       urgencies: ["Flexible", "30 días", "Alta prioridad"],
       scopes: ["Esencial", "Profesional", "Avanzado"],
-      leadIntro: "Hola D&D WEB Nexus, quiero avanzar con esta ruta de cotización.",
+      leadIntro: "Hola D&D WEB Nexus, me gustaría solicitar una cotización personalizada para mi proyecto.",
     },
     sectors,
     cases,
@@ -445,16 +489,6 @@ const siteCopy = {
     contactButton: "Quiero transformar mi negocio",
     contactSuccess: "Gracias. Recibimos tu información y la enviaremos al equipo comercial.",
     contactError: "No pudimos enviar tu mensaje. Inténtalo de nuevo o contáctanos por WhatsApp.",
-    scheduleShort: "Agendar",
-    scheduleEyebrow: "Agenda una reunión",
-    scheduleTitle: "Conversemos 20 minutos sobre tu proyecto",
-    scheduleText: "Elige servicio, fecha y hora. Abriremos Google Calendar con la reunión prellenada para que puedas guardarla.",
-    scheduleFields: ["Nombre", "Empresa", "Correo o WhatsApp"],
-    scheduleService: "Servicio a tratar",
-    scheduleDay: "Fecha",
-    scheduleTime: "Hora",
-    scheduleButton: "Agendar en Google Calendar",
-    scheduleIntro: "Reunion con D&D WEB Nexus",
     footerA: "DYDWEB. Plataforma tecnológica empresarial.",
     footerB: "SEO, Open Graph, Schema Markup, velocidad y escalabilidad desde la base.",
     footerTagline: "Tecnología que impulsa negocios.",
@@ -505,7 +539,8 @@ const siteCopy = {
     heroText: "We build digital solutions around your business to simplify your work, boost sales and help you grow.",
     primaryCta: "Talk to an advisor",
     secondaryCta: "View projects",
-    heroImageAlt: "Laptop and phone showing a sample sales dashboard",
+    playHeroVideo: "Play background video",
+    pauseHeroVideo: "Pause background video",
     stats: ["solutions delivered", "sectors served", "projected satisfaction", "digital operation"],
     proof: ["Software", "AI", "SEO", "Automation", "Branding", "Audiovisual", "Cloudflare", "PostgreSQL"],
     sections: {
@@ -520,9 +555,8 @@ const siteCopy = {
         text: "We guide every project through diagnosis, design, development and continuous optimization so the result is useful, measurable and easy to evolve.",
       },
       quote: {
-        eyebrow: "Quick quote",
-        title: "Estimate an initial route before speaking with the team",
-        text: "Choose project type, priority and scope. We prepare a WhatsApp-ready message with the business context.",
+        title: "Quick quote",
+        text: "Choose your project type, priority and scope. We'll send you a tailored proposal with no obligation.",
       },
       solutions: {
         eyebrow: "Business solutions",
@@ -548,6 +582,7 @@ const siteCopy = {
         eyebrow: "Portal and administration",
         title: "Manage your work in one place",
         text: "Bring projects, customers and reports together in a private portal for your team.",
+        imageAlt: "Example of a client portal with project tracking and documents",
       },
       audience: {
         eyebrow: "Who it is for",
@@ -561,13 +596,63 @@ const siteCopy = {
       },
     },
     services: [
-      { icon: Code2, title: "Software development", items: ["Business systems", "ERP and CRM", "Corporate portals", "REST APIs"] },
-      { icon: Globe2, title: "Web development", items: ["Corporate websites", "Landing pages", "E-commerce", "Custom portals"] },
-      { icon: Bot, title: "Artificial intelligence", items: ["Chatbots", "Automation", "AI agents", "Data processing"] },
-      { icon: Search, title: "SEO", items: ["Technical SEO", "Local SEO", "Optimized content", "Ranking strategies"] },
-      { icon: Layers3, title: "Graphic design", items: ["Branding", "Corporate identity", "Social media", "Advertising assets"] },
-      { icon: Play, title: "Audiovisual production", items: ["Corporate videos", "Motion graphics", "Professional editing", "Social content"] },
-    ],
+      {
+        id: "software",
+        icon: Code2,
+        title: "Software development",
+        items: ["Business systems", "ERP and CRM", "Corporate portals", "REST APIs"],
+        audience: "Teams running their operations through spreadsheets or disconnected tools.",
+        example: "A portal that brings orders, inventory and customer follow-up together, with permissions based on each person's role.",
+      },
+      {
+        id: "web",
+        icon: Globe2,
+        title: "Web development",
+        items: ["Corporate websites", "Landing pages", "E-commerce", "Custom portals"],
+        audience: "Businesses looking to attract inquiries, showcase what they do or sell online.",
+        example: "A site with a catalog, service pages and a quote form designed for people browsing on mobile.",
+      },
+      {
+        id: "ia",
+        icon: Bot,
+        title: "Artificial intelligence",
+        items: ["Chatbots", "Automation", "AI agents", "Data processing"],
+        audience: "Teams that handle repetitive inquiries or copy information between systems.",
+        example: "An assistant that answers common questions, collects inquiry details and hands them off to the team when needed.",
+      },
+      {
+        id: "seo",
+        icon: Search,
+        title: "SEO",
+        items: ["Technical SEO", "Local SEO", "Optimized content", "Ranking strategies"],
+        audience: "Companies with an existing site that want customers to find them when searching for their services.",
+        example: "An audit that finds hard-to-discover pages and a plan to improve their content, speed and indexing.",
+      },
+      {
+        id: "diseno",
+        icon: Layers3,
+        title: "Graphic design",
+        items: ["Branding", "Corporate identity", "Social media", "Advertising assets"],
+        audience: "Brands that need a consistent identity across their website, social channels or campaigns.",
+        example: "A set of colors, typefaces and templates that helps the team publish consistent materials.",
+      },
+      {
+        id: "audiovisual",
+        icon: Play,
+        title: "Audiovisual production",
+        items: ["Corporate videos", "Motion graphics", "Professional editing", "Social content"],
+        audience: "Teams that want to introduce a product, explain a service or launch a video campaign.",
+        example: "A main video for the website with shorter, captioned clips for social media.",
+      },
+    ] satisfies HomeService[],
+    serviceDetails: {
+      open: "Explore service",
+      close: "Close service details",
+      audience: "Who it's for",
+      includes: "What's included",
+      example: "Example",
+      quote: "Get a quote for this service",
+    },
     processSteps: [
       ["Diagnosis", "We understand goals, audience, processes, budget and automation opportunities."],
       ["Architecture", "We define experience, technology, integrations, content and growth plan."],
@@ -578,18 +663,20 @@ const siteCopy = {
       goalLabel: "What do you need to build",
       urgencyLabel: "Priority",
       scopeLabel: "Scope",
-      resultTitle: "Suggested route",
-      resultIntro: "Initial estimated range",
-      resultNote: "Final value depends on integrations, content, automations and deliverables.",
-      button: "Send route on WhatsApp",
-      goals: [
-        ["Premium website", "$900 - $1,800 USD", "Corporate presence, base SEO, forms and premium visual experience."],
-        ["Automation or AI", "$1,500 - $4,000 USD", "Chatbot, commercial flows, integrations and intelligent lead capture."],
-        ["Custom software", "$3,000 - $9,000 USD", "Portal, dashboard, users, database, roles and integrations."],
-      ],
+      proposalTitle: "Get a tailored quote",
+      proposalText: "We'll review your project and send a proposal with the scope, timeline and cost tailored to your needs.",
+      button: "Request a quote on WhatsApp",
+      goals: {
+        web: "Premium website",
+        ia: "Automation or AI",
+        software: "Custom software",
+        seo: "SEO",
+        diseno: "Graphic design",
+        audiovisual: "Audiovisual production",
+      },
       urgencies: ["Flexible", "30 days", "High priority"],
       scopes: ["Essential", "Professional", "Advanced"],
-      leadIntro: "Hello D&D WEB Nexus, I want to move forward with this quote route.",
+      leadIntro: "Hello D&D WEB Nexus, I'd like to request a tailored quote for my project.",
     },
     sectors: [
       ["Education", "Virtual classrooms, admissions, academic analytics and student portals."],
@@ -701,16 +788,6 @@ const siteCopy = {
     contactButton: "Transform my business",
     contactSuccess: "Thank you. We received your information and will send it to the commercial team.",
     contactError: "We couldn't send your message. Please try again or contact us on WhatsApp.",
-    scheduleShort: "Schedule",
-    scheduleEyebrow: "Schedule a meeting",
-    scheduleTitle: "Let us talk for 20 minutes about your project",
-    scheduleText: "Choose service, date and time. We will open Google Calendar with the meeting prefilled so you can save it.",
-    scheduleFields: ["Name", "Company", "Email or WhatsApp"],
-    scheduleService: "Service to discuss",
-    scheduleDay: "Date",
-    scheduleTime: "Time",
-    scheduleButton: "Schedule in Google Calendar",
-    scheduleIntro: "Meeting with D&D WEB Nexus",
     footerA: "DYDWEB. Enterprise technology platform.",
     footerB: "SEO, Open Graph, Schema Markup, speed and scalability from the foundation.",
     footerTagline: "Technology that drives business.",
@@ -971,7 +1048,7 @@ function SectionHeading({
   text: string;
 }) {
   return (
-    <div className="mx-auto mb-8 max-w-3xl text-center">
+    <div data-home-reveal className="mx-auto mb-8 max-w-3xl text-center">
       <p className="home-kicker mb-2">{eyebrow}</p>
       <h2 className="home-heading text-balance text-[1.875rem] md:text-[2.5rem]">{title}</h2>
       <p className="home-muted mx-auto mt-3 max-w-2xl text-pretty leading-relaxed">{text}</p>
@@ -979,18 +1056,105 @@ function SectionHeading({
   );
 }
 
+function ServiceDetailsDialog({
+  service,
+  labels,
+  onClose,
+  onQuote,
+}: {
+  service: HomeService | undefined;
+  labels: (typeof siteCopy)[Language]["serviceDetails"];
+  onClose: () => void;
+  onQuote: (id: ServiceId) => void;
+}) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (service && dialog && !dialog.open) {
+      dialog.showModal();
+    }
+  }, [service]);
+
+  return (
+    <dialog
+      id="home-service-details"
+      ref={dialogRef}
+      aria-labelledby="home-service-details-title"
+      className="home-service-dialog"
+      onClose={onClose}
+    >
+      {service && (
+        <>
+          <header className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-[#e4edf7] bg-white px-5 py-3 sm:px-6">
+            <h2 id="home-service-details-title" className="home-heading text-xl sm:text-2xl">{service.title}</h2>
+            <button
+              type="button"
+              aria-label={labels.close}
+              className="grid h-10 w-10 shrink-0 place-items-center rounded-md border border-[#dce8f6] text-[#075bbf] hover:bg-[#edf5ff]"
+              onClick={() => dialogRef.current?.close()}
+            >
+              <X size={20} aria-hidden="true" />
+            </button>
+          </header>
+          <Image
+            src={`/dydweb-servicio-${service.id}.webp`}
+            alt=""
+            width={960}
+            height={400}
+            sizes="(min-width: 704px) 672px, calc(100vw - 32px)"
+            className="aspect-[12/5] w-full object-cover"
+          />
+          <div className="space-y-4 p-5 sm:p-6">
+            <div>
+              <h3 className="font-extrabold">{labels.audience}</h3>
+              <p className="home-muted mt-1 text-sm leading-relaxed">{service.audience}</p>
+            </div>
+            <div>
+              <h3 className="font-extrabold">{labels.includes}</h3>
+              <ul className="mt-2 grid gap-2 sm:grid-cols-2">
+                {service.items.map((item) => (
+                  <li key={item} className="home-muted flex items-start gap-2 text-sm">
+                    <Check size={16} className="mt-0.5 shrink-0 text-[#0873e9]" aria-hidden="true" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="rounded-md border border-[#dcecff] bg-[#f2f8ff] p-4">
+              <h3 className="font-extrabold">{labels.example}</h3>
+              <p className="home-muted mt-1 text-sm leading-relaxed">{service.example}</p>
+            </div>
+            <a
+              href="#cotizar"
+              className="home-primary-button inline-flex min-h-11 w-full gap-2 rounded-lg px-4 text-sm sm:w-auto"
+              onClick={() => {
+                onQuote(service.id);
+                dialogRef.current?.close();
+              }}
+            >
+              {labels.quote} <ArrowRight size={17} className="shrink-0" aria-hidden="true" />
+            </a>
+          </div>
+        </>
+      )}
+    </dialog>
+  );
+}
+
 function QuickQuote({
   copy,
-  language,
+  serviceId,
+  onServiceChange,
 }: {
   copy: (typeof siteCopy)[Language];
-  language: Language;
+  serviceId: ServiceId;
+  onServiceChange: (id: ServiceId) => void;
 }) {
   const quote = copy.quoteWizard;
-  const [goalIndex, setGoalIndex] = useState(0);
   const [urgencyIndex, setUrgencyIndex] = useState(1);
   const [scopeIndex, setScopeIndex] = useState(1);
-  const selectedGoal = quote.goals[goalIndex];
+  const selectedGoal = quote.goals[serviceId];
   const selectedUrgency = quote.urgencies[urgencyIndex];
   const selectedScope = quote.scopes[scopeIndex];
 
@@ -998,14 +1162,11 @@ function QuickQuote({
     const message = [
       quote.leadIntro,
       "",
-      `${quote.goalLabel}: ${selectedGoal[0]}`,
+      `${quote.goalLabel}: ${selectedGoal}`,
       `${quote.urgencyLabel}: ${selectedUrgency}`,
       `${quote.scopeLabel}: ${selectedScope}`,
-      `${quote.resultIntro}: ${selectedGoal[1]}`,
       "",
-      selectedGoal[2],
-      "",
-      `${siteCopy[language].chatbot.leadOrigin}: ${typeof window !== "undefined" ? window.location.href : "DYDWEB website"}`,
+      `${copy.chatbot.leadOrigin}: ${window.location.href}`,
     ].join("\n");
 
     window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
@@ -1023,7 +1184,7 @@ function QuickQuote({
         <div className="grid gap-5 lg:grid-cols-[1fr_0.95fr]">
           <div className="grid gap-4 sm:grid-cols-2">
             {copy.processSteps.map(([title, text], index) => (
-              <article key={title} className="home-surface p-5 sm:p-6">
+              <article key={title} data-home-reveal className="home-surface p-5 sm:p-6">
                 <div className="mb-4 grid h-11 w-11 place-items-center rounded-md bg-[#edf5ff] text-[#076bd8]" aria-hidden="true">
                   {index === 0 ? <Search size={24} /> : null}
                   {index === 1 ? <Layers3 size={24} /> : null}
@@ -1036,23 +1197,23 @@ function QuickQuote({
             ))}
           </div>
 
-          <div id="cotizar" className="home-surface scroll-mt-20 p-5 sm:p-6">
-            <h3 className="home-heading text-2xl">{copy.sections.quote.eyebrow}</h3>
+          <div id="cotizar" tabIndex={-1} data-home-reveal className="home-surface scroll-mt-20 p-5 sm:p-6">
+            <h3 className="home-heading text-2xl">{copy.sections.quote.title}</h3>
             <p className="home-muted mt-2 text-sm leading-relaxed">{copy.sections.quote.text}</p>
 
             <div className="mt-6 space-y-5">
               <div>
                 <p className="mb-2 text-sm font-bold">{quote.goalLabel}</p>
-                <div className="grid grid-cols-3 gap-2" role="group" aria-label={quote.goalLabel}>
-                  {quote.goals.map(([label], index) => (
+                <div className="grid grid-cols-2 gap-2 min-[384px]:grid-cols-[1fr_1.25fr_1fr] sm:grid-cols-3" role="group" aria-label={quote.goalLabel}>
+                  {quoteServiceOrder.map((id) => (
                     <button
-                      key={label}
+                      key={id}
                       type="button"
-                      aria-pressed={goalIndex === index}
-                      onClick={() => setGoalIndex(index)}
+                      aria-pressed={serviceId === id}
+                      onClick={() => onServiceChange(id)}
                       className="home-choice text-xs"
                     >
-                      {label}
+                      {quote.goals[id]}
                     </button>
                   ))}
                 </div>
@@ -1094,16 +1255,14 @@ function QuickQuote({
                 </div>
               </div>
 
-              <div className="rounded-md border border-[#dcecff] bg-[#f2f8ff] p-4" aria-live="polite">
-                <div className="flex items-center gap-3">
-                  <CircleDollarSign className="shrink-0 text-[#0873e9]" aria-hidden="true" />
-                  <div>
-                    <p className="home-kicker">{quote.resultTitle}</p>
-                    <p className="mt-1 text-xl font-extrabold">{selectedGoal[1]}</p>
-                  </div>
+              <div className="flex items-start gap-3 rounded-md border border-[#dcecff] bg-[#f2f8ff] p-4">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#e0eeff] text-[#0873e9]" aria-hidden="true">
+                  <Tag size={21} />
+                </span>
+                <div>
+                  <h4 className="home-heading text-lg">{quote.proposalTitle}</h4>
+                  <p className="home-muted mt-1.5 text-sm leading-relaxed">{quote.proposalText}</p>
                 </div>
-                <p className="home-muted mt-2 text-sm leading-relaxed">{selectedGoal[2]}</p>
-                <p className="home-muted mt-1 text-xs leading-relaxed">{quote.resultNote}</p>
               </div>
 
               <button
@@ -1111,105 +1270,12 @@ function QuickQuote({
                 onClick={sendQuote}
                 className="home-primary-button inline-flex min-h-12 w-full gap-2 rounded-lg px-3 text-sm"
               >
-                {quote.button} <Send size={17} />
+                <MessageCircle size={18} className="shrink-0" aria-hidden="true" />
+                {quote.button}
               </button>
             </div>
           </div>
         </div>
-      </div>
-    </section>
-  );
-}
-
-function ScheduleMeeting({
-  copy,
-}: {
-  copy: (typeof siteCopy)[Language];
-}) {
-  const [service, setService] = useState(copy.serviceOptions[0]);
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("09:00");
-
-  useEffect(() => {
-    setService(copy.serviceOptions[0]);
-  }, [copy]);
-
-  const formatCalendarDate = (value: Date) => value.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const name = String(formData.get("name") || "").trim();
-    const company = String(formData.get("company") || "").trim();
-    const contact = String(formData.get("contact") || "").trim();
-    const start = new Date(`${date}T${time}:00`);
-    const end = new Date(start.getTime() + 20 * 60 * 1000);
-
-    const details = [
-      `${copy.scheduleService}: ${service}`,
-      `${copy.scheduleFields[0]}: ${name || copy.chatbot.notProvided}`,
-      `${copy.scheduleFields[1]}: ${company || copy.chatbot.notProvided}`,
-      `${copy.scheduleFields[2]}: ${contact || copy.chatbot.notProvided}`,
-      "",
-      typeof window !== "undefined" ? window.location.href : "DYDWEB website",
-    ].join("\n");
-
-    await submitLeadToSheets({
-      type: "schedule",
-      name,
-      company,
-      contact,
-      service,
-      date,
-      time,
-      message: details,
-      page: typeof window !== "undefined" ? window.location.href : "DYDWEB website",
-    });
-
-    const calendarUrl = new URL("https://calendar.google.com/calendar/render");
-    calendarUrl.searchParams.set("action", "TEMPLATE");
-    calendarUrl.searchParams.set("text", copy.scheduleIntro);
-    calendarUrl.searchParams.set("details", details);
-    calendarUrl.searchParams.set("location", "Google Meet / Online");
-    calendarUrl.searchParams.set("dates", `${formatCalendarDate(start)}/${formatCalendarDate(end)}`);
-
-    window.open(calendarUrl.toString(), "_blank", "noopener,noreferrer");
-  };
-
-  return (
-    <section id="agendar" className="home-section home-tint border-b border-[#e8f0f8]">
-      <div className="home-container grid items-center gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:gap-10">
-        <div>
-          <p className="home-kicker mb-2">{copy.scheduleEyebrow}</p>
-          <h2 className="home-heading text-balance text-3xl md:text-[2.5rem]">{copy.scheduleTitle}</h2>
-          <p className="home-muted mt-3 max-w-lg leading-relaxed">{copy.scheduleText}</p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="home-surface grid min-w-0 gap-3 p-4 sm:p-6">
-          <div className="grid gap-3 sm:grid-cols-2">
-            <input name="name" required autoComplete="name" className="home-field" placeholder={copy.scheduleFields[0]} aria-label={copy.scheduleFields[0]} />
-            <input name="company" autoComplete="organization" className="home-field" placeholder={copy.scheduleFields[1]} aria-label={copy.scheduleFields[1]} />
-          </div>
-          <input name="contact" required className="home-field" placeholder={copy.scheduleFields[2]} aria-label={copy.scheduleFields[2]} />
-          <select value={service} onChange={(event) => setService(event.target.value)} className="home-field" aria-label={copy.scheduleService}>
-            {copy.serviceOptions.map((option) => (
-              <option key={option}>{option}</option>
-            ))}
-          </select>
-          <div className="grid grid-cols-2 gap-3">
-            <label className="grid min-w-0 gap-1 text-sm font-bold">
-              {copy.scheduleDay}
-              <input type="date" required value={date} onChange={(event) => setDate(event.target.value)} className="home-field font-normal" />
-            </label>
-            <label className="grid min-w-0 gap-1 text-sm font-bold">
-              {copy.scheduleTime}
-              <input type="time" required value={time} onChange={(event) => setTime(event.target.value)} className="home-field font-normal" />
-            </label>
-          </div>
-          <button className="home-primary-button inline-flex min-h-12 gap-2 rounded-lg px-3 text-sm">
-            {copy.scheduleButton} <CalendarDays size={18} aria-hidden="true" />
-          </button>
-        </form>
       </div>
     </section>
   );
@@ -1531,11 +1597,14 @@ function HeroVisual({ language }: { language: Language }) {
 export default function Home() {
   const [open, setOpen] = useState(false);
   const [language, setLanguage] = useState<Language>("es");
+  const [activeServiceId, setActiveServiceId] = useState<ServiceId | null>(null);
+  const [quoteServiceId, setQuoteServiceId] = useState<ServiceId>("web");
   const [contactSent, setContactSent] = useState(false);
   const [contactError, setContactError] = useState(false);
-  const [vantaFallback, setVantaFallback] = useState(false);
-  const heroVantaRef = useRef<HTMLDivElement | null>(null);
+  const [heroVideoPlaying, setHeroVideoPlaying] = useState(false);
+  const heroVideoRef = useRef<HTMLVideoElement | null>(null);
   const copy = siteCopy[language];
+  const activeService = copy.services.find((service) => service.id === activeServiceId);
   const heroMetricIcons = [Globe2, Gauge, ShieldCheck, Rocket];
   const homeLinks = [
     { label: copy.menu[0], href: "#inicio" },
@@ -1558,79 +1627,32 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    let vantaEffect: VantaEffect | null = null;
-    let cancelled = false;
+    const video = heroVideoRef.current;
+    if (!video) return;
 
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    if (reducedMotion || !heroVantaRef.current) {
-      return undefined;
-    }
-
-    if (!supportsWebGL()) {
-      setVantaFallback(true);
-      return undefined;
-    }
-
-    const isMobile = window.matchMedia("(max-width: 768px)").matches;
-
-    async function initVanta() {
-      try {
-        const [birdsModule, threeModule] = await Promise.all([
-          import("vanta/dist/vanta.birds.min"),
-          import("three"),
-        ]);
-
-        if (cancelled || !heroVantaRef.current) {
-          return;
-        }
-
-        const BIRDS = (
-          birdsModule as {
-            default?: (options: Record<string, unknown>) => VantaEffect;
-          }
-        ).default;
-
-        if (!BIRDS) {
-          setVantaFallback(true);
-          return;
-        }
-
-        const THREE = (threeModule as { default?: unknown }).default ?? threeModule;
-
-        vantaEffect = BIRDS({
-          el: heroVantaRef.current,
-          THREE,
-          mouseControls: true,
-          touchControls: true,
-          gyroControls: false,
-          backgroundAlpha: 0,
-          backgroundColor: 0xeaf6ff,
-          color1: 0x2684ff,
-          color2: 0x6d6cff,
-          colorMode: "variance",
-          birdSize: isMobile ? 0.55 : 0.86,
-          wingSpan: isMobile ? 16 : 24,
-          speedLimit: isMobile ? 1.05 : 1.9,
-          separation: isMobile ? 46 : 32,
-          alignment: isMobile ? 34 : 28,
-          cohesion: isMobile ? 24 : 30,
-          quantity: isMobile ? 1.8 : 4.2,
-        });
-        setVantaFallback(false);
-      } catch {
-        vantaEffect = null;
-        setVantaFallback(true);
-      }
-    }
-
-    void initVanta();
-
-    return () => {
-      cancelled = true;
-      vantaEffect?.destroy();
+    const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const pauseForReducedMotion = () => {
+      if (motionPreference.matches) video.pause();
     };
+
+    if (!motionPreference.matches) {
+      void video.play().catch(() => undefined);
+    }
+
+    motionPreference.addEventListener("change", pauseForReducedMotion);
+    return () => motionPreference.removeEventListener("change", pauseForReducedMotion);
   }, []);
+
+  const toggleHeroVideo = () => {
+    const video = heroVideoRef.current;
+    if (!video) return;
+
+    if (video.paused) {
+      void video.play().catch(() => undefined);
+    } else {
+      video.pause();
+    }
+  };
 
   const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -1661,7 +1683,7 @@ export default function Home() {
   };
 
   return (
-    <main className="home-page min-h-screen overflow-hidden">
+    <main className="home-page min-h-screen overflow-clip">
       <header className="fixed inset-x-0 top-0 z-50 border-b border-[#e2edf8] bg-[#fafcff]/95 text-[#15263d] backdrop-blur-xl">
         <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-5 sm:px-8">
           <a href="#inicio" className="flex items-center">
@@ -1722,7 +1744,6 @@ export default function Home() {
             ...homeLinks,
             { label: copy.pageLinks.packages, href: "/servicios" },
             { label: copy.pageLinks.questions, href: "/preguntas" },
-            { label: copy.scheduleShort, href: "#agendar" },
             { label: copy.menu[3], href: "#contacto" },
             { label: copy.quote, href: "#cotizar" },
           ].map(({ label, href }) => (
@@ -1733,55 +1754,66 @@ export default function Home() {
         </div>
       </header>
 
-      <section id="inicio" className="relative isolate overflow-hidden pt-16">
-        <div className="light-hero-bg pointer-events-none absolute inset-x-0 bottom-0 top-16" aria-hidden="true" />
-        <div className="relative">
-          <div ref={heroVantaRef} className={`vanta-birds-layer vanta-birds-ambient${vantaFallback ? " vanta-birds-fallback" : ""}`} aria-hidden="true" />
-          <div className="home-container relative z-10 pb-10 pt-8 sm:pb-12 sm:pt-10 lg:pt-12">
-            <div className="grid items-center gap-7 md:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-10">
-              <div>
-                <p className="mb-4 inline-block rounded-full border border-[#c7e0ff] bg-white/80 px-3 py-1 text-xs font-bold text-[#0858bb] sm:mb-5">
-                  {copy.heroBadge}
-                </p>
-                <h1 className="hero-display text-balance text-[2rem] leading-[1.08] sm:text-[2.625rem] lg:text-[2.875rem] xl:text-[3.125rem]">
-                  {copy.heroBefore}{" "}
-                  <span className="text-[#065fcf]">{copy.heroHighlight}</span>{" "}
-                  {copy.heroAfter}
-                </h1>
-                <p className="mt-4 max-w-lg text-pretty text-base leading-relaxed text-[#34465e] sm:mt-5 sm:text-lg">
-                  {copy.heroText}
-                </p>
-                <div className="mt-6 flex flex-wrap gap-3 sm:mt-7">
-                  <a href="#contacto" className="home-primary-button inline-flex min-h-12 gap-2 rounded-lg px-4 text-sm sm:px-5">
-                    {copy.primaryCta} <ArrowRight size={17} aria-hidden="true" />
-                  </a>
-                  <a href="#casos" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-[#9fc9fa] bg-white/90 px-4 text-sm font-bold text-[#0959b8] transition hover:border-[#0872e9] hover:bg-[#edf6ff] sm:px-5">
-                    <CirclePlay size={19} aria-hidden="true" />
-                    {copy.secondaryCta}
-                  </a>
-                </div>
+      <section id="inicio" className="pt-16">
+        <div className="relative isolate overflow-hidden bg-[#07111f] text-white">
+          <video
+            ref={heroVideoRef}
+            src="/dydweb-banner.mp4"
+            poster="/dydweb-banner-poster.jpg"
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+            preload="none"
+            loop
+            muted
+            playsInline
+            onPlay={() => setHeroVideoPlaying(true)}
+            onPause={() => setHeroVideoPlaying(false)}
+          />
+          <div aria-hidden="true" className="home-video-scrim pointer-events-none absolute inset-0" />
+
+          <div className="home-container relative flex flex-col justify-between pb-8 sm:pb-10 md:min-h-[clamp(34rem,66vh,45rem)]">
+            <button
+              type="button"
+              onClick={toggleHeroVideo}
+              aria-label={heroVideoPlaying ? copy.pauseHeroVideo : copy.playHeroVideo}
+              className="absolute right-4 top-4 inline-flex size-11 items-center justify-center rounded-full border border-white/40 bg-[#07111f]/80 text-white transition hover:bg-[#0d2542] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:right-8 sm:top-6"
+            >
+              {heroVideoPlaying ? <Pause size={17} aria-hidden="true" /> : <Play size={17} aria-hidden="true" />}
+            </button>
+
+            <div className="max-w-[40rem] pb-8 pt-[4.5rem] sm:pb-12 md:py-16 lg:py-[4.5rem]">
+              <p className="mb-4 inline-block rounded-full border border-[#a5d3ff]/40 bg-[#08172a]/80 px-3 py-1 text-xs font-bold text-[#cae6ff] sm:mb-5">
+                {copy.heroBadge}
+              </p>
+              <h1 className="hero-display text-balance text-[2rem] leading-[1.08] sm:text-[2.625rem] lg:text-[2.875rem] xl:text-[3.125rem]">
+                {copy.heroBefore}{" "}
+                <span className="text-[#9bd6ff]">{copy.heroHighlight}</span>{" "}
+                {copy.heroAfter}
+              </h1>
+              <p className="mt-4 max-w-lg text-pretty text-base leading-relaxed text-[#dbe8f7] sm:mt-5 sm:text-lg">
+                {copy.heroText}
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3 sm:mt-7">
+                <a href="#contacto" className="home-primary-button inline-flex min-h-12 gap-2 rounded-lg px-4 text-sm sm:px-5">
+                  {copy.primaryCta} <ArrowRight size={17} aria-hidden="true" />
+                </a>
+                <a href="#casos" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-[#a5d3ff]/60 bg-[#071526]/80 px-4 text-sm font-bold text-white transition hover:border-white hover:bg-[#16304c] sm:px-5">
+                  <CirclePlay size={19} aria-hidden="true" />
+                  {copy.secondaryCta}
+                </a>
               </div>
-              <Image
-                src="/dydweb-hero-dispositivos.webp"
-                alt={copy.heroImageAlt}
-                width={1280}
-                height={853}
-                sizes="(min-width: 1280px) 620px, (min-width: 768px) 50vw, 90vw"
-                priority
-                className="mx-auto h-auto w-full max-w-xl md:max-w-none"
-              />
             </div>
 
-            <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-8 md:grid-cols-4 lg:gap-4">
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:gap-4">
               {stats.map(([value], index) => {
                 const MetricIcon = heroMetricIcons[index];
 
                 return (
-                  <div key={copy.stats[index]} className="light-metric-card flex min-h-[5rem] items-center gap-2.5 rounded-lg px-3 py-3 lg:gap-3 lg:px-5">
-                    <MetricIcon className="h-5 w-5 shrink-0 text-[#0872e9] lg:h-7 lg:w-7" aria-hidden="true" />
+                  <div key={copy.stats[index]} className="flex min-h-[5rem] items-center gap-2.5 rounded-lg border border-white/20 bg-[#08172a]/80 px-3 py-3 lg:gap-3 lg:px-5">
+                    <MetricIcon className="h-5 w-5 shrink-0 text-[#9bd6ff] lg:h-7 lg:w-7" aria-hidden="true" />
                     <div>
                       <p className="text-xl font-extrabold leading-tight sm:text-2xl">{value}</p>
-                      <p className="mt-1 text-xs font-semibold leading-tight text-[#34465e] sm:text-sm">{copy.stats[index]}</p>
+                      <p className="mt-1 text-xs font-semibold leading-tight text-[#dbe8f7] sm:text-sm">{copy.stats[index]}</p>
                     </div>
                   </div>
                 );
@@ -1799,20 +1831,44 @@ export default function Home() {
             text={copy.sections.services.text}
           />
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {copy.services.map(({ icon: Icon, title, items }) => (
-              <article key={title} className="home-surface p-5 lg:p-6">
-                <div className="mb-3 grid h-10 w-10 place-items-center rounded-md bg-[#edf5ff] text-[#076bd8]">
-                  <Icon size={23} aria-hidden="true" />
+            {copy.services.map(({ icon: Icon, id, title, items }) => (
+              <article key={id} data-home-reveal className="home-surface flex flex-col overflow-hidden">
+                <Image
+                  src={`/dydweb-servicio-${id}.webp`}
+                  alt=""
+                  width={960}
+                  height={400}
+                  sizes="(min-width: 1280px) 395px, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, calc(100vw - 40px)"
+                  className="aspect-[12/5] w-full border-b border-[#e4edf7] object-cover"
+                />
+                <div className="flex flex-1 flex-col p-5 lg:p-6">
+                  <div className="flex items-center gap-3">
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-md bg-[#edf5ff] text-[#076bd8]">
+                      <Icon size={23} aria-hidden="true" />
+                    </span>
+                    <h3 className="text-lg font-extrabold leading-tight">{title}</h3>
+                  </div>
+                  <ul className="mt-3 space-y-1.5">
+                    {items.map((item) => (
+                      <li key={item} className="home-muted flex items-start gap-2 text-sm">
+                        <Check size={16} className="mt-0.5 shrink-0 text-[#0873e9]" aria-hidden="true" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-auto pt-4">
+                    <button
+                      type="button"
+                      aria-haspopup="dialog"
+                      aria-controls="home-service-details"
+                      className="home-link inline-flex min-h-10 items-center gap-2 text-sm"
+                      onClick={() => setActiveServiceId(id)}
+                    >
+                      {copy.serviceDetails.open} <span className="sr-only">{title}</span>
+                      <ArrowRight size={17} aria-hidden="true" />
+                    </button>
+                  </div>
                 </div>
-                <h3 className="text-lg font-extrabold">{title}</h3>
-                <ul className="mt-3 space-y-1.5">
-                  {items.map((item) => (
-                    <li key={item} className="home-muted flex items-start gap-2 text-sm">
-                      <Check size={16} className="mt-0.5 shrink-0 text-[#0873e9]" aria-hidden="true" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
               </article>
             ))}
           </div>
@@ -1828,7 +1884,7 @@ export default function Home() {
         </div>
       </section>
 
-      <QuickQuote copy={copy} language={language} />
+      <QuickQuote copy={copy} serviceId={quoteServiceId} onServiceChange={setQuoteServiceId} />
 
       <section id="soluciones" className="home-section">
         <div className="home-container">
@@ -1839,14 +1895,24 @@ export default function Home() {
           />
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {copy.sectors.map(([sector, useCase], index) => {
-              const Icon = sectorIcons[index];
+              const { icon: Icon, image } = sectorMedia[index];
               return (
-                <article key={sector} className="home-surface p-4">
-                  <div className="flex items-center gap-2.5">
-                    <Icon size={22} className="shrink-0 text-[#076bd8]" aria-hidden="true" />
-                    <h3 className="font-extrabold">{sector}</h3>
+                <article key={image} data-home-reveal className="home-surface p-4">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="min-w-0">
+                      <Icon size={21} className="mb-1.5 text-[#076bd8]" aria-hidden="true" />
+                      <h3 className="font-extrabold leading-tight">{sector}</h3>
+                    </div>
+                    <Image
+                      src={`/dydweb-sector-${image}.webp`}
+                      alt=""
+                      width={288}
+                      height={192}
+                      sizes="(min-width: 1280px) 88px, (min-width: 1024px) 80px, 88px"
+                      className="aspect-[3/2] h-auto w-[5.5rem] shrink-0 rounded-md object-cover lg:w-20 xl:w-[5.5rem]"
+                    />
                   </div>
-                  <p className="home-muted mt-2 text-sm leading-relaxed">{useCase}</p>
+                  <p className="home-muted mt-3 text-sm leading-relaxed">{useCase}</p>
                 </article>
               );
             })}
@@ -1855,7 +1921,7 @@ export default function Home() {
       </section>
 
       <section className="home-tint border-y border-[#e8f0f8] py-10 sm:py-12">
-        <div className="home-container grid items-center gap-6 lg:grid-cols-[0.85fr_1.15fr_auto] lg:gap-10">
+        <div data-home-reveal className="home-container grid items-center gap-6 lg:grid-cols-[0.85fr_1.15fr_auto] lg:gap-10">
           <div>
             <p className="home-kicker mb-2">{copy.sections.trust.eyebrow}</p>
             <h2 className="home-heading text-balance text-3xl">{copy.sections.trust.title}</h2>
@@ -1885,7 +1951,7 @@ export default function Home() {
           />
           <div className="grid items-start gap-5 md:grid-cols-3">
             {copy.cases.map((item, index) => (
-              <article key={item.client} className="home-surface overflow-hidden">
+              <article key={item.client} data-home-reveal className="home-surface overflow-hidden">
                 <Image
                   src={caseImages[index]}
                   alt=""
@@ -1902,7 +1968,7 @@ export default function Home() {
                   <details className="group mt-4 border-t border-[#e4edf7] pt-3">
                     <summary className="home-link flex cursor-pointer list-none items-center justify-between gap-2 text-sm">
                       {copy.caseDetails}
-                      <ChevronDown size={17} className="transition-transform group-open:rotate-180" aria-hidden="true" />
+                      <ChevronDown size={17} className="group-open:rotate-180 motion-safe:transition-transform" aria-hidden="true" />
                     </summary>
                     <dl className="home-muted mt-3 space-y-2 text-sm leading-relaxed">
                       <div><dt className="inline font-bold text-[#15263d]">{copy.caseLabels.problem}</dt>{" "}<dd className="inline">{item.problem}</dd></div>
@@ -1919,7 +1985,7 @@ export default function Home() {
 
       <section id="noticias" className="home-section home-tint border-y border-[#e8f0f8]">
         <div className="home-container grid gap-6 xl:grid-cols-[0.8fr_2.2fr] xl:items-center xl:gap-8">
-          <div>
+          <div data-home-reveal>
             <p className="home-kicker mb-2">{copy.sections.news.eyebrow}</p>
             <h2 className="home-heading text-balance text-3xl">{copy.sections.news.title}</h2>
             <p className="home-muted mt-3 max-w-xl leading-relaxed">{copy.sections.news.text}</p>
@@ -1928,60 +1994,64 @@ export default function Home() {
             </a>
           </div>
           <div className="grid gap-4 sm:grid-cols-3">
-            {copy.news.map(([category, title, href], index) => {
-              const TopicIcon = index === 1 ? Bot : Search;
-              return (
-                <article key={href} className="home-surface">
-                  <a href={href} className="group block h-full rounded-lg">
-                    {index === 0 ? (
-                      <Image
-                        src="/noticias/desarrollo-web-empresarial.png"
-                        alt=""
-                        width={720}
-                        height={405}
-                        sizes="(min-width: 640px) 32vw, 90vw"
-                        className="aspect-video w-full rounded-t-lg object-cover"
-                      />
-                    ) : (
-                      <div className="grid aspect-video place-items-center rounded-t-lg bg-[#eaf4ff] text-[#076bd8]">
-                        <TopicIcon size={48} strokeWidth={1.45} aria-hidden="true" />
-                      </div>
-                    )}
-                    <div className="p-4">
-                      <p className="home-kicker">{category}</p>
-                      <h3 className="mt-2 font-extrabold leading-snug group-hover:text-[#075bbf]">{title}</h3>
-                    </div>
-                  </a>
-                </article>
-              );
-            })}
+            {copy.news.map(([category, title, href], index) => (
+              <article key={href} data-home-reveal className="home-surface">
+                <a href={href} className="home-resource-link group block h-full rounded-lg">
+                  <div className="aspect-video overflow-hidden rounded-t-lg">
+                    <Image
+                      src={newsImages[index]}
+                      alt=""
+                      width={768}
+                      height={432}
+                      sizes="(min-width: 1280px) 298px, (min-width: 640px) 32vw, 90vw"
+                      className="home-resource-image h-full w-full object-cover"
+                    />
+                  </div>
+                  <div className="p-4">
+                    <p className="home-kicker">{category}</p>
+                    <h3 className="mt-2 font-extrabold leading-snug group-hover:text-[#075bbf]">{title}</h3>
+                  </div>
+                </a>
+              </article>
+            ))}
           </div>
         </div>
       </section>
 
-      <section className="home-section">
+      <section id="portal" className="home-section">
         <div className="home-container grid items-center gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:gap-12">
-          <div>
+          <div data-home-reveal>
             <p className="home-kicker mb-2">{copy.sections.admin.eyebrow}</p>
             <h2 className="home-heading text-balance text-3xl md:text-[2.5rem]">{copy.sections.admin.title}</h2>
             <p className="home-muted mt-3 max-w-md leading-relaxed">{copy.sections.admin.text}</p>
+            <ul className="mt-6 grid gap-4">
+              {copy.adminCards.map(([title, text], index) => {
+                const Icon = [LockKeyhole, BarChart3, ShieldCheck][index];
+                return (
+                  <li key={title} className="flex gap-3">
+                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-[#edf5ff] text-[#076bd8]">
+                      <Icon size={19} aria-hidden="true" />
+                    </span>
+                    <div>
+                      <h3 className="font-extrabold">{title}</h3>
+                      <p className="home-muted mt-0.5 text-sm leading-relaxed">{text}</p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
-          <div className="grid gap-3">
-            {copy.adminCards.map(([title, text], index) => {
-              const Icon = [LockKeyhole, BarChart3, ShieldCheck][index];
-              return (
-                <div key={title} className="home-surface flex gap-3.5 p-4">
-                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-md bg-[#edf5ff] text-[#076bd8]">
-                    <Icon size={21} aria-hidden="true" />
-                  </span>
-                  <div>
-                    <h3 className="font-extrabold">{title}</h3>
-                    <p className="home-muted mt-1 text-sm leading-relaxed">{text}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          <figure data-home-reveal className="home-surface overflow-hidden">
+            <Image
+              src="/dydweb-portal-clientes.webp"
+              alt={copy.sections.admin.imageAlt}
+              width={1200}
+              height={675}
+              sizes="(min-width: 1280px) 645px, (min-width: 1024px) 54vw, calc(100vw - 40px)"
+              className="aspect-video w-full object-cover"
+            />
+            <figcaption className="home-muted border-t border-[#e4edf7] px-4 py-2 text-xs">{copy.caseImageCaption}</figcaption>
+          </figure>
         </div>
       </section>
 
@@ -1998,11 +2068,10 @@ export default function Home() {
         </div>
       </section>
 
-      <ScheduleMeeting copy={copy} />
-
-      <section id="contacto" className="home-section">
+      <section id="contacto" className="home-section relative">
+        <span id="agendar" className="pointer-events-none absolute inset-x-0 top-0 scroll-mt-16" aria-hidden="true" />
         <div className="home-container grid items-start gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:gap-10">
-          <div>
+          <div data-home-reveal>
             <p className="home-kicker mb-2">{copy.contactEyebrow}</p>
             <h2 className="home-heading text-balance text-3xl md:text-[2.5rem]">{copy.contactTitle}</h2>
             <p className="home-muted mt-3 max-w-lg leading-relaxed">{copy.contactText}</p>
@@ -2062,7 +2131,6 @@ export default function Home() {
               <a href="/nosotros">{copy.pageLinks.about}</a>
               <a href="/servicios">{copy.pageLinks.packages}</a>
               <a href="/preguntas">{copy.pageLinks.questions}</a>
-              <a href="#agendar">{copy.scheduleShort}</a>
               <a href="#contacto">{copy.menu[3]}</a>
             </div>
           </div>
@@ -2094,6 +2162,12 @@ export default function Home() {
       </footer>
 
       <WhatsAppChatbot language={language} />
+      <ServiceDetailsDialog
+        service={activeService}
+        labels={copy.serviceDetails}
+        onClose={() => setActiveServiceId(null)}
+        onQuote={setQuoteServiceId}
+      />
     </main>
   );
 }

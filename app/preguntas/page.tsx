@@ -18,7 +18,7 @@ const pageCopy = {
   es: {
     languageLabel: "Idioma",
     back: "Volver al inicio",
-    nav: { home: "Inicio", about: "Quiénes Somos", services: "Servicios", questions: "Preguntas", schedule: "Agendar", contact: "Contacto" },
+    nav: { home: "Inicio", about: "Quiénes Somos", services: "Servicios", questions: "Preguntas", contact: "Contacto" },
     badge: "Centro de orientación",
     title: "Preguntas frecuentes y rutas para iniciar tu proyecto",
     text: "Esta sección concentra las dudas principales y ayuda a identificar el mejor punto de partida antes de hablar por WhatsApp.",
@@ -50,7 +50,7 @@ const pageCopy = {
   en: {
     languageLabel: "Language",
     back: "Back home",
-    nav: { home: "Home", about: "About Us", services: "Services", questions: "FAQ", schedule: "Schedule", contact: "Contact" },
+    nav: { home: "Home", about: "About Us", services: "Services", questions: "FAQ", contact: "Contact" },
     badge: "Guidance center",
     title: "FAQ and routes to start your project",
     text: "This section gathers the main questions and helps identify the best starting point before speaking on WhatsApp.",
@@ -117,7 +117,6 @@ export default function QuestionsPage() {
             <a href="/nosotros" className="rounded-md px-3 py-2 text-sm font-medium text-dyd-text transition hover:bg-dyd-silver/10 hover:text-white">{copy.nav.about}</a>
             <a href="/servicios" className="rounded-md px-3 py-2 text-sm font-medium text-dyd-text transition hover:bg-dyd-silver/10 hover:text-white">{copy.nav.services}</a>
             <a href="/preguntas" className="rounded-md bg-dyd-cyan/10 px-3 py-2 text-sm font-medium text-white">{copy.nav.questions}</a>
-            <a href="/#agendar" className="rounded-md px-3 py-2 text-sm font-medium text-dyd-text transition hover:bg-dyd-silver/10 hover:text-white">{copy.nav.schedule}</a>
             <a href="/#contacto" className="rounded-md px-3 py-2 text-sm font-medium text-dyd-text transition hover:bg-dyd-silver/10 hover:text-white">{copy.nav.contact}</a>
           </div>
           <div className="flex items-center gap-3">
@@ -237,7 +236,6 @@ export default function QuestionsPage() {
               <a href="/nosotros" className="hover:text-white">{copy.nav.about}</a>
               <a href="/servicios" className="hover:text-white">{copy.nav.services}</a>
               <a href="/preguntas" className="hover:text-white">{copy.nav.questions}</a>
-              <a href="/#agendar" className="hover:text-white">{copy.nav.schedule}</a>
               <a href="/#contacto" className="hover:text-white">{copy.nav.contact}</a>
             </div>
           </div>

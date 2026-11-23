@@ -177,7 +177,6 @@ const baseSiteLinks = [
   { title: "Automatizacion con IA", url: "/automatizacion-con-inteligencia-artificial", type: "Landing SEO", priority: "Alta" },
   { title: "Chatbots WhatsApp", url: "/chatbots-whatsapp-empresas", type: "Landing SEO", priority: "Alta" },
   { title: "SEO tecnico", url: "/seo-tecnico-para-negocios", type: "Landing SEO", priority: "Media" },
-  { title: "Agendar reunion", url: "/#agendar", type: "Conversion", priority: "Alta" },
   { title: "Contacto", url: "/#contacto", type: "Conversion", priority: "Alta" },
 ];
 
